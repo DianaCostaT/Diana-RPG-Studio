@@ -34,3 +34,7 @@ Os tipos básicos observados são `move`, `motion`, `sound`, `animation`, `proje
 ## Aceite ainda necessário
 
 Criar uma tropa mínima e habilidades com animação, som, movimento, espera e impacto; salvar, reabrir e executar no jogo. Confirmar quantidade de dano, retorno ao estado ocioso e limpeza de efeitos após vitória/fuga. Repetir com ator e inimigo, velocidade personalizada e poses fixas/arbitrárias, registrando revisão, comando, saída e captura; somente então atualizar o estado de validação.
+
+## Interface 2D — 0.2.0
+
+Perfil 2D padrão, escolha 2D + 3D, grade Animações 2 e Tela de batalha integrados. Recursos verificados, contrato de posições no runtime e limites da reprodução clássica estão em [Interface 2D](2D_WORKSPACE.md).

@@ -45,3 +45,7 @@ abaixo continua pendente.
 
 Geradores, 3D e modos de combate adicionais existentes upstream não ampliam o compromisso do MVP Diana. Novos editores avançados e exportação de animações ficam **planejados**, sujeitos a testes e requisitos próprios.
 
+
+## Interface 2D — 0.2.0
+
+Perfil 2D padrão, escolha 2D + 3D, grade Animações 2 e Tela de batalha integrados. Recursos verificados, contrato de posições no runtime e limites da reprodução clássica estão em [Interface 2D](2D_WORKSPACE.md).

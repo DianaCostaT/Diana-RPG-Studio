@@ -3,8 +3,8 @@
   "steps": [
     {
       "priority": 1,
-      "task": "Validar feedback do usuário na 0.1.2 e completar uso básico com novo evento e edição do personagem",
-      "acceptance": "Criar/abrir/salvar pela interface permanece estável; novo diálogo e dados do personagem persistem e funcionam ao testar."
+      "task": "Consolidar autoria 2D e fidelidade funcional de Animações 2/Tela de batalha na 0.2.0",
+      "acceptance": "Revisar feedback visual, auditar filtros 3D em ferramentas avançadas e implementar HUD/armas/comandos restantes sem regressão de criação de projetos."
     },
     {
       "priority": 2,

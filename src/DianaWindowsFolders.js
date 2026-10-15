@@ -81,7 +81,7 @@
                 fs.mkdirSync(parent,{recursive:true});
                 const target=path.join(parent,choice.name);
                 this.uiManager.updateStatus('Criando projeto…');
-                if(!await this.projectManager.createNewProject(target,choice.name,{blank:true}))throw new Error(this.projectManager.lastCreateError||'Não foi possível criar os arquivos do projeto.');
+                if(!await this.projectManager.createNewProject(target,choice.name,{blank:true,dianaMode:choice.mode||'2d'}))throw new Error(this.projectManager.lastCreateError||'Não foi possível criar os arquivos do projeto.');
                 await this.openProjectAtPath(target);
                 return this.currentProject?.path===target;
             }catch(error){

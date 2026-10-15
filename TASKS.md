@@ -94,3 +94,7 @@ Evidências e limites em [UI_AUTHORING_VALIDATION.md](docs/UI_AUTHORING_VALIDATI
 - [x] Confirmar abrir/cancelar e reabrir sem alterar dados.
 - [x] Gerar pacote 0.1.2 separado e validar fluxo real.
 - [ ] Rever seletores de ferramentas avançadas em incremento próprio.
+
+## Interface 2D — 0.2.0
+
+Perfil 2D padrão, escolha 2D + 3D, grade Animações 2 e Tela de batalha integrados. Recursos verificados, contrato de posições no runtime e limites da reprodução clássica estão em [Interface 2D](docs/2D_WORKSPACE.md).

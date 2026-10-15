@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedOn": "2026-10-15",
   "product": "Diana RPG Studio",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "phase": "0: aplicação Windows e pacote local testados; 1: autoria integrada parcial",
   "base": {
     "project": "RPGReactor",
@@ -14,7 +14,8 @@
       "zz-pose-authoring.patch",
       "zzz-pose-authoring-localization.patch",
       "zzzz-animation-mvp.patch",
-      "zzzz-windows-package.patch"
+      "zzzz-windows-package.patch",
+      "zzzzz-2d-battle-screen.patch"
     ]
   },
   "verified": [
@@ -30,7 +31,6 @@
     "SHA-256 do ZIP NW.js confirmado com manifest oficial",
     "Grade e arraste por ponteiro real para atores/inimigos; recortes preservados no runtime",
     "Prévia automática, pause/reset/seek sem alterar dados e limites da imagem com erro visível",
-    "70 testes Diana e 31 contra build preparado aprovados",
     "Projeto inicial original: personagem, classe, progressão, ataque, defesa, nocaute, NPC e mapa transitável",
     "Novo jogo, diálogo e batalha por teclado real até vitória, derrota permitida e fuga; paleta legível",
     "Prévia bloqueada com aviso visual em português para classe inválida; dados do usuário não alterados",
@@ -50,13 +50,19 @@
     "Criar projeto pela interface: nome/destino com acentos, navegador integrado, confirmar Criar e mapa carregado sem encerramento",
     "Destino ocupado, cancelamento, abertura/cancelamento e reabertura pela interface preservam projeto e arquivos",
     "Pacote 0.1.2 validado pelo fluxo real de criação e smoke de dependências/runtime próprios",
-    "Pacote 0.1.2: botão real Testar inicia processo ativo por 12 segundos; editor responde após fechar teste; abertura direta do Diana.exe mostra janela e mapa carregado"
+    "Pacote 0.1.2: botão real Testar inicia processo ativo por 12 segundos; editor responde após fechar teste; abertura direta do Diana.exe mostra janela e mapa carregado",
+    "73 testes Diana e 31 contra build preparado aprovados; smoke Windows Rqv3i4 aprovado",
+    "Perfis de autoria 2D e 2D + 3D persistidos; padrão de novos projetos 2D e legado preservado",
+    "Animações 2 em páginas de oito, edições e cancelamento de poses para aliados/inimigos; duração salva lida pelo runtime",
+    "Tela de batalha 2D: apresentação, turnos, mensagens, comandos e posições; posição 510,280 confirmada no jogo"
   ],
   "partial": [
     "Autoria visual parcial: diálogo/parallax testados; importação, novo evento, condições e database completo pendentes",
     "Colisão visual customizada e dimensões retangulares independentes de tile",
     "Comparação renderizada de trajetórias/efeitos e som audível",
-    "Instalação em Windows limpo e revisão de falhas upstream"
+    "Instalação em Windows limpo e revisão de falhas upstream",
+    "Reprodução da organização clássica: Armas e Tipos reutilizam editores existentes; HUD A/B/C e comandos por ator pendentes",
+    "Filtro 2D com superfícies principais verificadas; auditoria integral de ferramentas avançadas pendente"
   ],
   "planned": [
     "Plugin SDK Diana versionado",
@@ -88,12 +94,13 @@
     "workspace": "artifacts/parallax-ui-smoke.json",
     "basicUse": "artifacts/basic-use-smoke.json",
     "projectCreation": "artifacts/project-ui-smoke.json",
-    "projectFix": "docs/PROJECT_CREATION_FIX.md"
+    "projectFix": "docs/PROJECT_CREATION_FIX.md",
+    "interface2d": "artifacts/2d-ui-smoke.json"
   },
   "git": {
     "branch": "diana/phase-0-1",
     "committed": true,
-    "reason": "Correção 0.1.2 validada; push continua pendente de URL do remoto."
+    "reason": "Interface 2D 0.2.0 validada; push continua pendente de URL do remoto."
   },
-  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.1.2/Diana.exe"
+  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.0/Diana.exe"
 }

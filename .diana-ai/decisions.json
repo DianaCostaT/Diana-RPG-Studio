@@ -124,6 +124,13 @@
       "status": "implementado e testado",
       "decision": "Substituir seletor nativo NW.js no criar/abrir por navegador integrado de pastas, sem instalação nem alterações de segurança. Validar fluxo pela interface em vez de somente API.",
       "evidence": "docs/PROJECT_CREATION_FIX.md"
+    },
+    {
+      "id": "2d-first-authoring",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Atender prioridade explícita 2D: perfil persistido, ferramentas 3D separadas, grade clássica de poses e tela de batalha sobre o contrato/runtime existentes. Sem copiar assets/código da referência.",
+      "evidence": "docs/2D_WORKSPACE.md"
     }
   ]
 }

@@ -23,7 +23,7 @@ function brandHtml(html) {
         .replace('<html lang="en">', '<html lang="pt-BR">')
         .replace('<title>RPG Reactor</title>', '<title>Diana RPG Studio</title>')
         .replace('</head>', '    <link rel="stylesheet" href="src/DianaWorkspace.css">\n</head>')
-        .replace(entry, '    <script src="src/DianaStarterData.js"></script>\n    <script src="src/DianaProjectValidation.js"></script>\n    <script src="src/DianaBootstrap.js"></script>\n    <script src="src/DianaWorkspace.js"></script>\n    <script src="src/DianaWindowsFolders.js"></script>\n' + entry);
+        .replace(entry, '    <script src="src/DianaStarterData.js"></script>\n    <script src="src/DianaProjectValidation.js"></script>\n    <script src="src/DianaBootstrap.js"></script>\n    <script src="src/DianaWorkspace.js"></script>\n    <script src="src/DianaWindowsFolders.js"></script>\n    <script src="src/DianaProjectMode.js"></script>\n    <script src="src/DianaBattle2D.js"></script>\n' + entry);
 }
 
 function prepareEditor(root = path.resolve(__dirname, '..')) {
@@ -79,7 +79,7 @@ function prepareEditor(root = path.resolve(__dirname, '..')) {
     fs.copyFileSync(path.join(root, 'src', 'DianaBootstrap.js'), path.join(editor, 'src', 'DianaBootstrap.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaStarterData.js'), path.join(editor, 'src', 'DianaStarterData.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaProjectValidation.js'), path.join(editor, 'src', 'DianaProjectValidation.js'));
-    for (const name of ['DianaWorkspace.js','DianaWorkspace.css','DianaWindowsFolders.js']) fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
+    for (const name of ['DianaWorkspace.js','DianaWorkspace.css','DianaWindowsFolders.js','DianaProjectMode.js','DianaBattle2D.js']) fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
     if (fs.existsSync(path.join(root, 'LICENSE'))) fs.copyFileSync(path.join(root, 'LICENSE'), path.join(staging, 'LICENSE'));
     // Development link reuses installed dependencies; it is not a release package.
     fs.symlinkSync(dependencies, path.join(editor, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
@@ -92,6 +92,8 @@ function prepareEditor(root = path.resolve(__dirname, '..')) {
         workspaceSha256: sha256(path.join(root,'src','DianaWorkspace.js')),
         workspaceCssSha256: sha256(path.join(root,'src','DianaWorkspace.css')),
         folderServiceSha256: sha256(path.join(root,'src','DianaWindowsFolders.js')),
+        projectModeSha256: sha256(path.join(root,'src','DianaProjectMode.js')),
+        battle2DSha256: sha256(path.join(root,'src','DianaBattle2D.js')),
         dependencyLockSha256: sha256(path.join(upstream, 'editor', 'package-lock.json')),
         dependencies: 'Local development link to upstream/editor/node_modules; not a distributable package'
     };

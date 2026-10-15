@@ -39,3 +39,7 @@ Publicação/distribuição final depende de validar o empacotamento e as licen�
 
 Modos frontal, no mapa, tático, estratégia, primeira pessoa, 2.5D, isométrico e Mode 7, além de ação, 3D, multiplayer, colaboração online, nuvem e suporte móvel não fazem parte do aceite de 30 dias. Módulos upstream relacionados são material para avaliação posterior, sem compromisso de integração ou suporte Diana. Importação ampla de projetos legados, marketplace, geração avançada de assets e provedores adicionais de IA exigem requisitos, auditoria e marcos próprios.
 
+
+## Interface 2D — 0.2.0
+
+Perfil 2D padrão, escolha 2D + 3D, grade Animações 2 e Tela de batalha integrados. Recursos verificados, contrato de posições no runtime e limites da reprodução clássica estão em [Interface 2D](docs/2D_WORKSPACE.md).

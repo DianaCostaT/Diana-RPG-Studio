@@ -39,3 +39,50 @@ body {font-family:'Segoe UI',sans-serif!important;background:#111722;color:#e7ed
 .welcome-cards {grid-template-columns:1fr!important;}
 #diana-tile-guide {font-size:11px;line-height:1.5;color:#b7c3d8;padding:9px 12px;border-top:1px solid #344157;background:#202d40;flex-shrink:0;}
 @media(max-width:1100px){#diana-workspace{gap:2px;padding:8px;}#diana-workspace button{padding:9px 7px;font-size:11px;}.diana-brand{min-width:98px;margin-right:5px;}}
+
+/* The 2D profile removes authoring controls only; project contents are retained. */
+html[data-diana-mode="2d"] [data-diana3d=true],
+html[data-diana-mode="2d"] [data-db=reactor3d],html[data-diana-mode="2d"] [data-db=structures],
+html[data-diana-mode="2d"] .database-nav-item[data-type=reactor3d],html[data-diana-mode="2d"] .database-nav-item[data-type=structures],
+html[data-diana-mode="2d"] .map-3d-view,html[data-diana-mode="2d"] .map-surround-view,
+html[data-diana-mode="2d"] .rr-controls-jump,
+html[data-diana-mode="2d"] .rr-3d-binding-row,html[data-diana-mode="2d"] .rr-3d-slot-corner,
+html[data-diana-mode="2d"] #flag-tile3d,html[data-diana-mode="2d"] #tile3d-preview,
+html[data-diana-mode="2d"] .tileset-layer-tab[data-layer=O],html[data-diana-mode="2d"] [data-folder-id=models] {display:none!important;}
+#diana-mode-badge {font-size:11px;white-space:nowrap;color:#dbe5f5;background:#26364a;padding:5px;border:1px solid #52617a;}
+#diana-workspace {padding:5px 8px;gap:2px;flex-wrap:wrap;}
+#diana-workspace button {border-radius:2px;padding:7px 9px;font-size:12px;}
+.diana-brand {min-width:82px;margin-right:8px;}.diana-brand strong{font-size:16px;letter-spacing:2px;}.diana-brand span{font-size:8px;letter-spacing:1px;}
+.diana-help{font-size:12px;line-height:1.5;color:var(--color-text-muted);}
+.diana-classic{padding:12px;box-sizing:border-box;min-width:0;color:var(--color-text);}
+.diana-classic-top,.diana-classic-resources{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px;}
+.diana-classic-field{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12px;}
+.diana-classic-field>span{min-width:70px;}.diana-classic-field input:not([type=checkbox]),.diana-classic-field select{min-width:0;flex:1;}
+.diana-classic fieldset{border:1px solid #59687e;border-radius:2px;padding:10px;min-width:0;}
+.diana-classic legend{font-size:12px;padding:0 5px;color:#d7e2f4;}
+.diana-classic-tabs{display:flex;gap:12px;align-items:center;border-bottom:1px solid #61728e;margin-top:14px;padding:8px;background:#2c3a50;}
+.database-content{flex-direction:column;}
+#database-navigation{display:flex;flex-wrap:wrap;gap:2px;width:auto;flex:0 0 auto;max-height:116px;overflow-y:auto;border-right:0;border-bottom:1px solid #52617b;padding:5px;}
+#database-navigation .database-nav-item{font-size:12px;padding:5px 8px;border:1px solid #43526a;border-radius:2px;white-space:nowrap;}
+#database-navigation .database-nav-item.active{background:#425572;border-color:#a4b3db;padding-left:8px;}
+.diana-pose-pages{display:flex;gap:3px;margin:8px 0;flex-wrap:wrap;}
+.diana-pose-pages [aria-pressed=true]{background:#4b6289;color:#fff;}
+.diana-pose-grid{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:14px 10px;margin:12px 0;}
+.diana-pose-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;}
+.diana-pose-card canvas{width:100%;max-width:96px;image-rendering:pixelated;border:1px solid #62728b;}
+.diana-pose-card button{padding:5px!important;font-size:12px!important;}
+.diana-pose-name{grid-column:1/-1;border:1px solid #536079;padding:5px;background:#121d2d;font-size:12px;}
+.diana-pose-card small{grid-column:1/-1;color:#a9b9cf;}
+.diana-animations2 .diana-classic-top{margin-bottom:6px;gap:10px;}
+.diana-animations2 .diana-classic-resources{padding:6px;margin-bottom:6px;}
+.diana-animations2 .diana-classic-tabs{margin-top:6px;padding:5px;}
+.diana-animations2 .diana-pose-grid{gap:6px;margin:6px 0;}
+.diana-animations2 .diana-pose-card{padding:6px;gap:4px;}
+.diana-animations2 .diana-pose-card canvas{max-width:72px;}
+.diana-animations2 .diana-pose-name{padding:3px;}
+.diana-pose-modal{z-index:22000!important;}.diana-pose-modal>.rr-modal{width:min(920px,95vw);max-height:92vh;display:flex;flex-direction:column;}
+.diana-pose-modal .rr-modal-body{overflow:auto;min-height:0;}.diana-pose-large{background:#26384a;border:1px solid #71839e;image-rendering:pixelated;}
+.diana-screen-columns{display:grid;grid-template-columns:minmax(280px,360px) minmax(350px,1fr);gap:16px;align-items:start;}
+.diana-screen-group{margin-bottom:14px;}.diana-battle-composition{width:100%;height:auto;image-rendering:pixelated;}
+.diana-position-row{display:flex;align-items:center;gap:8px;}.diana-position-row label{min-width:0;}.diana-position-row label>span{min-width:12px;}.diana-position-row input{width:70px;}
+@media(max-width:1000px){.diana-pose-grid{grid-template-columns:repeat(2,minmax(140px,1fr));}.diana-screen-columns{grid-template-columns:1fr;}}

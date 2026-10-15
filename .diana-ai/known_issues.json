@@ -70,6 +70,13 @@
       "severity": "alta",
       "description": "0.1.1 encerrou no seletor nativo (!base_dir.empty()). 0.1.2 usa navegador integrado ao criar/abrir projeto; fluxo real, erro e cancelamento testados. Outros seletores de ferramentas avançadas ainda não migrados.",
       "evidence": "docs/PROJECT_CREATION_FIX.md"
+    },
+    {
+      "id": "classic-battle-ui-parity",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Animações 2 reproduz organização de poses; Armas/Tipos usam editores existentes. Tela de batalha tem prévia esquemática; HUD A/B/C, ranks e comandos por ator ainda pendentes. Auditar todas as superfícies avançadas do perfil 2D.",
+      "evidence": "docs/2D_WORKSPACE.md"
     }
   ]
 }

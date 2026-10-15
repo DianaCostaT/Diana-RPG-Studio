@@ -1,0 +1,26 @@
+diff --git a/runtime/reactor_sprites.js b/runtime/reactor_sprites.js
+--- a/runtime/reactor_sprites.js
++++ b/runtime/reactor_sprites.js
+@@ -1010,3 +1010,10 @@
+ Sprite_Actor.prototype.setActorHome = function(index) {
++    // Diana's 2D composition uses the same logical field as the stock homes.
++    const point = globalThis.ReactorBattlePresentation?.settings?.screen2d?.actorHomes?.[index];
++    if (point && Number.isFinite(point.x) && Number.isFinite(point.y) &&
++            point.x >= 0 && point.x <= 816 && point.y >= 0 && point.y <= 624) {
++        this.setHome(...Sprite_Battler.fieldPoint(point.x, point.y));
++        return;
++    }
+     const [x, y] = Sprite_Battler.fieldPoint(600 + index * 32, 280 + index * 48);
+     this.setHome(x, y);
+diff --git a/runtime/reactor_main.js b/runtime/reactor_main.js
+--- a/runtime/reactor_main.js
++++ b/runtime/reactor_main.js
+@@ -3,6 +3,6 @@
+ // RPG Reactor runtime version: 0.99.0
+-// RPG Reactor runtime revision: 20261011.14
++// RPG Reactor runtime revision: diana-0.2.0
+ // The same stamp, reachable from the F12 console: which engine is this
+ // window actually running? Type RPG_REACTOR_RUNTIME_REVISION to see.
+-globalThis.RPG_REACTOR_RUNTIME_REVISION = "20261011.14";
++globalThis.RPG_REACTOR_RUNTIME_REVISION = "diana-0.2.0";
+ //=============================================================================

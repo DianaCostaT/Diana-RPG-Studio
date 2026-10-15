@@ -1,9 +1,9 @@
 # Usar o Diana agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.1.2/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Diana-RPG-Studio-Windows-0.2.0/Diana.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
 
-1. Clique em **Novo projeto**, dê um nome e informe **Salvar o projeto em**.
+1. Clique em **Novo projeto**, escolha **Inteiramente 2D**, dê um nome e informe **Salvar o projeto em**.
 2. Use **Procurar…** para escolher a pasta no seletor integrado, confirme
    **Usar esta pasta** e depois **Criar**. O projeto terá sua própria subpasta.
 3. A aba **B** já abre com os tiles originais. Escolha uma peça e pinte no mapa.
@@ -12,6 +12,15 @@ do executável. Não é necessário executar comandos.
 4. Clique em **Salvar** e em **Testar jogo**. Escolha **Novo jogo**.
 5. Use as setas para andar, Enter para conversar com o NPC e Escape para o menu.
    O NPC oferece uma batalha de treino editável.
+
+Projetos antigos: escolha **Projeto 2D** no seletor do topo para ocultar as
+ferramentas 3D. **Projeto 2D + 3D** oferece o conjunto completo. Essa escolha
+preserva os dados existentes e fica salva no projeto.
+
+Abra **Animações 2** para configurar poses de aliados e inimigos em páginas de
+oito prévias. **Definir…** abre recortes, quadros e reprodução; aplique a pose e
+salve pelo OK do banco. **Tela de batalha** configura apresentação, comandos e
+posições dos aliados. Veja os recursos e limites em [Interface 2D](2D_WORKSPACE.md).
 
 Os tiles incluem grama, caminho, água, tijolos, madeira, piso, areia, árvore,
 flores, telhado, ponte, pedra e neve. Água, parede, árvore, telhado, pedra grande
