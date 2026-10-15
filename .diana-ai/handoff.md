@@ -28,3 +28,7 @@ na branch `diana/phase-0-1`; builds, executáveis, dependências e evidências l
 permanecem ignorados. O repositório não tinha remoto configurado; URL solicitada
 para concluir o push. As observações anteriores de ausência de autorização são históricas.
 
+
+## Correção crítica 0.1.2: fechar ao criar projeto
+
+Usuário reportou encerramento. Log real da 0.1.1: FATAL file_chooser_impl.cc:35, !base_dir.empty(), dois dumps preservados. Testes anteriores API não cobriam a seleção nativa. Nova src/DianaWindowsFolders.js substitui criar/abrir Windows por navegador interno assíncrono e campo de destino na janela Novo projeto. Sem seletor nativo, helper adicional, instalação ou alteração de segurança. Criação usa métodos existentes, captura erros e bloqueia reentrada. Fluxo real pela interface passou no pacote dist/Diana-RPG-Studio-Windows-0.1.2/Diana.exe: criar, destino ocupado, cancelar, abrir/cancelar e reabrir; arquivos e editor preservados. 70 testes e 31 contra build passam; smoke Windows aprovado. docs/PROJECT_CREATION_FIX.md e artifacts/project-ui-smoke.json contêm evidências. Outros seletores avançados ainda não migrados.

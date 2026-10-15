@@ -7,13 +7,16 @@ alternativa, sem incorporar seu código.
 
 ## Executar neste workspace
 
-Há uma versão local pronta em `dist/Diana-RPG-Studio-Windows-0.1.1/Diana.exe`.
+Há uma versão local pronta em `dist/Diana-RPG-Studio-Windows-0.1.2/Diana.exe`.
 Abra esse executável para usar o editor sem comandos, Node ou Git instalados
 separadamente. Mantenha a pasta completa junta. Esta é uma versão de desenvolvimento
 para teste local; os bloqueios de distribuição pública continuam documentados.
 
 [Começar a usar](docs/USAR_AGORA.md): projetos novos já abrem com tiles originais,
 mapa navegável, personagem e batalha de treino; água e obstáculos têm colisão.
+
+A 0.1.2 corrige o fechamento ao escolher pasta para criar projeto, com um
+[seletor integrado](docs/PROJECT_CREATION_FIX.md) para criar e abrir projetos.
 
 A interface Diana tem navegação direta para mapas, eventos, banco de dados,
 inimigos, sequências, recursos, parallax e teste, com paleta e árvore de mapas

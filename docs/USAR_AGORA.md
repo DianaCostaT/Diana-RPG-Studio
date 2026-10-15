@@ -1,10 +1,11 @@
 # Usar o Diana agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.1.1/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Diana-RPG-Studio-Windows-0.1.2/Diana.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
 
-1. Clique em **Novo projeto**, dê um nome e confirme **Criar**.
-2. Escolha a pasta que receberá a nova subpasta do projeto.
+1. Clique em **Novo projeto**, dê um nome e informe **Salvar o projeto em**.
+2. Use **Procurar…** para escolher a pasta no seletor integrado, confirme
+   **Usar esta pasta** e depois **Criar**. O projeto terá sua própria subpasta.
 3. A aba **B** já abre com os tiles originais. Escolha uma peça e pinte no mapa.
    Para substituir o chão diretamente, selecione a camada 1 (primeira camada
    numérica da barra). Desfazer e refazer ficam na barra de ferramentas.
@@ -27,10 +28,11 @@ reescritos. Para experimentar os tiles novos, crie um projeto nesta versão.
 `npm run smoke:basic:windows` passou: diálogo de novo projeto e cancelamento,
 paleta B disponível automaticamente, seleção de água por ponteiro, pintura,
 undo/redo e salvar pelos botões; execução de Novo jogo por teclado, colisão na
-água pintada e movimento no caminho. Preparação do projeto do teste usa API;
-a escolha da pasta no diálogo nativo do Windows não foi automatizada.
+água pintada e movimento no caminho. A preparação desse teste usa API. Na 0.1.2,
+`smoke:project:windows` também confirma a criação completa pela interface e pelo
+seletor integrado, substituindo o caminho nativo que causava o fechamento.
 
 Resumo em `artifacts/basic-use-smoke.json`; projeto e capturas em sua pasta de
-evidências. O pacote 0.1.1 também é verificado por `smoke-ready-windows.cjs`.
+evidências. O pacote atual também é verificado por `smoke-ready-windows.cjs`.
 Continua sendo uma versão de desenvolvimento: autoria completa, animações
 avançadas e distribuição pública ainda têm pendências documentadas.

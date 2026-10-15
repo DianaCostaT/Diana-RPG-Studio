@@ -85,3 +85,12 @@ Evidências e limites em [UI_AUTHORING_VALIDATION.md](docs/UI_AUTHORING_VALIDATI
 - [x] Selecionar/pintar/desfazer/refazer/salvar por controles reais e verificar passagem no jogo.
 - [x] Pacote separado 0.1.1 com criação/salvamento verificados.
 - [ ] Seletor nativo de criação/abertura, novo evento e edição de dados em fluxo completo.
+
+## Correção crítica 0.1.2
+
+- [x] Identificar encerramento nativo em log real e preservar dumps/perfil.
+- [x] Eliminar seletor nativo do fluxo Criar/Abrir e adicionar destino visível/integrado.
+- [x] Confirmar criação, erro por pasta ocupada e cancelamento por UI sem encerramento.
+- [x] Confirmar abrir/cancelar e reabrir sem alterar dados.
+- [x] Gerar pacote 0.1.2 separado e validar fluxo real.
+- [ ] Rever seletores de ferramentas avançadas em incremento próprio.

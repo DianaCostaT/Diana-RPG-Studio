@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedOn": "2026-10-15",
   "product": "Diana RPG Studio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "phase": "0: aplicação Windows e pacote local testados; 1: autoria integrada parcial",
   "base": {
     "project": "RPGReactor",
@@ -30,7 +30,7 @@
     "SHA-256 do ZIP NW.js confirmado com manifest oficial",
     "Grade e arraste por ponteiro real para atores/inimigos; recortes preservados no runtime",
     "Prévia automática, pause/reset/seek sem alterar dados e limites da imagem com erro visível",
-    "63 testes Diana e 31 contra build preparado aprovados",
+    "70 testes Diana e 31 contra build preparado aprovados",
     "Projeto inicial original: personagem, classe, progressão, ataque, defesa, nocaute, NPC e mapa transitável",
     "Novo jogo, diálogo e batalha por teclado real até vitória, derrota permitida e fuga; paleta legível",
     "Prévia bloqueada com aviso visual em português para classe inválida; dados do usuário não alterados",
@@ -46,7 +46,10 @@
     "Projeto novo 0.1.1 com tiles originais de terreno/objetos, mapa com caminho/lago e colisão de obstáculos",
     "Paleta escolhe folha disponível em vez de abrir A vazia; preserva seleção válida e ignora conclusão antiga de carregamento",
     "Uso básico por controles reais: escolher água, pintar, desfazer/refazer, salvar; runtime bloqueia água e permite caminhar",
-    "Pacote 0.1.1 cria/salva usando dependências e runtime internos; diálogo inicial descreve corretamente o projeto fornecido"
+    "Pacote 0.1.1 cria/salva usando dependências e runtime internos; diálogo inicial descreve corretamente o projeto fornecido",
+    "Criar projeto pela interface: nome/destino com acentos, navegador integrado, confirmar Criar e mapa carregado sem encerramento",
+    "Destino ocupado, cancelamento, abertura/cancelamento e reabertura pela interface preservam projeto e arquivos",
+    "Pacote 0.1.2 validado pelo fluxo real de criação e smoke de dependências/runtime próprios"
   ],
   "partial": [
     "Autoria visual parcial: diálogo/parallax testados; importação, novo evento, condições e database completo pendentes",
@@ -82,12 +85,14 @@
     "readyExecutable": "artifacts/ready-exe-smoke.json",
     "directLaunch": "artifacts/direct-exe-launch.json",
     "workspace": "artifacts/parallax-ui-smoke.json",
-    "basicUse": "artifacts/basic-use-smoke.json"
+    "basicUse": "artifacts/basic-use-smoke.json",
+    "projectCreation": "artifacts/project-ui-smoke.json",
+    "projectFix": "docs/PROJECT_CREATION_FIX.md"
   },
   "git": {
     "branch": "diana/phase-0-1",
     "committed": true,
-    "reason": "Commit autorizado pelo usuário; push pendente de URL do remoto, ainda não configurado."
+    "reason": "Correção 0.1.2 validada; push continua pendente de URL do remoto."
   },
-  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.1.1/Diana.exe"
+  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.1.2/Diana.exe"
 }

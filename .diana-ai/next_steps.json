@@ -3,8 +3,8 @@
   "steps": [
     {
       "priority": 1,
-      "task": "Consolidar uso básico com criação/abertura pelo seletor do Windows, novo evento de diálogo e edição de personagem pela interface",
-      "acceptance": "Um usuário cria/salva/reabre o projeto, pinta mapa e cria diálogo sem código; roda jogo pelo botão Testar e recebe erros claros."
+      "task": "Validar feedback do usuário na 0.1.2 e completar uso básico com novo evento e edição do personagem",
+      "acceptance": "Criar/abrir/salvar pela interface permanece estável; novo diálogo e dados do personagem persistem e funcionam ao testar."
     },
     {
       "priority": 2,

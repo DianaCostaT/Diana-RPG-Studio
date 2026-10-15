@@ -33,7 +33,7 @@
             for (const notice of ['LICENSE', 'THIRD_PARTY_NOTICES.md']) {
                 this.fs.copyFileSync(this.path.join(distribution, notice), this.path.join(target, notice));
             }
-            data.diana = {schemaVersion:1, studioVersion:'0.1.1'};
+            data.diana = {schemaVersion:1, studioVersion:'0.1.2'};
             this._writeFileAtomic(this.fs, file, JSON.stringify(data,null,2), 'utf8');
             return true;
         } catch (error) {

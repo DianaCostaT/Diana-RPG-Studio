@@ -117,6 +117,13 @@
       "status": "implementado e testado",
       "decision": "Prioridade explícita: uso básico antes de amplitude. Conjunto original de tiles, colisão, paleta disponível e diálogo inicial honesto; pacote 0.1.1 separado preserva versão anterior e projetos existentes.",
       "evidence": "docs/USAR_AGORA.md"
+    },
+    {
+      "id": "project-folder-crash-fix",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Substituir seletor nativo NW.js no criar/abrir por navegador integrado de pastas, sem instalação nem alterações de segurança. Validar fluxo pela interface em vez de somente API.",
+      "evidence": "docs/PROJECT_CREATION_FIX.md"
     }
   ]
 }

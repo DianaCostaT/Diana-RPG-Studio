@@ -1,6 +1,6 @@
 ﻿{
   "name": "diana-rpg-studio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -15,6 +15,7 @@
     "smoke:poses:windows": "node scripts/smoke-pose-authoring-windows.cjs",
     "smoke:starter:windows": "node scripts/smoke-starter-windows.cjs",
     "smoke:basic:windows": "node scripts/smoke-basic-use-windows.cjs",
+    "smoke:project:windows": "node scripts/smoke-project-ui-windows.cjs",
     "smoke:maps:windows": "node scripts/smoke-map-events-windows.cjs",
     "smoke:authoring:windows": "node scripts/smoke-parallax-ui-windows.cjs",
     "smoke:sequences:windows": "node scripts/smoke-animation-sequences-windows.cjs",

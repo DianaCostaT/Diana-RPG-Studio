@@ -55,7 +55,7 @@
       "id": "git-uncommitted",
       "status": "parcial",
       "severity": "media",
-      "description": "Arquivos novos permanecem na branch diana/phase-0-1 sem commit; upstream/build/tools/artifacts são ignorados. Preservar fontes e patches antes de qualquer limpeza."
+      "description": "Base 0.1.1 commitada em ad485cb; não existe remoto configurado para push. Correção 0.1.2 preserva todos os arquivos locais."
     },
     {
       "id": "asset-preflight-coverage",
@@ -63,6 +63,13 @@
       "severity": "media",
       "description": "Prévia valida imagens do grupo inicial e mapa aberto; não percorre todos os mapas, comandos dinâmicos, áudio, modelos ou gráficos de batalha.",
       "evidence": "docs/UI_AUTHORING_VALIDATION.md"
+    },
+    {
+      "id": "native-folder-crash",
+      "status": "implementado e testado",
+      "severity": "alta",
+      "description": "0.1.1 encerrou no seletor nativo (!base_dir.empty()). 0.1.2 usa navegador integrado ao criar/abrir projeto; fluxo real, erro e cancelamento testados. Outros seletores de ferramentas avançadas ainda não migrados.",
+      "evidence": "docs/PROJECT_CREATION_FIX.md"
     }
   ]
 }
