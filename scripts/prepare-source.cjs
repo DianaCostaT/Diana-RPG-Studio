@@ -78,13 +78,16 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
     pkg.window.show = true;
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
     const htmlFile = path.join(editor, 'index.html');
-    fs.writeFileSync(htmlFile, brandHtml(fs.readFileSync(htmlFile, 'utf8')));
+    const branded=brandHtml(fs.readFileSync(htmlFile, 'utf8')).replace('    <script src="src/main.js"></script>','    <script src="src/DianaJRPGSample.js"></script>\n    <script src="src/main.js"></script>');
+    fs.writeFileSync(htmlFile, branded);
     fs.copyFileSync(path.join(root, 'src', 'DianaBootstrap.js'), path.join(editor, 'src', 'DianaBootstrap.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaStarterData.js'), path.join(editor, 'src', 'DianaStarterData.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaProjectValidation.js'), path.join(editor, 'src', 'DianaProjectValidation.js'));
     for (const name of ['DianaWorkspace.js','DianaWorkspace.css','DianaWindowsFolders.js','DianaProjectMode.js','DianaBattle2D.js','DianaThemes.js','DianaIcons.js','DianaAppearance.css']) fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
     require('./diana-icons.cjs').generate(path.join(editor,'images'));
     fs.copyFileSync(path.join(editor,'images','diana.png'),path.join(editor,'images','icon.png'));
+    fs.copyFileSync(path.join(root,'src','DianaJRPGSample.js'),path.join(editor,'src','DianaJRPGSample.js'));
+    fs.cpSync(path.join(root,'assets','jrpg-test','pack'),path.join(editor,'diana-assets','jrpg-test'),{recursive:true});
     if (fs.existsSync(path.join(root, 'LICENSE'))) fs.copyFileSync(path.join(root, 'LICENSE'), path.join(staging, 'LICENSE'));
     // Development link reuses installed dependencies; it is not a release package.
     fs.symlinkSync(dependencies, path.join(editor, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
@@ -104,6 +107,8 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
         iconsSha256: sha256(path.join(root,'src','DianaIcons.js')),
         appMarkSha256: sha256(path.join(root,'src/assets/diana.svg')),
         iconGeneratorSha256: sha256(path.join(root,'scripts/diana-icons.cjs')),
+        jrpgSampleSha256: sha256(path.join(root,'src','DianaJRPGSample.js')),
+        jrpgAssetManifestSha256: sha256(path.join(root,'assets','jrpg-test','pack','manifest.json')),
         dependencyLockSha256: sha256(path.join(upstream, 'editor', 'package-lock.json')),
         dependencies: 'Local development link to upstream/editor/node_modules; not a distributable package'
     };

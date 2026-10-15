@@ -7,7 +7,7 @@ alternativa, sem incorporar seu código.
 
 ## Executar neste workspace
 
-Há uma versão local pronta em `dist/Diana-RPG-Studio-Windows-0.2.1/Diana.exe`.
+Há uma versão local pronta em `dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe`.
 Abra esse executável para usar o editor sem comandos, Node ou Git instalados
 separadamente. Mantenha a pasta completa junta. Esta é uma versão de desenvolvimento
 para teste local; os bloqueios de distribuição pública continuam documentados.

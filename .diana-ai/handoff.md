@@ -42,3 +42,7 @@ Prioridade explícita: separar 2D/3D e aproximar Animações 2 e Battle Screen d
 ## Aparência 0.2.1
 
 Marca e ícones Diana originais; launcher com ICO próprio e NW com PNG. Aparência no topo escolhe seis paletas e persiste em rr-settings.theme; tokens substituem cores fixas. Smoke do pacote confirmou todas as paletas, inspeção de mapa/poses e persistência após reiniciar (artifacts/appearance-sh6q8k). 75 testes e 31 contra preparado passaram. Build padrão bloqueado por EPERM desconhecido: usar npm run prepare:editor -- --out build/diana-0.2.1 e empacotar --prepared nesse diretório. Pacote final dist/Diana-RPG-Studio-Windows-0.2.1/Diana.exe, versões anteriores preservadas. Ver docs/APPEARANCE.md. Auditoria de todas as superfícies avançadas permanece parcial.
+
+## Recursos JRPG 0.2.2
+
+Seis PNGs originais imagegen, sete PNGs importados em assets/jrpg-test. Prompts completos, manifesto e licença preservados. Modelo opcional Vila da Clareira no Novo projeto integra parallax/colisão, caminhada, rostos, NPC e combate com poses simétricas; estados mapeados para não renderizar atlas inteiro. Smoke do pacote confirmou quatro recortes reais de ataque de cada lado, dano e ausência de erros (artifacts/jrpg-assets-hdYll2). 78 testes e 31 preparados passaram. Projeto pronto dist/Projetos/Vila da Clareira; pacote dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe. Usar build/diana-0.2.2 no preparo/empacotamento. Ver docs/JRPG_ASSETS.md. Não substituir projetos existentes.

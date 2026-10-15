@@ -84,6 +84,13 @@
       "severity": "baixa",
       "description": "Windows retorna EPERM ao renomear build/diana, origem não determinada. Destino versionado build/diana-0.2.1 e parâmetros de preparação/validação permitem concluir sem encerrar janelas nem alterar segurança.",
       "evidence": "docs/APPEARANCE.md"
+    },
+    {
+      "id": "jrpg-art-review",
+      "status": "parcial",
+      "severity": "baixa",
+      "description": "Arte de teste gerada: uma orientação incoerente do guardião é excluída na importação; variações de detalhes e alinhamento ainda exigem revisão artística. Duas poses por lado, estados adicionais reutilizam imagens. Colisão do mapa aproximada por grid.",
+      "evidence": "assets/jrpg-test/README.md"
     }
   ]
 }

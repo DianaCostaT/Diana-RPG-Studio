@@ -47,3 +47,7 @@ Perfil 2D padrão, escolha 2D + 3D, grade Animações 2 e Tela de batalha integr
 ## Aparência 0.2.1
 
 Implementado e testado: identidade própria, ícones e seis temas com persistência. Ver [evidências e limites](docs/APPEARANCE.md).
+
+## Recursos JRPG 0.2.2
+
+Implementado e testado: conjunto original de assets e projeto ilustrado opcional. [Evidências e limitações](docs/JRPG_ASSETS.md).

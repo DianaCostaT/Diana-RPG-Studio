@@ -138,6 +138,13 @@
       "status": "implementado e testado",
       "decision": "Identidade própria em SVG/PNG/ICO gerados sem dependências e seis temas reutilizando o mecanismo de preferências existente. Paletas sem cores de interface fixas; não recolorir assets dos jogos.",
       "evidence": "docs/APPEARANCE.md"
+    },
+    {
+      "id": "jrpg-original-test-art",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Criar arte original com imagegen; preservar originais e prompts. Importar deterministicamente nos formatos existentes e oferecer modelo opcional, sem substituir projetos do usuário ou adicionar engine.",
+      "evidence": "docs/JRPG_ASSETS.md"
     }
   ]
 }

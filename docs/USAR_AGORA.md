@@ -1,7 +1,11 @@
 # Usar o Diana agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.2.1/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
+
+**Recursos JRPG ilustrados:** abra a pasta `dist/Projetos/Vila da Clareira` pelo
+botão Abrir projeto, ou marque **Usar Vila da Clareira** ao criar um novo projeto.
+Inclui mapa, personagens, rostos e combate animado. [Detalhes](JRPG_ASSETS.md).
 
 Clique em **Aparência** no canto superior direito para escolher Grafite, Claro,
 Rosa claro, Verde oliva, Azul névoa ou Ametista. A mudança é imediata e fica

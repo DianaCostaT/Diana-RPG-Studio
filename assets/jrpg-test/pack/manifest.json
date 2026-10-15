@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "name": "Vila da Clareira",
+  "license": "MIT",
+  "origin": "Arte original gerada para Diana com imagegen; sem extração de jogos comerciais.",
+  "sampling": "nearest-neighbor; original art retained in ../originals",
+  "files": [
+    {
+      "path": "img/battlebacks1/BosqueClareira.png",
+      "width": 1000,
+      "height": 740,
+      "sha256": "d43d7112743289ce1dfeff4a98f6066563be10c5113979d63c558cd31a5c3b6b"
+    },
+    {
+      "path": "img/characters/$Guardiao.png",
+      "width": 144,
+      "height": 192,
+      "sha256": "fb5b55501b1d52e0b21bc21df66fc50cb391358a9ea852f4febc485f8cfb390b"
+    },
+    {
+      "path": "img/characters/$Liora.png",
+      "width": 144,
+      "height": 192,
+      "sha256": "d8d0e952ec8d0fc31b2cb4f15c45e7b1cae392443c7b96d90131b653e66138ba"
+    },
+    {
+      "path": "img/faces/ClareiraRostos.png",
+      "width": 576,
+      "height": 288,
+      "sha256": "c8514f1639c2dd2bc6f54ed0d225b041aa4d283a6d662df5556671ceffe26ddf"
+    },
+    {
+      "path": "img/parallaxes/!VilaClareira.png",
+      "width": 1024,
+      "height": 1024,
+      "sha256": "fba82c035eaa01c30e13f5beba5a51c5c7d47cb182db4d9c828f5987a5813e29"
+    },
+    {
+      "path": "img/sv_actors/ClareiraCombate.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "16115168609f4788cfd4b8d7f2aee1bf55b9f0dae13f5145c8598947ee9111b1"
+    },
+    {
+      "path": "img/tilesets/ClareiraColisao.png",
+      "width": 768,
+      "height": 48,
+      "sha256": "ae501b32774b5d2684010c3722133e4f84ac35ff2105918fc03516ec96056a54"
+    }
+  ]
+}
