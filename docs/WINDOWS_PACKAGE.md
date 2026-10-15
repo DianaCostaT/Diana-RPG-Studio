@@ -4,7 +4,7 @@ Estado em 15/10/2026: **implementado e testado para validação local; distribui
 
 ## Uso
 
-Versão local pronta: `dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe`. O launcher C#
+Versão local pronta: `dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe`. O launcher C#
 original em `src/windows/DianaLauncher.cs` é compilado pelo .NET Framework local,
 sem instalação, e inicia o NW.js com caminhos absolutos, diretório correto e perfil
 local. É um executável de janela, sem terminal. Mantenha `nw.exe`, DLLs e `app`

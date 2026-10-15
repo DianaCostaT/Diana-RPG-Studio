@@ -38,8 +38,8 @@
     {
       "path": "img/sv_actors/ClareiraCombate.png",
       "width": 768,
-      "height": 768,
-      "sha256": "16115168609f4788cfd4b8d7f2aee1bf55b9f0dae13f5145c8598947ee9111b1"
+      "height": 1152,
+      "sha256": "4bd144467c897f3a762c081bb22710b9200922b32de3e7a79ad1783d9a5ac0c8"
     },
     {
       "path": "img/tilesets/ClareiraColisao.png",

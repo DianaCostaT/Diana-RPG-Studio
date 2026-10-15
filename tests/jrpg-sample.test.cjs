@@ -9,6 +9,7 @@ test('cenário ilustrado usa parallax nativo, colisões e posições transitáve
 test('aliados e inimigos usam quatro quadros e sequências equivalentes com impacto sincronizado',()=>{
  const d=populate(data(),B),s=d['BattlePresentation.json'];for(const kind of ['actors','enemies']){const g=s[kind][1].graphic;assert.deepEqual(B.validateGraphicPoses(g.poses),[]);assert.equal(g.poses.idle.frames.length,4);assert.equal(g.poses.attack.frames.length,4);assert.equal(B.graphicPoseDuration(g.poses.attack),32);}
  const semantic=steps=>steps.map(({id,...step})=>step);
+ for(const [kind,row] of [['actors',4],['enemies',5]]){const g={...s[kind][1].graphic,type:'static'};assert.equal(g.motions.damage.pose,'damage');assert.equal(g.poses.damage.loop,false);assert.equal(B.graphicPoseDuration(g.poses.damage),32);for(let i=0;i<4;i++){const f=B.graphicFrame(g,768,1152,'damage',i*8);assert.equal(f.y,row*192);assert.equal(f.x,i*192);assert.notDeepEqual(f,B.graphicFrame(g,768,1152,'idle',i*8));}}
  assert.deepEqual(semantic(d['ActionSequences.json'][1].steps),semantic(d['ActionSequences.json'][2].steps));assert.equal(d['ActionSequences.json'][1].steps.filter(s=>s.type==='impact').length,1);
  for(const kind of ['actors','enemies'])for(const motion of ['input','ready','entry','wait','moving','guard','dead','attack']){const g={...s[kind][1].graphic,type:'static'};assert.equal(B.graphicFrame(g,768,768,motion,0).width,192,kind+' '+motion+' must not render the atlas');}
 });

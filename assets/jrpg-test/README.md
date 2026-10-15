@@ -11,6 +11,7 @@ lateral. Nenhuma imagem, personagem ou código foi extraído de jogos comerciais
 - `originals/LioraCaminhada.png`: aventureira, três quadros e quatro direções.
 - `originals/GuardiaoCaminhada.png`: guardião de pedra e musgo.
 - `originals/Combate.png`: quatro quadros de espera e quatro de ataque por lado.
+- `originals/Dano.png`: quatro reações de dano para cada combatente.
 - `originals/Rostos.png`: três expressões de Liora e um rosto do guardião.
 - `originals/BosqueBatalha.png`: cenário lateral de combate.
 - `pack/img/`: versões importáveis no Diana. Originais preservados integralmente.
@@ -22,12 +23,12 @@ Não usa uma segunda engine nem instala dependências. Rostos usam células de
 144 × 144, personagens 48 × 48, poses 192 × 192. O parallax mede 1024 × 1024.
 
 No atlas de rostos 4 × 2: normal = 0, sorrindo = 1, séria = 4, guardião = 5.
-Na folha de batalha 4 × 4: Liora espera/ataque nas linhas 0/1; guardião nas
-linhas 2/3. As poses têm âncora nos pés e duração configurável no editor.
+Na folha de batalha 4 × 6: Liora espera/ataque nas linhas 0/1; guardião nas
+linhas 2/3; dano de Liora/guardião nas linhas 4/5. As poses têm âncora nos pés e duração configurável no editor.
 
 ## Usar
 
-No Novo projeto do Diana 0.2.2, marque **Usar Vila da Clareira**. O mapa tem
+No Novo projeto do Diana 0.2.4, já vem marcado **Usar Vila da Clareira**. O mapa tem
 parallax nativo, colisões por tiles transparentes, NPC com retrato e batalha
 de treino. Projetos existentes e o modelo básico permanecem preservados.
 

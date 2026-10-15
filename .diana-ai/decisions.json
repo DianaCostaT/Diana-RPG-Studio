@@ -152,6 +152,13 @@
       "status": "implementado e testado",
       "decision": "Formulário visual reutiliza eventos e undo existentes. Cache de recorte reduz desenhos das miniaturas sem alterar dados; ferramentas avançadas recolhidas no perfil 2D.",
       "evidence": "docs/CLASSIC_AUTHORING.md"
+    },
+    {
+      "id": "illustrated-default-and-damage",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Usar modelo ilustrado por padrão nos projetos novos, sem copiar sprites provisórios antigos. Acrescentar dano original em quatro quadros a ambos os combatentes, pelo contrato existente. Preservar projetos anteriores.",
+      "evidence": "artifacts/jrpg-assets-smoke.json"
     }
   ]
 }

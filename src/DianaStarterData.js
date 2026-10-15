@@ -84,11 +84,13 @@
         map.events[1] = {id:1,name:'Treino de batalha',x:8,y:7,note:'',pages:[{conditions:{actorId:1,actorValid:false,itemId:1,itemValid:false,selfSwitchCh:'A',selfSwitchValid:false,switch1Id:1,switch1Valid:false,switch2Id:1,switch2Valid:false,variableId:1,variableValid:false,variableValue:0},directionFix:false,image:{tileId:0,characterName:'$Treinador',characterIndex:0,direction:8,pattern:1},moveFrequency:3,moveRoute:{list:[{code:0,parameters:[]}],repeat:true,skippable:false,wait:false},moveSpeed:3,moveType:0,priorityType:1,stepAnime:true,through:false,trigger:0,walkAnime:true,list:[{code:101,indent:0,parameters:['',0,0,2]},{code:401,indent:0,parameters:['Bem-vindo! Use as setas para andar e Enter para interagir.']},{code:401,indent:0,parameters:['Vamos treinar uma batalha. Escolha Lutar e Atacar.']},{code:301,indent:0,parameters:[0,1,true,true]},{code:0,indent:0,parameters:[]}]}]};
         return data;
     }
-    function writeAssets(manager, target) {
+    function writeAssets(manager, target, {illustrated=false}={}) {
         const file = (folder, name) => manager.path.join(target, 'img', folder, name + '.png');
+        if (!illustrated) {
         manager.writePng(file('characters', '$Diana'), 144, 192, sheet([111,88,198,255]));
         manager.writePng(file('characters', '$Treinador'), 144, 192, sheet([66,156,128,255]));
         manager.writePng(file('tilesets', 'DianaChao'), 768, 96, tilePixel);
+        }
         // Runtime samples the 32 text colours from this exact windowskin region.
         const palette = [[242,240,255,255],[142,179,255,255],[255,144,144,255],[143,224,175,255],
             [143,218,255,255],[211,174,255,255],[255,224,146,255],[198,197,214,255]];

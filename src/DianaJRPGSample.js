@@ -17,9 +17,10 @@
   const pose=row=>({loop:true,anchor:{x:.5,y:1},frames:Array.from({length:4},(_,i)=>({x:i*192,y:row*192,width:192,height:192,duration:10}))});
   const sequences=[null];
   for(const [kind,offset,id] of [['actors',0,1],['enemies',2,2]]){
-   const idle=pose(offset),attack=pose(offset+1);attack.loop=false;attack.frames.forEach((f,i)=>f.duration=[8,6,6,12][i]);
+   const idle=pose(offset),attack=pose(offset+1),damage=pose(kind==='actors'?4:5);attack.loop=false;attack.frames.forEach((f,i)=>f.duration=[8,6,6,12][i]);damage.loop=false;damage.frames.forEach(f=>f.duration=8);
    const motions=Object.fromEntries([...new Set([...Object.keys(B.spriteMotions),...B.battlerStates.map(([name])=>name)])].map(name=>[name,{pose:['attack','punch','swing','thrust','missile','skill','item','cast','spell'].includes(name)?'attack':'idle'}]));
-   settings[kind][1]={mode:'sequence',sequenceId:id,graphic:{mode:'static',name:'ClareiraCombate',folder:'sv_actors',scale:1,poses:{idle,attack},motions}};
+   motions.damage={pose:'damage'};
+   settings[kind][1]={mode:'sequence',sequenceId:id,graphic:{mode:'static',name:'ClareiraCombate',folder:'sv_actors',scale:1,poses:{idle,attack,damage},motions}};
    sequences.push({id,version:1,name:kind==='actors'?'Liora — corte da clareira':'Guardião — golpe de musgo',phases:B.phaseIds(),steps:[
     B.step('motion',{motion:'idle',duration:8,phase:'prepare'}),
     B.step('motion',{motion:'attack',duration:32,concurrent:true,phase:'execute'}),
@@ -42,7 +43,7 @@
  function install(){
   const dialog=UIManager.prototype.showNewProjectDialog;
   UIManager.prototype.showNewProjectDialog=function(options){const result=dialog.call(this,options),body=document.querySelector('#rr-new-project-dialog .rr-modal-body');if(!body)return result;
-   const row=document.createElement('label');row.className='diana-sample-choice';const check=document.createElement('input');check.type='checkbox';check.id='diana-jrpg-sample';const text=document.createElement('span');text.textContent='Usar Vila da Clareira — mapa ilustrado, personagens, rostos e combate animado';row.append(check,text);body.append(row);return result.then(choice=>choice?{...choice,dianaSample:check.checked}:null);
+   const row=document.createElement('label');row.className='diana-sample-choice';const check=document.createElement('input');check.type='checkbox';check.checked=true;check.id='diana-jrpg-sample';const text=document.createElement('span');text.textContent='Usar Vila da Clareira — mapa ilustrado, personagens, rostos e combate animado';row.append(check,text);body.append(row);return result.then(choice=>choice?{...choice,dianaSample:check.checked}:null);
   };
  }
  root.DianaJRPGSample={populate,walkable,installProject};if(typeof module!=='undefined')module.exports=root.DianaJRPGSample;

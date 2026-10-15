@@ -32,7 +32,7 @@ async function main() {
             const app = window.reactor;
             const manager = app.projectManager;
             const controller = app.projectController;
-            if (!await manager.createNewProject(projectPath,'Meu jogo',{blank:false}))
+            if (!await manager.createNewProject(projectPath,'Meu jogo',{blank:false,dianaSample:false}))
                 throw new Error(manager.lastCreateError || 'create failed');
             const project = await manager.loadProject(projectPath);
             if (!project) throw new Error('load failed');

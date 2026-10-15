@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedOn": "2026-10-15",
   "product": "Diana RPG Studio",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "phase": "0: aplicação Windows e pacote local testados; 1: autoria integrada parcial",
   "base": {
     "project": "RPGReactor",
@@ -65,7 +65,10 @@
     "81 testes Diana e 31 contra build preparado aprovados na 0.2.3",
     "Novo NPC no pacote Windows: validação, criar, undo/redo, salvar e diálogo com retrato no jogo",
     "Miniaturas: comparação real 968 para 60 drawImage em dois segundos; dados inalterados",
-    "Smoke Windows 0.2.3 aprovado: editor, assets, evento, parallax, persistência e jogo executado (IONDMF)"
+    "Smoke Windows 0.2.3 aprovado: editor, assets, evento, parallax, persistência e jogo executado (IONDMF)",
+    "0.2.4: recursos ilustrados padrão na criação visual; placeholders antigos não copiados; projeto pronto em dist/Projetos/Vila da Clareira 0.2.4",
+    "Pacote 0.2.4: quatro quadros de ataque e de dano renderizados para Liora e guardião, perda de PV e nenhum erro JavaScript; 81 testes Diana e 31 preparados aprovados",
+    "Smoke Windows do pacote 0.2.4 aprovado: assets, evento, parallax, persistência e jogo executado (uFjoNZ)"
   ],
   "partial": [
     "Autoria visual parcial: novo NPC com diálogo/retrato testado; condições avançadas, importação visual integral e database completo pendentes",
@@ -75,7 +78,7 @@
     "Reprodução da organização clássica: Armas e Tipos reutilizam editores existentes; HUD A/B/C e comandos por ator pendentes",
     "Filtro 2D com superfícies principais verificadas; auditoria integral de ferramentas avançadas pendente",
     "Auditoria de contraste e ícones de todas as ferramentas avançadas do upstream pendente",
-    "Arte gerada para testes: revisão final e poses específicas de dano/nocaute/defesa, efeitos/sons e tileset modular pendentes"
+    "Arte gerada para testes: revisão final e poses específicas de nocaute/defesa, efeitos/sons e tileset modular pendentes"
   ],
   "planned": [
     "Plugin SDK Diana versionado",
@@ -87,7 +90,7 @@
     "Aceite global upstream pendente de falhas Windows e funcionais"
   ],
   "evidence": {
-    "build": "build/diana-0.2.3/provenance.json",
+    "build": "build/diana-0.2.4/provenance.json",
     "reproducibility": "artifacts/prepare-verification.json",
     "windows": "artifacts/windows-smoke.json",
     "launch": "artifacts/launch-verification.json",
@@ -117,8 +120,8 @@
   "git": {
     "branch": "diana/phase-0-1",
     "committed": true,
-    "reason": "Incremento 0.2.3 integrado e validado; push pendente de URL do remoto."
+    "reason": "0.2.4 integrado e validado; push pendente de remoto."
   },
-  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe",
-  "sampleProject": "dist/Projetos/Vila da Clareira"
+  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe",
+  "sampleProject": "dist/Projetos/Vila da Clareira 0.2.4"
 }

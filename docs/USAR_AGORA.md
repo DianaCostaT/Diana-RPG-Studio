@@ -1,6 +1,6 @@
 # Usar o Diana agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
 
 **Recursos JRPG ilustrados:** abra a pasta `dist/Projetos/Vila da Clareira` pelo
@@ -55,3 +55,5 @@ Continua sendo uma versão de desenvolvimento: autoria completa, animações
 avançadas e distribuição pública ainda têm pendências documentadas.
 
 **Novo NPC:** abra um mapa, clique em Novo NPC, escolha imagem/retrato e escreva o diálogo. Confirme, salve e teste com Enter diante do personagem. Ferramentas avançadas expande a barra no perfil 2D. [Detalhes](CLASSIC_AUTHORING.md).
+
+Na 0.2.4, Vila da Clareira já vem marcada ao criar projeto. Salve e use Testar jogo; converse com o guardião para batalhar e ver a reação de dano. Os PNGs estão em assets/jrpg-test/pack/img e são copiados para img dentro do projeto novo.

@@ -53,3 +53,5 @@ Implementado e testado: identidade própria, ícones e seis temas com persistên
 Implementado e testado: conjunto original de assets e projeto ilustrado opcional. [Evidências e limitações](docs/JRPG_ASSETS.md).
 
 0.2.3 — implementado e testado: criação visual de NPC, histórico e diálogo no runtime; barra 2D simplificada e cache das miniaturas. [Evidências](docs/CLASSIC_AUTHORING.md). Finalização do MVP permanece parcial.
+
+0.2.4: recursos ilustrados como padrão dos novos projetos, sem placeholders antigos; pose de dano própria para aliado e inimigo. Ver docs/JRPG_ASSETS.md.

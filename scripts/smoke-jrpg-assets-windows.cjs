@@ -16,10 +16,12 @@ async function main(){
   await launch(app);await wait('return !!window.reactor?.projectManager && getComputedStyle(document.getElementById("splash-screen")).display==="none";');
   await click('.welcome-button[data-action=new-project]');
   await driver.execute('for(const [id,value] of [["rr-new-project-name",arguments[0]],["diana-project-folder",arguments[1]]]){const e=document.getElementById(id);e.value=value;e.dispatchEvent(new Event("input",{bubbles:true}));}',[path.basename(project),path.dirname(project)]);
-  await click('#diana-jrpg-sample');await shot('sample-choice');await click('#rr-new-project-create');
+  assert.equal(await driver.execute('return document.getElementById("diana-jrpg-sample").checked;'),true);await shot('sample-choice');await click('#rr-new-project-create');
   await driver.waitForScript('return reactor.projectController.currentProject?.path===arguments[0];',[project],{timeout:90000});await delay(600);await shot('map-editor');
   assert.equal(await driver.execute('return reactor.databaseManager.data.actors[1].characterName;'),'$Liora');
   assert.equal(await driver.execute('return reactor.databaseManager.data.actors[1].faceName;'),'ClareiraRostos');
+  for(const name of ['$Diana','$Treinador'])assert.equal(fs.existsSync(path.join(project,'img/characters',name+'.png')),false,'Old placeholder not copied');
+  assert.equal(fs.existsSync(path.join(project,'img/tilesets/DianaChao.png')),false);
   await click('[data-diana-action=poses]');await wait('return document.querySelectorAll(".diana-pose-card").length===8;');await delay(300);await shot('poses-editor');await click('#database-cancel-btn');
   await driver.close();driver=null;
   await launch(project);await wait('return window.SceneManager?._scene?.constructor.name==="Scene_Title" && SceneManager._scene._commandWindow?.isOpen() && SceneManager._scene.isActive() && !SceneManager._scene.isBusy();');await key('\uE007');
@@ -47,6 +49,7 @@ async function main(){
   const state=await driver.execute('return {enemyHp:$gameTroop.members()[0].hp,actorHp:$gameParty.leader().hp,errors:__sampleErrors,rendered:__sampleFrames,actorFrames:ReactorBattlePresentation.settings.actors[1].graphic.poses.attack.frames.length,enemyFrames:ReactorBattlePresentation.settings.enemies[1].graphic.poses.attack.frames.length};');
   assert.deepEqual(state.errors,[]);assert.equal(state.actorFrames,4);assert.equal(state.enemyFrames,4);
   for(const [kind,y] of [['actors',192],['enemies',576]])for(let x=0;x<768;x+=192)assert.ok(state.rendered[kind].includes(x+','+y),kind+' renders attack frame '+x);
+  for(const [kind,y] of [['actors',768],['enemies',960]])for(let x=0;x<768;x+=192)assert.ok(state.rendered[kind].includes(x+','+y),kind+' renders damage reaction frame '+x);
   report.battle=state;report.status='passed';console.log('PASS JRPG assets '+run+' project '+project);
  }catch(error){report.status='failed';report.failure=String(error.stack||error);if(driver)try{await shot('failure');report.diagnostic=await driver.execute('return {body:document.body.innerText,scene:window.SceneManager?._scene?.constructor.name,phase:window.BattleManager?._phase,errors:window.__sampleErrors};');}catch{}throw error;}
  finally{if(driver)await driver.close();fs.writeFileSync(path.join(root,'artifacts/jrpg-assets-smoke.json'),JSON.stringify(report,null,2));}

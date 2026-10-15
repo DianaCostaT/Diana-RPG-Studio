@@ -26,15 +26,16 @@
         const ok = await create.call(this, target, name, {...options, blank:true});
         if (!ok) return false;
         try {
-            if (typeof DianaStarterData !== 'undefined') DianaStarterData.writeAssets(this, target);
-            if (options.dianaSample && typeof DianaJRPGSample !== 'undefined') DianaJRPGSample.installProject(this,target);
+            const illustrated = options.dianaSample !== false;
+            if (typeof DianaStarterData !== 'undefined') DianaStarterData.writeAssets(this, target, {illustrated});
+            if (illustrated && typeof DianaJRPGSample !== 'undefined') DianaJRPGSample.installProject(this,target);
             const file = this.path.join(target, 'project.rpgreactor');
             const data = JSON.parse(this.fs.readFileSync(file, 'utf8'));
             const distribution = this.path.join(this.getRuntimePath(), '..');
             for (const notice of ['LICENSE', 'THIRD_PARTY_NOTICES.md']) {
                 this.fs.copyFileSync(this.path.join(distribution, notice), this.path.join(target, notice));
             }
-            data.diana = {schemaVersion:1, studioVersion:'0.2.3',mode:options.dianaMode==='hybrid'?'hybrid':'2d',sample:options.dianaSample?'vila-da-clareira':undefined};
+            data.diana = {schemaVersion:1, studioVersion:'0.2.4',mode:options.dianaMode==='hybrid'?'hybrid':'2d',sample:illustrated?'vila-da-clareira':undefined};
             this._writeFileAtomic(this.fs, file, JSON.stringify(data,null,2), 'utf8');
             return true;
         } catch (error) {

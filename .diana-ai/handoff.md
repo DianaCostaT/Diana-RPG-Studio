@@ -50,3 +50,7 @@ Seis PNGs originais imagegen, sete PNGs importados em assets/jrpg-test. Prompts 
 ## Incremento 0.2.3 — autoria clássica e otimização
 
 Executável dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe. Novo NPC reutiliza commitQuickEvent, valida posição e oferece personagem/retrato/diálogo. Teste do pacote passou por criar, desfazer/refazer, salvar e conversar no runtime. Barra 2D recolhe ferramentas avançadas; híbrido mantém conjunto completo. Cache das oito miniaturas: 968 contra 60 drawImage em ~2s nas versões 0.2.2/0.2.3, sem mutação de dados; não representa desempenho global. 81 testes Diana e 31 preparados aprovados. Ver docs/CLASSIC_AUTHORING.md. MVP permanece parcial, distribuição pública e Windows limpo pendentes. Sem instalações.
+
+## 0.2.4 — gráficos padrão e dano
+
+Pedido do usuário: substituir gráficos provisórios pelos ilustrados e expressão de dano. Criação padrão passa a usar Vila da Clareira (checkbox marcado; API opt-out false preservado para testes/legado). Não copia $Diana/$Treinador/DianaChao no padrão. Dano.png original gerado com imagegen, compilado nas linhas 4/5 de ClareiraCombate (768×1152), poses damage de 32 ticks sem loop para ambos. Smoke real do pacote renderizou os quatro quadros de dano e ataque de cada lado, com PV reduzido e nenhum erro JS. Projeto pronto dist/Projetos/Vila da Clareira 0.2.4. Executável dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe. 81+31 testes passaram. Projetos anteriores preservados. Sem instalações.
