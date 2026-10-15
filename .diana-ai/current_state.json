@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedOn": "2026-10-15",
   "product": "Diana RPG Studio",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "phase": "0: aplicação Windows e pacote local testados; 1: autoria integrada parcial",
   "base": {
     "project": "RPGReactor",
@@ -61,10 +61,14 @@
     "Recursos originais imagegen: vila, fundo lateral, dois personagens, retratos e 16 quadros de combate; originais e PNGs importáveis preservados",
     "Modelo opt-in Vila da Clareira criado pela interface e executado: parallax, colisões, caminhada, diálogo com retrato, batalha",
     "Quatro quadros de ataque renderizados por aliado/inimigo, dano bilateral e ausência de erros JavaScript no teste do pacote",
-    "78 testes Diana e 31 contra build preparado aprovados"
+    "78 testes Diana e 31 contra build preparado aprovados",
+    "81 testes Diana e 31 contra build preparado aprovados na 0.2.3",
+    "Novo NPC no pacote Windows: validação, criar, undo/redo, salvar e diálogo com retrato no jogo",
+    "Miniaturas: comparação real 968 para 60 drawImage em dois segundos; dados inalterados",
+    "Smoke Windows 0.2.3 aprovado: editor, assets, evento, parallax, persistência e jogo executado (IONDMF)"
   ],
   "partial": [
-    "Autoria visual parcial: diálogo/parallax testados; importação, novo evento, condições e database completo pendentes",
+    "Autoria visual parcial: novo NPC com diálogo/retrato testado; condições avançadas, importação visual integral e database completo pendentes",
     "Colisão visual customizada e dimensões retangulares independentes de tile",
     "Comparação renderizada de trajetórias/efeitos e som audível",
     "Instalação em Windows limpo e revisão de falhas upstream",
@@ -83,7 +87,7 @@
     "Aceite global upstream pendente de falhas Windows e funcionais"
   ],
   "evidence": {
-    "build": "build/diana-0.2.2/provenance.json",
+    "build": "build/diana-0.2.3/provenance.json",
     "reproducibility": "artifacts/prepare-verification.json",
     "windows": "artifacts/windows-smoke.json",
     "launch": "artifacts/launch-verification.json",
@@ -106,13 +110,15 @@
     "projectFix": "docs/PROJECT_CREATION_FIX.md",
     "interface2d": "artifacts/2d-ui-smoke.json",
     "appearance": "artifacts/appearance-smoke.json",
-    "jrpgAssets": "artifacts/jrpg-assets-smoke.json"
+    "jrpgAssets": "artifacts/jrpg-assets-smoke.json",
+    "classicAuthoring": "artifacts/classic-ui-smoke.json",
+    "poseBenchmark": "artifacts/pose-benchmark.json"
   },
   "git": {
     "branch": "diana/phase-0-1",
     "committed": true,
-    "reason": "Assets JRPG 0.2.2 integrados e validados; push pendente de URL do remoto."
+    "reason": "Incremento 0.2.3 integrado e validado; push pendente de URL do remoto."
   },
-  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe",
+  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe",
   "sampleProject": "dist/Projetos/Vila da Clareira"
 }

@@ -3,8 +3,8 @@
   "steps": [
     {
       "priority": 1,
-      "task": "Consolidar autoria 2D e fidelidade funcional de Animações 2/Tela de batalha na 0.2.0",
-      "acceptance": "Revisar feedback visual, auditar filtros 3D em ferramentas avançadas e implementar HUD/armas/comandos restantes sem regressão de criação de projetos."
+      "task": "Consolidar autoria clássica após 0.2.3",
+      "acceptance": "Completar condições e seletores visuais de eventos/database, revisar HUD de batalha e filtros avançados sem regressão do fluxo Novo NPC e criação de projetos."
     },
     {
       "priority": 2,

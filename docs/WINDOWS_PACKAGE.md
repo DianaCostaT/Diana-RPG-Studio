@@ -1,10 +1,10 @@
-﻿# Pacote Windows local
+# Pacote Windows local
 
 Estado em 15/10/2026: **implementado e testado para validação local; distribuição pública bloqueada por licenças**. O editor e o jogo usam o mesmo NW.js SDK local 0.118.0 win-x64, sem instalação, download, junction no resultado ou overlay de codecs. Não se trata de instalador nem de certificação em máquina Windows limpa.
 
 ## Uso
 
-Versão local pronta: `dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe`. O launcher C#
+Versão local pronta: `dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe`. O launcher C#
 original em `src/windows/DianaLauncher.cs` é compilado pelo .NET Framework local,
 sem instalação, e inicia o NW.js com caminhos absolutos, diretório correto e perfil
 local. É um executável de janela, sem terminal. Mantenha `nw.exe`, DLLs e `app`

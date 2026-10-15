@@ -1,6 +1,6 @@
 {
   "name": "diana-rpg-studio",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -26,7 +26,8 @@
     "smoke:2d:windows": "node scripts/smoke-2d-windows.cjs",
     "smoke:appearance:windows": "node scripts/smoke-appearance-windows.cjs",
     "assets:compile": "node scripts/compile-jrpg-assets.cjs",
-    "smoke:assets:windows": "node scripts/smoke-jrpg-assets-windows.cjs"
+    "smoke:assets:windows": "node scripts/smoke-jrpg-assets-windows.cjs",
+    "smoke:classic:windows": "node scripts/smoke-classic-editor-windows.cjs"
   },
   "engines": {
     "node": ">=22"

@@ -1,6 +1,6 @@
 # Usar o Diana agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
 
 **Recursos JRPG ilustrados:** abra a pasta `dist/Projetos/Vila da Clareira` pelo
@@ -53,3 +53,5 @@ Resumo em `artifacts/basic-use-smoke.json`; projeto e capturas em sua pasta de
 evidências. O pacote atual também é verificado por `smoke-ready-windows.cjs`.
 Continua sendo uma versão de desenvolvimento: autoria completa, animações
 avançadas e distribuição pública ainda têm pendências documentadas.
+
+**Novo NPC:** abra um mapa, clique em Novo NPC, escolha imagem/retrato e escreva o diálogo. Confirme, salve e teste com Enter diante do personagem. Ferramentas avançadas expande a barra no perfil 2D. [Detalhes](CLASSIC_AUTHORING.md).

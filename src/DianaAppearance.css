@@ -42,5 +42,14 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .diana-theme-swatch{grid-row:1/3;width:44px;height:36px;box-sizing:border-box;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(30,30,40,.15);}
 .diana-theme-choice small{font-size:11px;color:var(--color-text-muted);}
 .diana-sample-choice{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.5;margin:12px 0;padding:10px;border:1px solid var(--color-border);border-radius:5px;background:var(--color-bg-panel);}
+.diana-npc-panel{width:min(560px,94vw);max-height:92vh;display:flex;flex-direction:column;}.diana-npc-panel .rr-modal-body{overflow:auto;min-height:0;}
+.diana-npc-field{display:grid;grid-template-columns:170px 1fr;gap:10px;align-items:center;margin:10px 0;font-size:12px;}.diana-npc-field textarea{resize:vertical;min-height:90px;}.diana-npc-field input,.diana-npc-field select,.diana-npc-field textarea{width:100%;box-sizing:border-box;}
+#diana-npc-error{color:var(--color-danger-bright);font-size:12px;}
+#diana-advanced-tools{border:1px solid var(--color-border-input);border-radius:4px;background:var(--color-bg-button);color:var(--color-text);padding:5px 9px;font-size:11px;white-space:nowrap;margin-left:auto;cursor:pointer;}
+html[data-diana-mode=hybrid] #diana-advanced-tools{display:none;}
+html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=build-tool],html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=lighting-tool],html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=media-surfaces],html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=forge-launcher]{display:none!important;}
+html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar .toolbar-label[data-i18n="toolbar.forge"]{display:none;}
+.diana-npc-panel textarea{font-family:'Segoe UI',sans-serif!important;line-height:1.6;}
+@media(max-width:1360px){#diana-workspace [data-diana-action=animations] .diana-button-label{display:none;}}
 @media(max-width:1360px){#diana-workspace [data-diana-action=assets] .diana-button-label,#diana-workspace [data-diana-action=parallax] .diana-button-label,#diana-workspace [data-diana-action=enemies] .diana-button-label{display:none;}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;}}

@@ -145,6 +145,13 @@
       "status": "implementado e testado",
       "decision": "Criar arte original com imagegen; preservar originais e prompts. Importar deterministicamente nos formatos existentes e oferecer modelo opcional, sem substituir projetos do usuário ou adicionar engine.",
       "evidence": "docs/JRPG_ASSETS.md"
+    },
+    {
+      "id": "classic-npc-and-preview-cache",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Formulário visual reutiliza eventos e undo existentes. Cache de recorte reduz desenhos das miniaturas sem alterar dados; ferramentas avançadas recolhidas no perfil 2D.",
+      "evidence": "docs/CLASSIC_AUTHORING.md"
     }
   ]
 }

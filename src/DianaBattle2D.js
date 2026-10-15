@@ -35,7 +35,9 @@
   }
  }
  class Battle2D{
-  constructor(parent,host){this.parent=parent;this.host=host;this.db=parent.databaseManager;this.presentation=parent.battlePresentationEditor;this.images=new Map();this.previews=[];this.dead=false;this.raf=0;this.speed=1;}
+  constructor(parent,host){this.parent=parent;this.host=host;this.db=parent.databaseManager;this.presentation=parent.battlePresentationEditor;this.images=new Map();this.previews=[];this.dead=false;this.raf=0;this.speed=1;
+   this.visibility=()=>{if(document.hidden){cancelAnimationFrame(this.raf);this.raf=0;}else if(this.previews.length)this.animate();};document.addEventListener('visibilitychange',this.visibility);
+  }
   changed(){this.db.mutationGeneration++;this.parent.updateStatus('Modificado');}
   settings(){return this.db.data.battlePresentation||=ReactorBattleData.empty();}
   graphic(kind,id){return ReactorBattleData.graphic(this.settings(),kind,id,this.db.data[kind][id]);}
@@ -44,8 +46,12 @@
    if(!this.images.has(url))this.images.set(url,new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=url;}));return this.images.get(url);
   }
   preview(canvas,g,motion,kind){const item={canvas,g,motion,kind,image:null};this.previews.push(item);this.image(g).then(img=>{if(!this.dead&&canvas.isConnected)item.image=img;});}
-  animate(){if(this.raf||this.dead)return;const draw=now=>{if(this.dead||!this.host.isConnected)return;for(const p of this.previews){if(!p.canvas.isConnected)continue;const c=p.canvas.getContext('2d'),w=p.canvas.width,h=p.canvas.height;c.clearRect(0,0,w,h);c.fillStyle='#26384a';c.fillRect(0,0,w,h);
-    if(p.image){const f=ReactorBattleData.graphicFrame(p.g,p.image.width,p.image.height,p.motion,Math.floor(now*60/1000*this.speed),p.kind==='actors'?-90:90),scale=Math.min((w-12)/f.width,(h-12)/f.height,3);c.imageSmoothingEnabled=false;c.drawImage(p.image,f.x,f.y,f.width,f.height,(w-f.width*scale)/2,h-6-f.height*scale,f.width*scale,f.height*scale);}
+  animate(){if(this.raf||this.dead||document.hidden)return;const draw=now=>{this.raf=0;if(this.dead||!this.host.isConnected||document.hidden)return;const viewport=this.host.getBoundingClientRect();for(const p of this.previews){if(!p.canvas.isConnected)continue;
+    const rect=p.canvas.getBoundingClientRect();if(rect.bottom<viewport.top||rect.top>viewport.bottom||rect.right<viewport.left||rect.left>viewport.right)continue;
+    const w=p.canvas.width,h=p.canvas.height,f=p.image?ReactorBattleData.graphicFrame(p.g,p.image.width,p.image.height,p.motion,Math.floor(now*60/1000*this.speed),p.kind==='actors'?-90:90):null;
+    const stamp=f?[f.x,f.y,f.width,f.height,w,h].join(','):'missing';if(p.stamp===stamp)continue;p.stamp=stamp;
+    const c=p.canvas.getContext('2d');c.clearRect(0,0,w,h);c.fillStyle='#26384a';c.fillRect(0,0,w,h);
+    if(p.image){const scale=Math.min((w-12)/f.width,(h-12)/f.height,3);c.imageSmoothingEnabled=false;c.drawImage(p.image,f.x,f.y,f.width,f.height,(w-f.width*scale)/2,h-6-f.height*scale,f.width*scale,f.height*scale);}
     else{c.fillStyle='#d3dce7';c.font='12px Segoe UI';c.textAlign='center';c.fillText(p.g.type==='model'?'Modelo 3D':'Sem imagem',w/2,h/2);}
    }this.raf=requestAnimationFrame(draw);};this.raf=requestAnimationFrame(draw);}
   poses(){
@@ -131,7 +137,7 @@
     c.fillText(system.terms.commands[0]||'Lutar',30,535);c.fillText(system.terms.commands[1]||'Fugir',30,575);c.fillText('Aliado       PV 100 / 100       PM 30 / 30',250,550);
    };draw();
   }
-  dispose(){this.dead=true;cancelAnimationFrame(this.raf);this.previews=[];this.images.clear();}
+  dispose(){this.dead=true;cancelAnimationFrame(this.raf);document.removeEventListener('visibilitychange',this.visibility);this.previews=[];this.images.clear();}
  }
  root.DianaBattle2D={poseNames,defaults};if(typeof module!=='undefined')module.exports=root.DianaBattle2D;
  if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',install);

@@ -46,3 +46,7 @@ Marca e ícones Diana originais; launcher com ICO próprio e NW com PNG. Aparên
 ## Recursos JRPG 0.2.2
 
 Seis PNGs originais imagegen, sete PNGs importados em assets/jrpg-test. Prompts completos, manifesto e licença preservados. Modelo opcional Vila da Clareira no Novo projeto integra parallax/colisão, caminhada, rostos, NPC e combate com poses simétricas; estados mapeados para não renderizar atlas inteiro. Smoke do pacote confirmou quatro recortes reais de ataque de cada lado, dano e ausência de erros (artifacts/jrpg-assets-hdYll2). 78 testes e 31 preparados passaram. Projeto pronto dist/Projetos/Vila da Clareira; pacote dist/Diana-RPG-Studio-Windows-0.2.2/Diana.exe. Usar build/diana-0.2.2 no preparo/empacotamento. Ver docs/JRPG_ASSETS.md. Não substituir projetos existentes.
+
+## Incremento 0.2.3 — autoria clássica e otimização
+
+Executável dist/Diana-RPG-Studio-Windows-0.2.3/Diana.exe. Novo NPC reutiliza commitQuickEvent, valida posição e oferece personagem/retrato/diálogo. Teste do pacote passou por criar, desfazer/refazer, salvar e conversar no runtime. Barra 2D recolhe ferramentas avançadas; híbrido mantém conjunto completo. Cache das oito miniaturas: 968 contra 60 drawImage em ~2s nas versões 0.2.2/0.2.3, sem mutação de dados; não representa desempenho global. 81 testes Diana e 31 preparados aprovados. Ver docs/CLASSIC_AUTHORING.md. MVP permanece parcial, distribuição pública e Windows limpo pendentes. Sem instalações.
