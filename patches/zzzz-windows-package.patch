@@ -1,0 +1,54 @@
+diff --git a/editor/src/forge/SoundEffectGenerator/AudioExport.js b/editor/src/forge/SoundEffectGenerator/AudioExport.js
+index 34069d1..387bb1b 100644
+--- a/editor/src/forge/SoundEffectGenerator/AudioExport.js
++++ b/editor/src/forge/SoundEffectGenerator/AudioExport.js
+@@ -11,8 +11,7 @@
+ 
+     const FORMATS = [
+         { id: 'wav', label: 'WAV (lossless)', extension: '.wav', mimeType: 'audio/wav', lossy: false },
+-        { id: 'ogg', label: 'OGG', extension: '.ogg', mimeType: 'audio/ogg', lossy: true },
+-        { id: 'mp3', label: 'MP3', extension: '.mp3', mimeType: 'audio/mpeg', lossy: true }
++        { id: 'ogg', label: 'OGG', extension: '.ogg', mimeType: 'audio/ogg', lossy: true }
+     ];
+ 
+     /** The bitrate a 1..10 quality step means, per format (kbps). */
+@@ -67,14 +66,7 @@
+      * package still encodes correctly once they are.
+      */
+     function loadLame(requireFn) {
+-        const req = requireFn || (typeof require === 'function' ? require : null);
+-        if (!req) return null;
+-        const scope = typeof window !== 'undefined' ? window : globalThis;
+-        for (const name of ['MPEGMode', 'Lame', 'BitStream']) {
+-            if (scope[name]) continue;
+-            try { scope[name] = req('lamejs/src/js/' + name + '.js'); } catch (error) { /* an older package has them inside */ }
+-        }
+-        return req('lamejs');
++        throw new Error('MP3 opcional desativado no Diana: licenca lamejs pendente. Use WAV ou OGG.');
+     }
+ 
+     /** MP3 through lamejs (`lame` is the module from loadLame). */
+@@ -207,12 +199,12 @@
+ 
+     /** Ogg Opus through WebCodecs. Rejects when the browser has no Opus encoder. */
+     async function encodeOggOpus(buffer, kbps) {
+-        if (typeof AudioEncoder === 'undefined' || typeof AudioData === 'undefined') throw new Error('This build cannot encode Opus; save as WAV or MP3.');
++        if (typeof AudioEncoder === 'undefined' || typeof AudioData === 'undefined') throw new Error('This build cannot encode Opus; save as WAV.');
+         const source = await resampleTo48k(buffer);
+         const channels = Math.max(1, Math.min(2, source.numberOfChannels || 1)), sampleRate = source.sampleRate;
+         const config = { codec: 'opus', sampleRate, numberOfChannels: channels, bitrate: (kbps || 96) * 1000 };
+         const support = await AudioEncoder.isConfigSupported(config).catch(() => ({ supported: false }));
+-        if (!support || !support.supported) throw new Error('This build cannot encode Opus; save as WAV or MP3.');
++        if (!support || !support.supported) throw new Error('This build cannot encode Opus; save as WAV.');
+         const packets = [];
+         let head = null, failure = null;
+         const encoder = new AudioEncoder({
+@@ -246,7 +238,7 @@
+ 
+     /** The file bytes for a format, as an ArrayBuffer. `lame` is the lamejs module when MP3 is wanted. */
+     async function encode(buffer, format, quality, lame) {
+-        if (format === 'mp3') return encodeMp3(buffer, bitrateFor('mp3', quality), lame);
++        if (format === 'mp3') throw new Error('MP3 opcional desativado no Diana. Use WAV ou OGG.');
+         if (format === 'ogg') return encodeOggOpus(buffer, bitrateFor('ogg', quality));
+         return encodeWav(buffer);
+     }

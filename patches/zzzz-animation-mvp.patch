@@ -1,0 +1,80 @@
+diff --git a/editor/src/battle/BattlePresentationEditor.js b/editor/src/battle/BattlePresentationEditor.js
+index e6adfc3..09e3b56 100644
+--- a/editor/src/battle/BattlePresentationEditor.js
++++ b/editor/src/battle/BattlePresentationEditor.js
+@@ -19,6 +19,18 @@ class BattlePresentationEditor {
+     number(host,label,value,change,step=.1) {const input=this.element('input','database-field-value');input.type='number';input.step=step;input.value=value;input.onchange=()=>{if(Number.isFinite(input.valueAsNumber))change(input.valueAsNumber);};return this.field(host,label,input);}
+     button(label,fn,raw=false) {const b=this.element('button','rr-btn-secondary',label,raw);b.type='button';b.onclick=fn;return b;}
+     section(title) {const panel=this.element('div','database-section');panel.append(this.element('div','database-section-header',title));const body=this.element('div','database-section-content');panel.append(body);return {panel,body};}
++    poseReferences(names) {
++        const wanted=new Set(names),references=[];
++        // Sequences are shared by allies and enemies: never silently rewrite them.
++        for(const sequence of Object.values(this.db.data?.actionSequences||{}))for(const step of sequence?.steps||[])
++            if(['motion','pose'].includes(step.type)&&wanted.has(step.motion))references.push(`${sequence.name||'Sequence'} #${sequence.id??'?'} / ${step.id}`);
++        const visit=(value,path)=>{if(!value||typeof value!=='object')return;
++            for(const [motion,mapping] of Object.entries(value.graphic?.motions||{}))if(wanted.has(mapping?.pose))references.push(path+' / '+motion);
++            for(const [key,child] of Object.entries(value))if(key!=='graphic')visit(child,path+' / '+key);
++        };
++        visit(this.db.data?.battlePresentation,'BattlePresentation');
++        return references;
++    }
+     rectanglePoseEditor(host,initial,onChange,onPreview,imageSource) {
+         const B=ReactorBattleData,card=this.element('details','rr-battle-motion-details rr-rectangle-poses');card.append(this.element('summary','','Rectangle Poses'));host.append(card);
+         let poses=JSON.parse(JSON.stringify(initial)),selected=Object.keys(poses)[0]||'',tick=0;
+@@ -44,7 +56,7 @@ class BattlePresentationEditor {
+                 for(const source of sources){const suffix=source.slice(6);if(value.endsWith(suffix))return this.message(source,{name:value.slice(0,-suffix.length)});}
+                 return value;
+             };
+-            const save=next=>{const errors=B.validateGraphicPoses(next);if(!errors.length&&!inBounds(next)){report('Frame must stay inside the image.');return false;}if(errors.length){error.removeAttribute('data-i18n-text-source');error.removeAttribute('data-i18n-text-params');error.replaceChildren(...errors.flatMap(value=>[this.element('span','',localizeError(value)),document.createTextNode(' ')]));return false;}poses=next;onChange(JSON.parse(JSON.stringify(poses)));draw();return true;};
++            const save=next=>{const removed=Object.keys(poses).filter(name=>!Object.hasOwn(next,name)),references=this.poseReferences(removed);if(references.length){this.setText(error,this.message('Pose is referenced. Edit sequences and motion mappings before renaming or removing: {references}',{references:references.join('; ')}));return false;}const errors=B.validateGraphicPoses(next);if(!errors.length&&!inBounds(next)){report('Frame must stay inside the image.');return false;}if(errors.length){error.removeAttribute('data-i18n-text-source');error.removeAttribute('data-i18n-text-params');error.replaceChildren(...errors.flatMap(value=>[this.element('span','',localizeError(value)),document.createTextNode(' ')]));return false;}poses=next;onChange(JSON.parse(JSON.stringify(poses)));draw();return true;};
+             const update=fn=>{const next=JSON.parse(JSON.stringify(poses));fn(next);return save(next);};
+             const text=(label,value,fn)=>{const input=this.element('input','database-field-value');input.value=value;input.setAttribute('aria-label',this.text(label));input.onchange=()=>fn(input.value);this.field(body,label,input);return input;};
+             body.append(this.element('p','rr-battle-help','Choose an image and create poses from pixel rectangles. Duration: game frames (60 per second). Anchor: 0,0 at the top left; 0.5,1 at the feet. Use idle for rest, attack for attacking, or select a pose in a sequence.'));
+@@ -53,8 +65,8 @@ class BattlePresentationEditor {
+             if(selected&&poses[selected]){
+                 this.field(body,'Pose',this.select(Object.keys(poses).map(n=>[n,n,true]),selected,v=>{selected=v;tick=0;draw();onPreview(selected,tick);}));
+                 const rename=text('Pose Name',selected,()=>{});
+-                body.append(this.button('Rename Pose',()=>{const key=rename.value.trim();if(!key||key!==selected&&Object.hasOwn(poses,key)){this.setText(error,'Choose a new, nonempty name.');return;}const next=JSON.parse(JSON.stringify(poses)),pose=next[selected];delete next[selected];Object.defineProperty(next,key,{value:pose,enumerable:true,writable:true,configurable:true});selected=key;save(next);}));
+-                body.append(this.button('Remove Pose',()=>{const next=JSON.parse(JSON.stringify(poses));delete next[selected];selected=Object.keys(next)[0]||'';save(next);}));
++                body.append(this.button('Rename Pose',()=>{const key=rename.value.trim();if(!key||key!==selected&&Object.hasOwn(poses,key)){this.setText(error,'Choose a new, nonempty name.');return;}const next=JSON.parse(JSON.stringify(poses)),pose=next[selected];delete next[selected];Object.defineProperty(next,key,{value:pose,enumerable:true,writable:true,configurable:true});if(save(next)){selected=key;draw();}}));
++                body.append(this.button('Remove Pose',()=>{const next=JSON.parse(JSON.stringify(poses));delete next[selected];if(save(next)){selected=Object.keys(next)[0]||'';draw();}}));
+                 const pose=poses[selected];
+                 this.field(body,'Playback',this.select([['loop','Repeat'],['hold','Hold Last Frame'],['play','Play Once and Return to Idle']],pose.loop===false?'play':pose.loop==='once'?'hold':'loop',v=>update(next=>{next[selected].loop=v==='loop'?true:v==='hold'?'once':false;})));
+                 for(const [axis,label] of [['x','Anchor X'],['y','Anchor Y']])this.number(body,label,pose.anchor?.[axis]??(axis==='x'?.5:1),v=>update(next=>{next[selected].anchor={x:.5,y:1,...next[selected].anchor,[axis]:v};}),.05);
+@@ -83,7 +95,7 @@ class BattlePresentationEditor {
+             }
+             const advanced=this.element('details');advanced.append(this.element('summary','','Advanced: JSON'));body.append(advanced);
+             const input=this.element('textarea','database-field-value');input.setAttribute('aria-label',this.text('Named Rectangle Poses JSON'));input.rows=12;input.style.width='100%';input.value=JSON.stringify(poses,null,2);advanced.append(input);
+-            advanced.append(this.button('Apply JSON',()=>{try{const next=JSON.parse(input.value);if(!B.validateGraphicPoses(next).length){selected=Object.keys(next)[0]||'';}save(next);}catch(e){this.setText(error,'Invalid JSON.');}}));body.append(error);
++            advanced.append(this.button('Apply JSON',()=>{try{const next=JSON.parse(input.value);if(save(next)){selected=Object.keys(next)[0]||'';draw();}}catch(e){this.setText(error,'Invalid JSON.');}}));body.append(error);
+         };
+         draw();return card;
+     }
+diff --git a/editor/src/database/DatabaseActionSequenceEditor.js b/editor/src/database/DatabaseActionSequenceEditor.js
+index 0b08800..f21fc2d 100644
+--- a/editor/src/database/DatabaseActionSequenceEditor.js
++++ b/editor/src/database/DatabaseActionSequenceEditor.js
+@@ -531,7 +531,7 @@ class DatabaseActionSequenceEditor {
+         U.field(this.inspector,'Battler',U.select([['user','User'],['target','Current Target'],['allTargets','All Targets'],...ReactorBattleData.targetGroups.filter(v=>!['user','target','allTargets'].includes(v)).map(v=>[v,ReactorBattleData.optionLabel(v)]),...Array.from({length:Math.max(this.targetCount,(step.targetIndex??0)+1)},(_,i)=>['target'+i,U.message('Target {n}',{n:i+1})])],ReactorBattleData.roleKey(step),v=>{this.edit(()=>{step.role=v.startsWith('target')&&v!=='target'?'target':v;step.targetIndex=v.startsWith('target')&&v!=='target'?Number(v.slice(6)):undefined;});this.drawInspector();}));
+         const B=ReactorBattleData,advanced=this.inspectorFold('Advanced','advanced');const advancedDetails=advanced.parentElement;advancedDetails.remove();
+         // A concurrent step lets the next one start on the same frame while it plays on: a jump riding a move, two battlers acting at once.
+-        {const concurrent=U.element('input');concurrent.type='checkbox';concurrent.checked=!!step.concurrent;concurrent.dataset.sequenceConcurrent='';concurrent.onchange=()=>change('concurrent',concurrent.checked||undefined);const row=U.field(advanced,'Concurrent',concurrent);if(row?.title!==undefined)row.title=U.text('The next step starts on the same frame instead of after this one.');}
++        {const concurrent=U.element('input');concurrent.type='checkbox';concurrent.checked=!!step.concurrent;concurrent.dataset.sequenceConcurrent='';concurrent.onchange=()=>change('concurrent',concurrent.checked||undefined);const row=U.field(this.inspector,'Concurrent',concurrent);if(row?.title!==undefined)row.title=U.text('The next step starts on the same frame instead of after this one.');}
+         // Changing a step's phase moves it into that section, after the section's last step.
+         if(B.purpose(this.sequence)==='action')U.field(advanced,'Phase',U.select(B.actionPhases.map(([id,label])=>[id,label]),B.stepPhase(step),v=>{if(v===B.stepPhase(step))return;this.edit(()=>{const steps=this.sequence.steps,from=steps.indexOf(step);steps.splice(from,1);step.phase=v;const to=this.phaseInsertIndex(v);steps.splice(to,0,step);this.selected=to;});this.refresh();this.selectStep(this.selected);this.revealStep();}));
+         if(!['user','target','allTargets','subject'].includes(step.role)){
+diff --git a/editor/src/I18nReviewedTranslations.js b/editor/src/I18nReviewedTranslations.js
+index 3638cb1..36231af 100644
+--- a/editor/src/I18nReviewedTranslations.js
++++ b/editor/src/I18nReviewedTranslations.js
+@@ -8930,3 +8930,10 @@ globalThis.RR_REVIEWED_TRANSLATIONS.sections.pl.Vehicles = 'Pojazdy';
+         globalThis.RR_REVIEWED_TRANSLATIONS.text[locale][key] = values[index];
+     });
+ }
++
++// Diana animation sequence controls (pt-BR).
++Object.assign(globalThis.RR_REVIEWED_TRANSLATIONS.text['pt'], {
++    'Concurrent':'Simultâneo',
++    'The next step starts on the same frame instead of after this one.':'O próximo passo começa no mesmo quadro, enquanto este continua.',
++    'Pose is referenced. Edit sequences and motion mappings before renaming or removing: {references}':'A pose possui referências. Edite as sequências e os mapeamentos antes de renomear ou remover: {references}'
++});

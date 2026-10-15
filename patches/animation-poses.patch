@@ -1,0 +1,323 @@
+diff --git a/editor/src/battle/BattleData.js b/editor/src/battle/BattleData.js
+index 14fb924..318c686 100644
+--- a/editor/src/battle/BattleData.js
++++ b/editor/src/battle/BattleData.js
+@@ -160,7 +160,37 @@
+     // (right), 180 faces -y (up), -90 faces -x (left). Character sheets pick
+     // the matching row unless the graphic or motion names a direction.
+     B.directionFromYaw = yaw => { const a=((Number(yaw)||0)%360+360)%360; return a<45||a>=315?2:a<135?6:a<225?8:4; };
++    // Rectangle poses use source pixels, durations in game frames (60 fps), and
++    // normalized anchors: (0,0) top left, (.5,1) feet. Motion mappings may alias a pose.
++    B.validateGraphicPoses = poses => {
++        const errors=[];
++        if(!poses||typeof poses!=='object'||Array.isArray(poses))return ['Poses must be an object keyed by name.'];
++        for(const [name,pose] of Object.entries(poses)){
++            if(!name.trim()||!pose||typeof pose!=='object'){errors.push('Each pose needs a name and an object.');continue;}
++            if(!Array.isArray(pose.frames)||!pose.frames.length){errors.push(name+': add at least one frame.');continue;}
++            if(pose.loop!==undefined&&![true,false,'once'].includes(pose.loop))errors.push(name+': loop must be true, false, or "once".');
++            const anchor=a=>a&&['x','y'].every(k=>Number.isFinite(a[k])&&a[k]>=0&&a[k]<=1);
++            if(pose.anchor!==undefined&&!anchor(pose.anchor))errors.push(name+': anchor x and y must be between 0 and 1.');
++            for(const f of pose.frames)if(!f||!['x','y','width','height','duration'].every(k=>Number.isInteger(f[k]))||f.x<0||f.y<0||f.width<1||f.height<1||f.duration<1||f.anchor!==undefined&&!anchor(f.anchor))errors.push(name+': frames need nonnegative x/y, positive width/height/duration integers, and valid optional anchors.');
++        }
++        return errors;
++    };
++    B.graphicPose = (graphic,motion) => {
++        const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
++        return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
++    };
++    B.graphicPoseDuration = pose => pose.frames.reduce((sum,f)=>sum+f.duration,0);
+     B.graphicFrame = (graphic,width,height,motion='idle',frame=0,facingYaw=-90,heldFrame=null) => {
++        const pose=B.graphicPose(graphic,motion);
++        if(pose){
++            const duration=B.graphicPoseDuration(pose),loop=graphic.motions?.[motion]?.loop??pose.loop??true;
++            let tick=Math.floor(Math.max(0,number(frame))),index=0;
++            if(heldFrame!==null)index=Math.max(0,Math.min(pose.frames.length-1,Math.floor(number(heldFrame))));
++            else {tick=loop===true?tick%duration:Math.min(duration-1,tick);while(index<pose.frames.length-1&&tick>=pose.frames[index].duration)tick-=pose.frames[index++].duration;}
++            const f=pose.frames[index],anchor=f.anchor||pose.anchor||{x:.5,y:1};
++            // Invalid source bounds fall back to the existing sheet rather than sampling outside the image.
++            if(f.x+f.width<=width&&f.y+f.height<=height)return {x:f.x,y:f.y,width:f.width,height:f.height,anchor:{...anchor}};
++        }
+         if(graphic.type==='static')return {x:0,y:0,width,height};
+         const setup=graphic.motions?.[motion]||{},speed=Math.max(1,setup.speed||graphic.speed||12);
+         const frames=Math.min(graphic.frames||3,Math.max(1,setup.frames||graphic.frames||3)),tick=Math.floor(Math.max(0,frame)/speed);
+diff --git a/runtime/reactor_battle_data.js b/runtime/reactor_battle_data.js
+index 14fb924..318c686 100644
+--- a/runtime/reactor_battle_data.js
++++ b/runtime/reactor_battle_data.js
+@@ -160,7 +160,37 @@
+     // (right), 180 faces -y (up), -90 faces -x (left). Character sheets pick
+     // the matching row unless the graphic or motion names a direction.
+     B.directionFromYaw = yaw => { const a=((Number(yaw)||0)%360+360)%360; return a<45||a>=315?2:a<135?6:a<225?8:4; };
++    // Rectangle poses use source pixels, durations in game frames (60 fps), and
++    // normalized anchors: (0,0) top left, (.5,1) feet. Motion mappings may alias a pose.
++    B.validateGraphicPoses = poses => {
++        const errors=[];
++        if(!poses||typeof poses!=='object'||Array.isArray(poses))return ['Poses must be an object keyed by name.'];
++        for(const [name,pose] of Object.entries(poses)){
++            if(!name.trim()||!pose||typeof pose!=='object'){errors.push('Each pose needs a name and an object.');continue;}
++            if(!Array.isArray(pose.frames)||!pose.frames.length){errors.push(name+': add at least one frame.');continue;}
++            if(pose.loop!==undefined&&![true,false,'once'].includes(pose.loop))errors.push(name+': loop must be true, false, or "once".');
++            const anchor=a=>a&&['x','y'].every(k=>Number.isFinite(a[k])&&a[k]>=0&&a[k]<=1);
++            if(pose.anchor!==undefined&&!anchor(pose.anchor))errors.push(name+': anchor x and y must be between 0 and 1.');
++            for(const f of pose.frames)if(!f||!['x','y','width','height','duration'].every(k=>Number.isInteger(f[k]))||f.x<0||f.y<0||f.width<1||f.height<1||f.duration<1||f.anchor!==undefined&&!anchor(f.anchor))errors.push(name+': frames need nonnegative x/y, positive width/height/duration integers, and valid optional anchors.');
++        }
++        return errors;
++    };
++    B.graphicPose = (graphic,motion) => {
++        const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
++        return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
++    };
++    B.graphicPoseDuration = pose => pose.frames.reduce((sum,f)=>sum+f.duration,0);
+     B.graphicFrame = (graphic,width,height,motion='idle',frame=0,facingYaw=-90,heldFrame=null) => {
++        const pose=B.graphicPose(graphic,motion);
++        if(pose){
++            const duration=B.graphicPoseDuration(pose),loop=graphic.motions?.[motion]?.loop??pose.loop??true;
++            let tick=Math.floor(Math.max(0,number(frame))),index=0;
++            if(heldFrame!==null)index=Math.max(0,Math.min(pose.frames.length-1,Math.floor(number(heldFrame))));
++            else {tick=loop===true?tick%duration:Math.min(duration-1,tick);while(index<pose.frames.length-1&&tick>=pose.frames[index].duration)tick-=pose.frames[index++].duration;}
++            const f=pose.frames[index],anchor=f.anchor||pose.anchor||{x:.5,y:1};
++            // Invalid source bounds fall back to the existing sheet rather than sampling outside the image.
++            if(f.x+f.width<=width&&f.y+f.height<=height)return {x:f.x,y:f.y,width:f.width,height:f.height,anchor:{...anchor}};
++        }
+         if(graphic.type==='static')return {x:0,y:0,width,height};
+         const setup=graphic.motions?.[motion]||{},speed=Math.max(1,setup.speed||graphic.speed||12);
+         const frames=Math.min(graphic.frames||3,Math.max(1,setup.frames||graphic.frames||3)),tick=Math.floor(Math.max(0,frame)/speed);
+diff --git a/template/Demo/js/reactor_battle_data.js b/template/Demo/js/reactor_battle_data.js
+index 14fb924..318c686 100644
+--- a/template/Demo/js/reactor_battle_data.js
++++ b/template/Demo/js/reactor_battle_data.js
+@@ -160,7 +160,37 @@
+     // (right), 180 faces -y (up), -90 faces -x (left). Character sheets pick
+     // the matching row unless the graphic or motion names a direction.
+     B.directionFromYaw = yaw => { const a=((Number(yaw)||0)%360+360)%360; return a<45||a>=315?2:a<135?6:a<225?8:4; };
++    // Rectangle poses use source pixels, durations in game frames (60 fps), and
++    // normalized anchors: (0,0) top left, (.5,1) feet. Motion mappings may alias a pose.
++    B.validateGraphicPoses = poses => {
++        const errors=[];
++        if(!poses||typeof poses!=='object'||Array.isArray(poses))return ['Poses must be an object keyed by name.'];
++        for(const [name,pose] of Object.entries(poses)){
++            if(!name.trim()||!pose||typeof pose!=='object'){errors.push('Each pose needs a name and an object.');continue;}
++            if(!Array.isArray(pose.frames)||!pose.frames.length){errors.push(name+': add at least one frame.');continue;}
++            if(pose.loop!==undefined&&![true,false,'once'].includes(pose.loop))errors.push(name+': loop must be true, false, or "once".');
++            const anchor=a=>a&&['x','y'].every(k=>Number.isFinite(a[k])&&a[k]>=0&&a[k]<=1);
++            if(pose.anchor!==undefined&&!anchor(pose.anchor))errors.push(name+': anchor x and y must be between 0 and 1.');
++            for(const f of pose.frames)if(!f||!['x','y','width','height','duration'].every(k=>Number.isInteger(f[k]))||f.x<0||f.y<0||f.width<1||f.height<1||f.duration<1||f.anchor!==undefined&&!anchor(f.anchor))errors.push(name+': frames need nonnegative x/y, positive width/height/duration integers, and valid optional anchors.');
++        }
++        return errors;
++    };
++    B.graphicPose = (graphic,motion) => {
++        const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
++        return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
++    };
++    B.graphicPoseDuration = pose => pose.frames.reduce((sum,f)=>sum+f.duration,0);
+     B.graphicFrame = (graphic,width,height,motion='idle',frame=0,facingYaw=-90,heldFrame=null) => {
++        const pose=B.graphicPose(graphic,motion);
++        if(pose){
++            const duration=B.graphicPoseDuration(pose),loop=graphic.motions?.[motion]?.loop??pose.loop??true;
++            let tick=Math.floor(Math.max(0,number(frame))),index=0;
++            if(heldFrame!==null)index=Math.max(0,Math.min(pose.frames.length-1,Math.floor(number(heldFrame))));
++            else {tick=loop===true?tick%duration:Math.min(duration-1,tick);while(index<pose.frames.length-1&&tick>=pose.frames[index].duration)tick-=pose.frames[index++].duration;}
++            const f=pose.frames[index],anchor=f.anchor||pose.anchor||{x:.5,y:1};
++            // Invalid source bounds fall back to the existing sheet rather than sampling outside the image.
++            if(f.x+f.width<=width&&f.y+f.height<=height)return {x:f.x,y:f.y,width:f.width,height:f.height,anchor:{...anchor}};
++        }
+         if(graphic.type==='static')return {x:0,y:0,width,height};
+         const setup=graphic.motions?.[motion]||{},speed=Math.max(1,setup.speed||graphic.speed||12);
+         const frames=Math.min(graphic.frames||3,Math.max(1,setup.frames||graphic.frames||3)),tick=Math.floor(Math.max(0,frame)/speed);
+diff --git a/runtime/reactor_battle_presentation.js b/runtime/reactor_battle_presentation.js
+index 29bf2b4..6a03914 100644
+--- a/runtime/reactor_battle_presentation.js
++++ b/runtime/reactor_battle_presentation.js
+@@ -798,19 +798,21 @@
+         const main=sprite._mainSprite||sprite,bitmap=main.bitmap;if(!bitmap?.isReady?.()||!bitmap.width||!bitmap.height)return;
+         const battler=sprite._actor||sprite._enemy,time=sprite._rrGraphicFrame||0;
+         let motion=sprite._rrGraphicMotion;
+-        if(motion){const mapping=graphic.motions?.[motion.name]||{},length=(mapping.frames||graphic.frames||3)*(mapping.speed||graphic.speed||12);
+-            if(mapping.loop!==true&&mapping.loop!=='once'&&time-motion.start>=length&&!['idle','moving','walk','run','guard','chant','victory','dead'].includes(motion.name))sprite._rrGraphicMotion=motion=null;}
++        if(motion){const mapping=graphic.motions?.[motion.name]||{},pose=B.graphicPose(graphic,motion.name),length=pose?B.graphicPoseDuration(pose):(mapping.frames||graphic.frames||3)*(mapping.speed||graphic.speed||12),loop=mapping.loop??pose?.loop??(pose?true:undefined);
++            if(loop!==true&&loop!=='once'&&time-motion.start>=length&&!['idle','moving','walk','run','guard','chant','victory','dead'].includes(motion.name))sprite._rrGraphicMotion=motion=null;}
+         const override=sprite._rrMotionOverride;if(override&&motion?.name===override.name)graphic={...graphic,motions:{...graphic.motions,[override.name]:{...graphic.motions?.[override.name],...override}}};
+         const held=sprite._rrHeldPose,facingYaw=sprite._reactorRoomPosition?.facing??P.spriteYaw(sprite);
+         const frame=B.graphicFrame(graphic,bitmap.width,bitmap.height,held?.motion||motion?.name||P.battlerState(battler,sprite),motion?time-motion.start:time,facingYaw,held?held.frame:null);
+         if(main!==sprite)main.y=-(graphic.offsetY||0);
++        sprite._rrPoseFrame=frame;
++        if(main.anchor){sprite._rrGraphicBaseAnchor||={x:main.anchor.x,y:main.anchor.y};const a=frame.anchor||sprite._rrGraphicBaseAnchor;main.anchor.set(a.x,a.y);}
+         main.setFrame(frame.x,frame.y,frame.width,frame.height);
+         if(main!==sprite)sprite.setFrame(0,0,frame.width,frame.height);
+     };
+     P.installGraphics = () => {
+         for(const [Class,kind] of [[root.Sprite_Actor,'actors'],[root.Sprite_Enemy,'enemies']])if(Class){
+             const bitmap=Class.prototype.updateBitmap,frame=Class.prototype.updateFrame,update=Class.prototype.update,motion=Class.prototype.startMotion;
+-            Class.prototype.updateBitmap=function(...args){const g=P.graphicFor(this._actor||this._enemy);if(g){P.updateGraphicBitmap(this,g,kind);return;}if(this._rrGraphicKey){const main=this._mainSprite||this,old=this._rrGraphicBaseScale;if(old){main.scale.set(old.x,old.y);main.y=old.offsetY;}this._rrGraphicKey=null;this._rrGraphicBaseScale=null;this._battlerName='';}return bitmap?.apply(this,args);};
++            Class.prototype.updateBitmap=function(...args){const g=P.graphicFor(this._actor||this._enemy);if(g){P.updateGraphicBitmap(this,g,kind);return;}if(this._rrGraphicKey){const main=this._mainSprite||this,old=this._rrGraphicBaseScale;if(old){main.scale.set(old.x,old.y);main.y=old.offsetY;}if(this._rrGraphicBaseAnchor){main.anchor?.set(this._rrGraphicBaseAnchor.x,this._rrGraphicBaseAnchor.y);this._rrGraphicBaseAnchor=null;}this._rrPoseFrame=null;this._rrGraphicKey=null;this._rrGraphicBaseScale=null;this._battlerName='';}return bitmap?.apply(this,args);};
+             Class.prototype.updateFrame=function(...args){const g=P.graphicFor(this._actor||this._enemy);if(g){P.updateGraphicFrame(this,g);return;}return frame?.apply(this,args);};
+             Class.prototype.startMotion=function(name){P.requestGraphicMotion(this,P.engineMotion(this,name));return motion?.call(this,name);};
+             Class.prototype.update=function(...args){this._rrGraphicFrame=(this._rrGraphicFrame||0)+1;const result=update?.apply(this,args);if(kind==='enemies'&&P.graphicFor(this._enemy)&&this._enemy?.isWeaponAnimationRequested?.()){if(P.graphicFor(this._enemy).showWeapon!==false){if(!this._rrWeaponSprite){this._rrWeaponSprite=new Sprite_Weapon();this.addChild(this._rrWeaponSprite);}this._rrWeaponSprite.setup(this._enemy.weaponImageId());}this._enemy.clearWeaponAnimation();}return result;};
+@@ -1011,7 +1013,7 @@
+             const main=sprite._mainSprite||sprite;
+             if(spec){if(room.billboards.has(key))room.remove(key);room.addModel(key,spec,p);room.place(key,p);if(actor)P.fallPose(room,key,battler);else P.liePose(room,key,sprite._corpse);}
+             else {if(room.models.has(key))room.remove(key);}
+-            if(!spec&&main.bitmap?.isReady()){const tall=Math.max(.5,main._frame.height/48);room.billboard(key,main.bitmap.canvas,main._frame,{...P.lieBillboard(p,main._frame,tall,actor?0:sprite._corpse),flipX:actor?p.facing>0:p.facing<0},tall);}
++            if(!spec&&main.bitmap?.isReady()){const tall=Math.max(.5,main._frame.height/48);room.billboard(key,main.bitmap.canvas,sprite._rrPoseFrame||main._frame,{...P.lieBillboard(p,main._frame,tall,actor?0:sprite._corpse),flipX:actor?p.facing>0:p.facing<0},tall);}
+             const record=room.models.get(key)||room.billboards.get(key);
+             if(record?.object)P.mirrorSpriteLook(sprite,battler,record);
+             const projected=P.roomScreenPosition(sprite);if(projected){sprite.x=projected.x;sprite.y=projected.y;}
+diff --git a/template/Demo/js/reactor_battle_presentation.js b/template/Demo/js/reactor_battle_presentation.js
+index 29bf2b4..6a03914 100644
+--- a/template/Demo/js/reactor_battle_presentation.js
++++ b/template/Demo/js/reactor_battle_presentation.js
+@@ -798,19 +798,21 @@
+         const main=sprite._mainSprite||sprite,bitmap=main.bitmap;if(!bitmap?.isReady?.()||!bitmap.width||!bitmap.height)return;
+         const battler=sprite._actor||sprite._enemy,time=sprite._rrGraphicFrame||0;
+         let motion=sprite._rrGraphicMotion;
+-        if(motion){const mapping=graphic.motions?.[motion.name]||{},length=(mapping.frames||graphic.frames||3)*(mapping.speed||graphic.speed||12);
+-            if(mapping.loop!==true&&mapping.loop!=='once'&&time-motion.start>=length&&!['idle','moving','walk','run','guard','chant','victory','dead'].includes(motion.name))sprite._rrGraphicMotion=motion=null;}
++        if(motion){const mapping=graphic.motions?.[motion.name]||{},pose=B.graphicPose(graphic,motion.name),length=pose?B.graphicPoseDuration(pose):(mapping.frames||graphic.frames||3)*(mapping.speed||graphic.speed||12),loop=mapping.loop??pose?.loop??(pose?true:undefined);
++            if(loop!==true&&loop!=='once'&&time-motion.start>=length&&!['idle','moving','walk','run','guard','chant','victory','dead'].includes(motion.name))sprite._rrGraphicMotion=motion=null;}
+         const override=sprite._rrMotionOverride;if(override&&motion?.name===override.name)graphic={...graphic,motions:{...graphic.motions,[override.name]:{...graphic.motions?.[override.name],...override}}};
+         const held=sprite._rrHeldPose,facingYaw=sprite._reactorRoomPosition?.facing??P.spriteYaw(sprite);
+         const frame=B.graphicFrame(graphic,bitmap.width,bitmap.height,held?.motion||motion?.name||P.battlerState(battler,sprite),motion?time-motion.start:time,facingYaw,held?held.frame:null);
+         if(main!==sprite)main.y=-(graphic.offsetY||0);
++        sprite._rrPoseFrame=frame;
++        if(main.anchor){sprite._rrGraphicBaseAnchor||={x:main.anchor.x,y:main.anchor.y};const a=frame.anchor||sprite._rrGraphicBaseAnchor;main.anchor.set(a.x,a.y);}
+         main.setFrame(frame.x,frame.y,frame.width,frame.height);
+         if(main!==sprite)sprite.setFrame(0,0,frame.width,frame.height);
+     };
+     P.installGraphics = () => {
+         for(const [Class,kind] of [[root.Sprite_Actor,'actors'],[root.Sprite_Enemy,'enemies']])if(Class){
+             const bitmap=Class.prototype.updateBitmap,frame=Class.prototype.updateFrame,update=Class.prototype.update,motion=Class.prototype.startMotion;
+-            Class.prototype.updateBitmap=function(...args){const g=P.graphicFor(this._actor||this._enemy);if(g){P.updateGraphicBitmap(this,g,kind);return;}if(this._rrGraphicKey){const main=this._mainSprite||this,old=this._rrGraphicBaseScale;if(old){main.scale.set(old.x,old.y);main.y=old.offsetY;}this._rrGraphicKey=null;this._rrGraphicBaseScale=null;this._battlerName='';}return bitmap?.apply(this,args);};
++            Class.prototype.updateBitmap=function(...args){const g=P.graphicFor(this._actor||this._enemy);if(g){P.updateGraphicBitmap(this,g,kind);return;}if(this._rrGraphicKey){const main=this._mainSprite||this,old=this._rrGraphicBaseScale;if(old){main.scale.set(old.x,old.y);main.y=old.offsetY;}if(this._rrGraphicBaseAnchor){main.anchor?.set(this._rrGraphicBaseAnchor.x,this._rrGraphicBaseAnchor.y);this._rrGraphicBaseAnchor=null;}this._rrPoseFrame=null;this._rrGraphicKey=null;this._rrGraphicBaseScale=null;this._battlerName='';}return bitmap?.apply(this,args);};
+             Class.prototype.updateFrame=function(...args){const g=P.graphicFor(this._actor||this._enemy);if(g){P.updateGraphicFrame(this,g);return;}return frame?.apply(this,args);};
+             Class.prototype.startMotion=function(name){P.requestGraphicMotion(this,P.engineMotion(this,name));return motion?.call(this,name);};
+             Class.prototype.update=function(...args){this._rrGraphicFrame=(this._rrGraphicFrame||0)+1;const result=update?.apply(this,args);if(kind==='enemies'&&P.graphicFor(this._enemy)&&this._enemy?.isWeaponAnimationRequested?.()){if(P.graphicFor(this._enemy).showWeapon!==false){if(!this._rrWeaponSprite){this._rrWeaponSprite=new Sprite_Weapon();this.addChild(this._rrWeaponSprite);}this._rrWeaponSprite.setup(this._enemy.weaponImageId());}this._enemy.clearWeaponAnimation();}return result;};
+@@ -1011,7 +1013,7 @@
+             const main=sprite._mainSprite||sprite;
+             if(spec){if(room.billboards.has(key))room.remove(key);room.addModel(key,spec,p);room.place(key,p);if(actor)P.fallPose(room,key,battler);else P.liePose(room,key,sprite._corpse);}
+             else {if(room.models.has(key))room.remove(key);}
+-            if(!spec&&main.bitmap?.isReady()){const tall=Math.max(.5,main._frame.height/48);room.billboard(key,main.bitmap.canvas,main._frame,{...P.lieBillboard(p,main._frame,tall,actor?0:sprite._corpse),flipX:actor?p.facing>0:p.facing<0},tall);}
++            if(!spec&&main.bitmap?.isReady()){const tall=Math.max(.5,main._frame.height/48);room.billboard(key,main.bitmap.canvas,sprite._rrPoseFrame||main._frame,{...P.lieBillboard(p,main._frame,tall,actor?0:sprite._corpse),flipX:actor?p.facing>0:p.facing<0},tall);}
+             const record=room.models.get(key)||room.billboards.get(key);
+             if(record?.object)P.mirrorSpriteLook(sprite,battler,record);
+             const projected=P.roomScreenPosition(sprite);if(projected){sprite.x=projected.x;sprite.y=projected.y;}
+diff --git a/editor/src/battle/BattlePresentationEditor.js b/editor/src/battle/BattlePresentationEditor.js
+index a09f089..b6b2de8 100644
+--- a/editor/src/battle/BattlePresentationEditor.js
++++ b/editor/src/battle/BattlePresentationEditor.js
+@@ -19,6 +19,43 @@ class BattlePresentationEditor {
+     number(host,label,value,change,step=.1) {const input=this.element('input','database-field-value');input.type='number';input.step=step;input.value=value;input.onchange=()=>{if(Number.isFinite(input.valueAsNumber))change(input.valueAsNumber);};return this.field(host,label,input);}
+     button(label,fn,raw=false) {const b=this.element('button','rr-btn-secondary',label,raw);b.type='button';b.onclick=fn;return b;}
+     section(title) {const panel=this.element('div','database-section');panel.append(this.element('div','database-section-header',title));const body=this.element('div','database-section-content');panel.append(body);return {panel,body};}
++    rectanglePoseEditor(host,initial,onChange,onPreview) {
++        const B=ReactorBattleData,card=this.element('details','rr-battle-motion-details rr-rectangle-poses');card.append(this.element('summary','','Poses por retângulos',true));host.append(card);
++        let poses=JSON.parse(JSON.stringify(initial)),selected=Object.keys(poses)[0]||'',tick=0;
++        const body=this.element('div');card.append(body);
++        const draw=()=>{
++            body.replaceChildren();
++            const error=this.element('p','rr-battle-help');error.setAttribute('role','status');
++            const save=next=>{const errors=B.validateGraphicPoses(next);if(errors.length){error.textContent=errors.join(' ');return false;}poses=next;onChange(JSON.parse(JSON.stringify(poses)));draw();return true;};
++            const update=fn=>{const next=JSON.parse(JSON.stringify(poses));fn(next);return save(next);};
++            const text=(label,value,fn)=>{const input=this.element('input','database-field-value');input.value=value;input.setAttribute('aria-label',label);input.onchange=()=>fn(input.value);this.field(body,label,input);return input;};
++            body.append(this.element('p','rr-battle-help','Escolha uma imagem e crie poses com recortes em pixels. Duração: quadros do jogo (60 por segundo). Âncora: 0,0 no canto superior esquerdo; 0.5,1 nos pés. Use idle para repouso, attack para ataque, ou escolha a pose em uma sequência.',true));
++            const name=text('Nome da nova pose','',()=>{});
++            body.append(this.button('Criar pose',()=>{const key=name.value.trim();if(!key||Object.hasOwn(poses,key)){error.textContent='Escolha um nome novo e não vazio.';return;}selected=key;tick=0;update(next=>{Object.defineProperty(next,key,{value:{loop:true,anchor:{x:.5,y:1},frames:[{x:0,y:0,width:32,height:48,duration:12}]},enumerable:true,writable:true,configurable:true});});},true));
++            if(selected&&poses[selected]){
++                this.field(body,'Pose',this.select(Object.keys(poses).map(n=>[n,n,true]),selected,v=>{selected=v;tick=0;draw();onPreview(selected,tick);}));
++                const rename=text('Nome da pose',selected,()=>{});
++                body.append(this.button('Renomear pose',()=>{const key=rename.value.trim();if(!key||key!==selected&&Object.hasOwn(poses,key)){error.textContent='Escolha um nome novo e não vazio.';return;}const next=JSON.parse(JSON.stringify(poses)),pose=next[selected];delete next[selected];Object.defineProperty(next,key,{value:pose,enumerable:true,writable:true,configurable:true});selected=key;save(next);},true));
++                body.append(this.button('Remover pose',()=>{const next=JSON.parse(JSON.stringify(poses));delete next[selected];selected=Object.keys(next)[0]||'';save(next);},true));
++                const pose=poses[selected];
++                this.field(body,'Reprodução',this.select([['loop','Repetir',true],['hold','Manter último quadro',true],['play','Uma vez e voltar ao repouso',true]],pose.loop===false?'play':pose.loop==='once'?'hold':'loop',v=>update(next=>{next[selected].loop=v==='loop'?true:v==='hold'?'once':false;})));
++                for(const [axis,label] of [['x','Âncora X'],['y','Âncora Y']])this.number(body,label,pose.anchor?.[axis]??(axis==='x'?.5:1),v=>update(next=>{next[selected].anchor={x:.5,y:1,...next[selected].anchor,[axis]:v};}),.05);
++                pose.frames.forEach((frame,index)=>{
++                    const row=this.element('fieldset','rr-rectangle-pose-frame');row.dataset.frameIndex=String(index);row.append(this.element('legend','','Quadro '+(index+1),true));body.append(row);
++                    for(const [key,label] of [['x','X (pixels)'],['y','Y (pixels)'],['width','Largura (pixels)'],['height','Altura (pixels)'],['duration','Duração (quadros)']])this.number(row,label,frame[key],v=>update(next=>{next[selected].frames[index][key]=v;}),1);
++                    for(const [label,delta] of [['Subir quadro',-1],['Descer quadro',1]]){const button=this.button(label,()=>update(next=>{const frames=next[selected].frames;[frames[index],frames[index+delta]]=[frames[index+delta],frames[index]];}),true);button.disabled=index+delta<0||index+delta>=pose.frames.length;row.append(button);}
++                    const remove=this.button('Remover quadro',()=>update(next=>next[selected].frames.splice(index,1)),true);remove.disabled=pose.frames.length===1;row.append(remove);
++                });
++                body.append(this.button('Adicionar quadro',()=>update(next=>next[selected].frames.push({...next[selected].frames.at(-1)})),true));
++                this.number(body,'Prévia: tempo (quadros)',tick,v=>{tick=Math.max(0,Math.floor(v));onPreview(selected,tick);},1);
++                body.append(this.button('Ver pose',()=>onPreview(selected,tick),true));
++            }
++            const advanced=this.element('details');advanced.append(this.element('summary','','Avançado: JSON',true));body.append(advanced);
++            const input=this.element('textarea','database-field-value');input.setAttribute('aria-label','Named Rectangle Poses JSON');input.rows=12;input.style.width='100%';input.value=JSON.stringify(poses,null,2);advanced.append(input);
++            advanced.append(this.button('Aplicar JSON',()=>{try{const next=JSON.parse(input.value);if(!B.validateGraphicPoses(next).length){selected=Object.keys(next)[0]||'';}save(next);}catch(e){error.textContent=e.message;}},true));body.append(error);
++        };
++        draw();return card;
++    }
+     preserveDisclosures(host) {
+         const keys=()=>{const counts=new Map();return [...host.querySelectorAll('details')].map(details=>{const title=details.querySelector('summary')?.getAttribute('data-i18n-text-source')||'',index=counts.get(title)||0;counts.set(title,index+1);return [title+':'+index,details];});};
+         const states=new Map(keys().map(([key,details])=>[key,details.open]));
+@@ -193,7 +230,7 @@ class BattlePresentationEditor {
+             };
+         }
+ 
+-        let generation=0;
++        let generation=0,previewPose='idle',previewTick=0;
+         const enemyRows=()=>kind==='enemies'?[...host.querySelectorAll('.enemy-image-controls')]:[];
+         const optionsCard=this.element('details','rr-battle-motion-details rr-battler-graphic-card');optionsCard.append(this.element('summary','','Battler Options'));
+         const optionsBody=this.element('div','rr-battler-graphic-options-body');optionsCard.append(optionsBody);optionsCard.style.display='none';
+@@ -242,7 +279,7 @@ class BattlePresentationEditor {
+             if(resolved.type==='model'&&resolved.model){
+                 Promise.resolve(RRDatabase3DBindings.modelThumbnail(this.parent.reactor3dEditor,resolved.model)).then(url=>{if(token!==generation||!previewCanvas.isConnected||!url)return;const image=new Image();image.onload=()=>{if(token!==generation)return;const scale=Math.min(W/image.width,H/image.height);previewCanvas.getContext('2d').drawImage(image,(W-image.width*scale)/2,(H-image.height*scale)/2,image.width*scale,image.height*scale);};image.src=url;}).catch(console.warn);
+             }else if(resolved.name){
+-                const image=new Image();image.onload=()=>{if(token!==generation||!previewCanvas.isConnected)return;const f=B.graphicFrame(resolved,image.width,image.height,'idle',0,kind==='actors'?-90:90),c=previewCanvas.getContext('2d'),scale=Math.min((W-20)/f.width,(H-20)/f.height);c.imageSmoothingEnabled=false;c.save();c.translate(W/2,H/2-(resolved.offsetY||0));c.scale(resolved.mirror?-1:1,1);c.drawImage(image,f.x,f.y,f.width,f.height,-f.width*scale/2,-f.height*scale/2,f.width*scale,f.height*scale);c.restore();};
++                const image=new Image();image.onload=()=>{if(token!==generation||!previewCanvas.isConnected)return;const f=B.graphicFrame(resolved,image.width,image.height,previewPose,previewTick,kind==='actors'?-90:90),c=previewCanvas.getContext('2d'),scale=Math.min((W-20)/f.width,(H-20)/f.height);c.imageSmoothingEnabled=false;c.save();c.clearRect(0,0,W,H);c.translate(W/2,(f.anchor?H-10:H/2)-(resolved.offsetY||0));c.scale(resolved.mirror?-1:1,1);c.drawImage(image,f.x,f.y,f.width,f.height,-f.width*scale*(f.anchor?.x??.5),-f.height*scale*(f.anchor?.y??.5),f.width*scale,f.height*scale);c.restore();};
+                 image.src=RRAssetFiles.urlFor(require('path').join(project.path,'img',resolved.folder),resolved.name,['.png']);
+             }
+         };
+@@ -267,6 +304,7 @@ class BattlePresentationEditor {
+                 this.number(dimensions,'Defeated Character Index (1–8)',(g.damagedIndex||0)+1,v=>set({...get(),damagedIndex:Math.max(0,Math.min(7,Math.round(v)-1))}),1);
+                 this.field(dimensions,'Defeated Direction',this.select([[2,'Down'],[4,'Left'],[6,'Right'],[8,'Up']],g.damagedDirection||2,v=>set({...get(),damagedDirection:Number(v)})));
+             }
++            if(resolved.type!=='model')this.rectanglePoseEditor(optionsBody,g.poses||{},value=>set({...get(),poses:value}),(name,tick)=>{previewPose=name;previewTick=tick;drawPreview(B.graphic(settings,kind,record.id,record,binding()),generation);});
+             if(['sv','character'].includes(resolved.type)){
+                 this.number(dimensions,'Frames per Motion',g.frames||3,value=>{set({...get(),frames:Math.max(1,Math.min(60,Math.round(value)))});draw();},1);
+                 this.number(dimensions,'Frames per Step',g.speed||12,value=>set({...get(),speed:Math.max(1,Math.round(value))}),1);
+diff --git a/editor/src/database/DatabaseActionSequenceEditor.js b/editor/src/database/DatabaseActionSequenceEditor.js
+index f9db024..0b08800 100644
+--- a/editor/src/database/DatabaseActionSequenceEditor.js
++++ b/editor/src/database/DatabaseActionSequenceEditor.js
+@@ -607,6 +607,7 @@ class DatabaseActionSequenceEditor {
+             // A model's own poses come first and take the names they share with sprite motions.
+             if(spec)addGroup('Custom',[[B.POSE_MOTION,'Pose Parts']]);
+             addGroup(spec?U.message('Model Poses and Clips: {name}',{name:spec.name}):'Model Poses and Clips',modelRules.map(name=>[name,name,true]));
++            addGroup('Named Rectangle Poses',Object.keys(this.images?.[role]?.graphic?.poses||{}).map(name=>[name,name,true]));
+             addGroup('Sprite Motions',Object.entries(this.motionLabels()).filter(([id])=>!modelSet.has(id.toLowerCase())));
+             if(step.motion&&step.motion!==B.POSE_MOTION&&!known.has(step.motion)&&!modelSet.has(step.motion.toLowerCase()))addGroup('Other',[[step.motion,step.motion,true]]);
+             select.value=step.motion||'idle';select.onchange=()=>{this.edit(()=>{step.motion=select.value;if(select.value===B.POSE_MOTION)step.parts||=[];else {delete step.parts;delete step.resetPose;}});this.drawInspector();if(select.value===B.POSE_MOTION)this.openFold(step.id+':pose');this.showPoseFrame();this.paint();};U.field(this.inspector,'Motion',select);
+@@ -1038,7 +1039,7 @@ class DatabaseActionSequenceEditor {
+             this.ensurePoseRules(view);
+             for(const key of ['user','target0','target1','target2','target3']){
+                 const role=key==='user'?'user':'target',p=poses[key],image=this.images[role],motion=this.controls.mode==='formation'?{name:'idle',start:0}:this.motionFor(key);
+-                if(image&&p){const {bitmap,actor,graphic}=image,held=visuals.held[key],facingYaw=p.facing??B.facingToward(p,role==='user'?poses.target:poses.user),frame=B.graphicFrame(graphic,bitmap.width,bitmap.height,held?.name||motion.name,held?held.frame*(graphic.speed||12):Math.max(0,this.frame-motion.start),facingYaw);
++                if(image&&p){const {bitmap,actor,graphic}=image,held=visuals.held[key],facingYaw=p.facing??B.facingToward(p,role==='user'?poses.target:poses.user),frame=B.graphicFrame(graphic,bitmap.width,bitmap.height,held?.name||motion.name,Math.max(0,this.frame-motion.start),facingYaw,held?held.frame:null);
+                     view.billboard(key,bitmap.image,frame,{...lift(p),rotateZ:-(p.rotateZ||0),flipX:graphic.type==='character'?!!graphic.mirror:(actor?p.facing>0:p.facing<0)!==!!graphic.mirror,layer:actor?1:0},Math.max(.2,frame.height/48)*(graphic.scale||1));
+                 }
+                 const record=view.models.get(key)||view.billboards.get(key);if(record?.object){record.object.visible=!!p;record.object.traverse?.(object=>{for(const material of Array.isArray(object.material)?object.material:[object.material])if(material){material.transparent=true;material.opacity=visuals.opacity[key]??1;}});if(p){view.place(key,{...(view.billboards.has(key)?lift(p):p),facing:p.facing??B.facingToward(p,role==='user'?poses.target:poses.user)});record.action=motion.name==='idle'?null:{name:motion.name,start:motion.start};if(motion.name==='idle'&&record.binding)record.binding.movingAt=undefined;}}
+diff --git a/runtime/reactor_battle_room.js b/runtime/reactor_battle_room.js
+index 39bc1b6..eff8b19 100644
+--- a/runtime/reactor_battle_room.js
++++ b/runtime/reactor_battle_room.js
+@@ -214,6 +214,8 @@
+             if (r.canvas.width !== width || r.canvas.height !== heightPx) { r.canvas.width=width;r.canvas.height=heightPx; }
+             const ctx = r.canvas.getContext('2d');ctx.clearRect(0,0,r.canvas.width,r.canvas.height);
+             ctx.drawImage(source,frame.x,frame.y,frame.width,frame.height,0,0,width,heightPx);r.texture.needsUpdate=true;
++            const anchor=frame.anchor||{x:.5,y:1},anchorKey=anchor.x+','+anchor.y;
++            if(r.anchorKey!==anchorKey){r.object.geometry.dispose();r.object.geometry=new T.PlaneGeometry(1,1);r.object.geometry.translate(.5-anchor.x,anchor.y-1,0);r.anchorKey=anchorKey;}
+             r.height=height;r.object.scale.set(height*frame.width/frame.height*(position.scale??1)*(position.scaleX??1)*(position.flipX?-1:1),height*(position.scale??1)*(position.scaleY??1),1);
+             // Sequence visuals are placed after render()'s own facing pass, so
+             // the turn a held or thrown picture carries is applied here as
+diff --git a/template/Demo/js/reactor_battle_room.js b/template/Demo/js/reactor_battle_room.js
+index 39bc1b6..eff8b19 100644
+--- a/template/Demo/js/reactor_battle_room.js
++++ b/template/Demo/js/reactor_battle_room.js
+@@ -214,6 +214,8 @@
+             if (r.canvas.width !== width || r.canvas.height !== heightPx) { r.canvas.width=width;r.canvas.height=heightPx; }
+             const ctx = r.canvas.getContext('2d');ctx.clearRect(0,0,r.canvas.width,r.canvas.height);
+             ctx.drawImage(source,frame.x,frame.y,frame.width,frame.height,0,0,width,heightPx);r.texture.needsUpdate=true;
++            const anchor=frame.anchor||{x:.5,y:1},anchorKey=anchor.x+','+anchor.y;
++            if(r.anchorKey!==anchorKey){r.object.geometry.dispose();r.object.geometry=new T.PlaneGeometry(1,1);r.object.geometry.translate(.5-anchor.x,anchor.y-1,0);r.anchorKey=anchorKey;}
+             r.height=height;r.object.scale.set(height*frame.width/frame.height*(position.scale??1)*(position.scaleX??1)*(position.flipX?-1:1),height*(position.scale??1)*(position.scaleY??1),1);
+             // Sequence visuals are placed after render()'s own facing pass, so
+             // the turn a held or thrown picture carries is applied here as

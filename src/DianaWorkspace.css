@@ -1,0 +1,41 @@
+/* Original Diana palette and compact, map-first desktop layout. */
+:root {
+ --color-accent:#8b9bff!important;--color-accent-bright:#b3bfff!important;--color-accent-hover:#a5b3ff!important;
+ --color-accent-muted:#b3bfff!important;--color-accent-deep:#5869bd!important;
+ --color-accent-on:#101625!important;--color-accent-hover-on:#101625!important;
+ --color-accent-shadow:#151e38!important;--color-accent-border:#6678bd!important;
+ --color-accent-border-mid:#8090d5!important;--color-accent-border-strong:#a5b3ff!important;
+ --color-accent-tint-10:rgba(139,155,255,.10)!important;--color-accent-tint-15:rgba(139,155,255,.15)!important;
+ --color-accent-tint-25:rgba(139,155,255,.25)!important;--color-accent-tint-30:rgba(139,155,255,.30)!important;
+ --color-accent-tint-35:rgba(139,155,255,.35)!important;--color-accent-tint-40:rgba(139,155,255,.40)!important;
+ --color-bg-base:#111722!important;--color-bg-surface:#192230!important;--color-bg-toolbar:#1e2939!important;
+ --color-bg-input:#111a27!important;--color-bg-hover:#2b3a51!important;--color-bg-selected:#35476a!important;
+ --color-text:#e7edf8!important;--color-text-muted:#a1aec2!important;--color-border:#344157!important;
+ --color-link:#9cacff!important;--color-link-bright:#c0ccff!important;
+}
+body {font-family:'Segoe UI',sans-serif!important;background:#111722;color:#e7edf8;}
+#menu-bar {background:#111722!important;border-bottom:1px solid #344157!important;min-height:32px;}
+#diana-workspace {display:flex;align-items:center;gap:5px;padding:10px 14px;background:#192230;border-bottom:1px solid #344157;flex-shrink:0;}
+.diana-brand {display:flex;flex-direction:column;min-width:112px;margin-right:16px;line-height:1.1;}
+.diana-brand strong {font-size:21px;letter-spacing:4px;color:#c5ceff;}
+.diana-brand span {font-size:9px;letter-spacing:3px;color:#a1aec2;margin-top:4px;}
+#diana-workspace button {font:600 12px 'Segoe UI',sans-serif;border:1px solid transparent;background:transparent;color:#b7c3d8;border-radius:6px;padding:10px 12px;cursor:pointer;white-space:nowrap;}
+#diana-workspace button:hover:not(:disabled),#diana-workspace button[aria-pressed=true] {background:#2c3b58;color:#eef2ff;border-color:#6678bd;}
+#diana-workspace button:disabled {opacity:.4;cursor:default;}
+#diana-workspace button:focus-visible {outline:2px solid #b3bfff;outline-offset:2px;}
+#diana-workspace .diana-play {margin-left:auto;background:#305b50;color:#d9fff0;border:1px solid #578675;}
+#toolbar {background:#1e2939!important;padding:6px 12px!important;gap:5px!important;border-bottom:1px solid #344157!important;flex-wrap:nowrap!important;overflow-x:auto!important;}
+#toolbar .tool-button {border-radius:4px!important;border-color:#40506a!important;background:#253247!important;}
+#toolbar .tool-button.active {background:#465d8c!important;border-color:#a4b4ef!important;}
+#sidebar {width:286px!important;min-width:250px!important;background:#192230!important;border-right:1px solid #344157!important;}
+.sidebar-header {background:#1e2939!important;border-left:3px solid #8b9bff!important;padding:10px 12px!important;color:#cad5eb!important;font-size:11px!important;letter-spacing:.8px;}
+.sidebar-content {background:#192230!important;}
+.tree-item.selected,.database-list-item.selected {background:#35476a!important;color:#fff!important;}
+.rr-modal {border-color:#536484!important;border-radius:9px!important;}
+.rr-modal-header {background:#243249!important;}
+.welcome-content {max-width:760px!important;}
+.diana-welcome-title {font-size:42px;letter-spacing:-1.5px;color:#d4dcff;margin:0 0 12px;}
+.welcome-tagline {font-size:18px!important;color:#afbdd4!important;}
+.welcome-cards {grid-template-columns:1fr!important;}
+#diana-tile-guide {font-size:11px;line-height:1.5;color:#b7c3d8;padding:9px 12px;border-top:1px solid #344157;background:#202d40;flex-shrink:0;}
+@media(max-width:1100px){#diana-workspace{gap:2px;padding:8px;}#diana-workspace button{padding:9px 7px;font-size:11px;}.diana-brand{min-width:98px;margin-right:5px;}}

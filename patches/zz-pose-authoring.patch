@@ -1,0 +1,421 @@
+diff --git a/editor/src/battle/BattlePresentationEditor.js b/editor/src/battle/BattlePresentationEditor.js
+--- a/editor/src/battle/BattlePresentationEditor.js
++++ b/editor/src/battle/BattlePresentationEditor.js
+@@ -19,24 +19,37 @@ class BattlePresentationEditor {
+     number(host,label,value,change,step=.1) {const input=this.element('input','database-field-value');input.type='number';input.step=step;input.value=value;input.onchange=()=>{if(Number.isFinite(input.valueAsNumber))change(input.valueAsNumber);};return this.field(host,label,input);}
+     button(label,fn,raw=false) {const b=this.element('button','rr-btn-secondary',label,raw);b.type='button';b.onclick=fn;return b;}
+     section(title) {const panel=this.element('div','database-section');panel.append(this.element('div','database-section-header',title));const body=this.element('div','database-section-content');panel.append(body);return {panel,body};}
+-    rectanglePoseEditor(host,initial,onChange,onPreview) {
++    rectanglePoseEditor(host,initial,onChange,onPreview,imageSource) {
+         const B=ReactorBattleData,card=this.element('details','rr-battle-motion-details rr-rectangle-poses');card.append(this.element('summary','','Rectangle Poses'));host.append(card);
+         let poses=JSON.parse(JSON.stringify(initial)),selected=Object.keys(poses)[0]||'',tick=0;
+         const body=this.element('div');card.append(body);
++        let image=null,disposed=false,raf=0,playing=false,epoch=null,base=0,cw=32,ch=48,free=false,report=()=>{},sync=()=>{};
++        const pause=()=>{playing=false;epoch=null;if(raf)cancelAnimationFrame(raf);raf=0;};
++        const active=()=>!disposed&&card.isConnected&&card.open&&!document.hidden&&(!card.parentElement?.closest('details')||card.parentElement.closest('details').open);
++        const preview=()=>{onPreview(selected,tick);sync();};
++        const step=now=>{raf=0;if(!active()){pause();return;}if(epoch===null)epoch=now;tick=base+Math.floor((now-epoch)*60/1000);const pose=poses[selected],duration=(pose?B.graphicPoseDuration(pose):1);
++            if((pose?.loop??true)!==true&&tick>=duration){tick=duration;onPreview(pose?.loop===false&&selected!=='idle'&&poses.idle?'idle':selected,tick);sync();pause();return;}preview();raf=requestAnimationFrame(step);};
++        const visibility=()=>{if(document.hidden)pause();};
++        const cleanup=()=>{if(disposed)return;disposed=true;pause();document.removeEventListener?.('visibilitychange',visibility);observer?.disconnect();this.views.delete(cleanup);image=null;};
++        const observer=typeof MutationObserver==='undefined'?null:new MutationObserver(()=>{if(!card.isConnected)cleanup();else if(!active())pause();});observer?.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open']});
++        document.addEventListener?.('visibilitychange',visibility);card.ontoggle=()=>{if(!card.open)pause();};this.views.add(cleanup);
++        card.posePreview={pause,dispose:cleanup,get tick(){return tick;},get playing(){return playing;}};
++        const inBounds=next=>!image||Object.values(next).every(p=>p.frames.every(f=>f.x+f.width<=image.width&&f.y+f.height<=image.height));
++        if(imageSource)Promise.resolve(imageSource()).then(loaded=>{if(disposed||!card.isConnected)return;image=loaded;draw();if(!inBounds(poses))report('Frame must stay inside the image.');}).catch(()=>{if(!disposed)report('Could not load spritesheet.');});
+         const draw=()=>{
+-            body.replaceChildren();
+-            const error=this.element('p','rr-battle-help');error.setAttribute('role','status');
++            pause();body.replaceChildren();
++            const error=this.element('p','rr-battle-help');error.setAttribute('role','status');report=value=>this.setText(error,value);
+             const localizeError=value=>{
+                 const sources=["{name}: add at least one frame.","{name}: loop must be true, false, or \"once\".","{name}: anchor x and y must be between 0 and 1.","{name}: frames need nonnegative x/y, positive width/height/duration integers, and valid optional anchors."];
+                 for(const source of sources){const suffix=source.slice(6);if(value.endsWith(suffix))return this.message(source,{name:value.slice(0,-suffix.length)});}
+                 return value;
+             };
+-            const save=next=>{const errors=B.validateGraphicPoses(next);if(errors.length){error.removeAttribute('data-i18n-text-source');error.removeAttribute('data-i18n-text-params');error.replaceChildren(...errors.flatMap(value=>[this.element('span','',localizeError(value)),document.createTextNode(' ')]));return false;}poses=next;onChange(JSON.parse(JSON.stringify(poses)));draw();return true;};
++            const save=next=>{const errors=B.validateGraphicPoses(next);if(!errors.length&&!inBounds(next)){report('Frame must stay inside the image.');return false;}if(errors.length){error.removeAttribute('data-i18n-text-source');error.removeAttribute('data-i18n-text-params');error.replaceChildren(...errors.flatMap(value=>[this.element('span','',localizeError(value)),document.createTextNode(' ')]));return false;}poses=next;onChange(JSON.parse(JSON.stringify(poses)));draw();return true;};
+             const update=fn=>{const next=JSON.parse(JSON.stringify(poses));fn(next);return save(next);};
+             const text=(label,value,fn)=>{const input=this.element('input','database-field-value');input.value=value;input.setAttribute('aria-label',this.text(label));input.onchange=()=>fn(input.value);this.field(body,label,input);return input;};
+             body.append(this.element('p','rr-battle-help','Choose an image and create poses from pixel rectangles. Duration: game frames (60 per second). Anchor: 0,0 at the top left; 0.5,1 at the feet. Use idle for rest, attack for attacking, or select a pose in a sequence.'));
+             const name=text('New Pose Name','',()=>{});
+-            body.append(this.button('Create Pose',()=>{const key=name.value.trim();if(!key||Object.hasOwn(poses,key)){this.setText(error,'Choose a new, nonempty name.');return;}selected=key;tick=0;update(next=>{Object.defineProperty(next,key,{value:{loop:true,anchor:{x:.5,y:1},frames:[{x:0,y:0,width:32,height:48,duration:12}]},enumerable:true,writable:true,configurable:true});});}));
++            body.append(this.button('Create Pose',()=>{const key=name.value.trim();if(!key||Object.hasOwn(poses,key)){this.setText(error,'Choose a new, nonempty name.');return;}selected=key;tick=0;update(next=>{Object.defineProperty(next,key,{value:{loop:true,anchor:{x:.5,y:1},frames:[{x:0,y:0,width:image?Math.min(32,image.width):32,height:image?Math.min(48,image.height):48,duration:12}]},enumerable:true,writable:true,configurable:true});});}));
+             if(selected&&poses[selected]){
+                 this.field(body,'Pose',this.select(Object.keys(poses).map(n=>[n,n,true]),selected,v=>{selected=v;tick=0;draw();onPreview(selected,tick);}));
+                 const rename=text('Pose Name',selected,()=>{});
+@@ -52,7 +65,20 @@ class BattlePresentationEditor {
+                     const remove=this.button('Remove Frame',()=>update(next=>next[selected].frames.splice(index,1)));remove.disabled=pose.frames.length===1;row.append(remove);
+                 });
+                 body.append(this.button('Add Frame',()=>update(next=>next[selected].frames.push({...next[selected].frames.at(-1)}))));
+-                this.number(body,'Preview Time (frames)',tick,v=>{tick=Math.max(0,Math.floor(v));onPreview(selected,tick);},1);
++                if(image){
++                    for(const [label,value,set] of [['Cell Width (pixels)',cw,v=>cw=v],['Cell Height (pixels)',ch,v=>ch=v]])this.number(body,label,value,v=>{if(Number.isInteger(v)&&v>0){set(v);draw();}else report('Cell size must be a positive integer.');},1).setAttribute('data-pose-control',label.startsWith('Cell Width')?'cell-width':'cell-height');
++                    const mode=this.element('input');mode.type='checkbox';mode.setAttribute('data-pose-control','free-rectangle');mode.checked=free;mode.onchange=()=>{free=mode.checked;draw();};this.field(body,'Free Rectangle',mode);
++                    const canvas=this.element('canvas','rr-pose-sheet rr-pose-sheet-canvas');canvas.width=image.width;canvas.height=image.height;canvas.style.cssText='max-width:100%;height:auto;touch-action:none;image-rendering:pixelated;';canvas.setAttribute('aria-label',this.text('Spritesheet Picker'));body.append(canvas);const ctx=canvas.getContext('2d');
++                    const paint=r=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0);ctx.strokeStyle='#55aaff';ctx.beginPath();if(!free){for(let x=0;x<=canvas.width;x+=cw){ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);}for(let y=0;y<=canvas.height;y+=ch){ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);}ctx.stroke();}if(r){ctx.strokeStyle='#ffcc33';ctx.strokeRect(r.x,r.y,r.width,r.height);}};paint();
++                    const point=e=>{const r=canvas.getBoundingClientRect();return {x:Math.floor((e.clientX-r.left)*canvas.width/r.width),y:Math.floor((e.clientY-r.top)*canvas.height/r.height)};};
++                    const rectangle=(a,b)=>({x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),width:Math.abs(a.x-b.x),height:Math.abs(a.y-b.y)});let drag=null;
++                    canvas.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();drag=point(e);canvas.setPointerCapture?.(e.pointerId);};canvas.onpointermove=e=>{if(drag&&free)paint(rectangle(drag,point(e)));};
++                    canvas.onpointerup=e=>{if(!drag)return;const a=drag;drag=null;const r=free?rectangle(a,point(e)):{x:Math.floor(a.x/cw)*cw,y:Math.floor(a.y/ch)*ch,width:cw,height:ch};canvas.releasePointerCapture?.(e.pointerId);
++                        if(r.x<0||r.y<0||r.width<1||r.height<1||r.x+r.width>image.width||r.y+r.height>image.height){paint();report('Frame must stay inside the image.');return;}update(next=>next[selected].frames.push({...r,duration:12}));};canvas.onpointercancel=canvas.onlostpointercapture=()=>{drag=null;paint();};
++                }
++                const duration=B.graphicPoseDuration(pose),timeline=this.element('input','rr-pose-timeline');timeline.type='range';timeline.setAttribute('data-pose-control','timeline');timeline.min=0;timeline.max=duration;timeline.step=1;timeline.value=tick;timeline.setAttribute('aria-label',this.text('Pose Timeline'));timeline.oninput=()=>{pause();tick=Number(timeline.value);preview();};this.field(body,'Pose Timeline',timeline);
++                const time=this.number(body,'Preview Time (frames)',tick,v=>{pause();tick=Math.max(0,Math.floor(v));preview();},1);sync=()=>{timeline.value=(pose.loop??true)===true?tick%duration:Math.min(tick,duration);time.value=tick;};
++                for(const [id,label,fn] of [['play','Play Pose',()=>{pause();if(!active())return;if((pose.loop??true)!==true&&tick>=duration)tick=0;playing=true;base=tick;raf=requestAnimationFrame(step);}],['pause','Pause Pose',pause],['reset','Reset Pose',()=>{pause();tick=0;preview();}]]){const button=this.button(label,fn);button.setAttribute('data-pose-control',id);body.append(button);}
+                 body.append(this.button('Preview Pose',()=>onPreview(selected,tick)));
+             }
+             const advanced=this.element('details');advanced.append(this.element('summary','','Advanced: JSON'));body.append(advanced);
+@@ -235,7 +261,10 @@ class BattlePresentationEditor {
+             };
+         }
+ 
+-        let generation=0,previewPose='idle',previewTick=0;
++        let generation=0,previewPose='idle',previewTick=0,disposed=false;
++        const imageCache=new Map(),pendingImages=new Set();
++        const loadImage=resolved=>{const url=RRAssetFiles.urlFor(require('path').join(project.path,'img',resolved.folder),resolved.name,['.png']);if(!imageCache.has(url))imageCache.set(url,new Promise((resolve,reject)=>{const image=new Image(),cancel=()=>{image.onload=image.onerror=null;image.src='';reject(Error('Image load cancelled'));};pendingImages.add(cancel);image.onload=()=>{pendingImages.delete(cancel);image.onload=image.onerror=null;resolve(image);};image.onerror=()=>{pendingImages.delete(cancel);imageCache.delete(url);image.onload=image.onerror=null;reject(Error('Image load failed'));};image.src=url;}));return imageCache.get(url);};
++        const cleanup=()=>{disposed=true;generation++;for(const cancel of pendingImages)cancel();pendingImages.clear();imageCache.clear();hostObserver?.disconnect();this.views.delete(cleanup);};const hostObserver=typeof MutationObserver==='undefined'?null:new MutationObserver(()=>{if(!host.isConnected)cleanup();});hostObserver?.observe(document.body,{subtree:true,childList:true});this.views.add(cleanup);
+         const enemyRows=()=>kind==='enemies'?[...host.querySelectorAll('.enemy-image-controls')]:[];
+         const optionsCard=this.element('details','rr-battle-motion-details rr-battler-graphic-card');optionsCard.append(this.element('summary','','Battler Options'));
+         const optionsBody=this.element('div','rr-battler-graphic-options-body');optionsCard.append(optionsBody);optionsCard.style.display='none';
+@@ -273,10 +302,10 @@ class BattlePresentationEditor {
+         if(kind==='enemies'&&button)button.addEventListener('click',event=>{if(host.dataset.rrExplicit!=='true')return;event.stopImmediatePropagation();event.preventDefault();explicitChange();},true);
+ 
+         const drawPreview=(resolved,token)=>{
+-            if(kind==='enemies'){
++            if(kind==='enemies'&&!previewCanvas?.isConnected){
+                 explicitPane._battlerPreviewRequest={};explicitPane.dataset.model='';explicitPane.style.filter='';
+                 previewCanvas=this.element('canvas','rr-battler-graphic-preview');previewCanvas.width=240;previewCanvas.height=180;explicitPane.replaceChildren(previewCanvas);
+-            }else{
++            }else if(kind==='actors'){
+                 previewCanvas.getContext('2d').clearRect(0,0,previewCanvas.width,previewCanvas.height);
+                 nameTag.textContent=resolved.type==='model'?resolved.model?.name||this.text('No Model Selected'):resolved.name||this.text('No Image Selected');nameTag.title=nameTag.textContent;
+             }
+@@ -284,8 +313,7 @@ class BattlePresentationEditor {
+             if(resolved.type==='model'&&resolved.model){
+                 Promise.resolve(RRDatabase3DBindings.modelThumbnail(this.parent.reactor3dEditor,resolved.model)).then(url=>{if(token!==generation||!previewCanvas.isConnected||!url)return;const image=new Image();image.onload=()=>{if(token!==generation)return;const scale=Math.min(W/image.width,H/image.height);previewCanvas.getContext('2d').drawImage(image,(W-image.width*scale)/2,(H-image.height*scale)/2,image.width*scale,image.height*scale);};image.src=url;}).catch(console.warn);
+             }else if(resolved.name){
+-                const image=new Image();image.onload=()=>{if(token!==generation||!previewCanvas.isConnected)return;const f=B.graphicFrame(resolved,image.width,image.height,previewPose,previewTick,kind==='actors'?-90:90),c=previewCanvas.getContext('2d'),scale=Math.min((W-20)/f.width,(H-20)/f.height);c.imageSmoothingEnabled=false;c.save();c.clearRect(0,0,W,H);c.translate(W/2,(f.anchor?H-10:H/2)-(resolved.offsetY||0));c.scale(resolved.mirror?-1:1,1);c.drawImage(image,f.x,f.y,f.width,f.height,-f.width*scale*(f.anchor?.x??.5),-f.height*scale*(f.anchor?.y??.5),f.width*scale,f.height*scale);c.restore();};
+-                image.src=RRAssetFiles.urlFor(require('path').join(project.path,'img',resolved.folder),resolved.name,['.png']);
++                loadImage(resolved).then(image=>{if(disposed||token!==generation||!previewCanvas.isConnected)return;const f=B.graphicFrame(resolved,image.width,image.height,previewPose,previewTick,kind==='actors'?-90:90),c=previewCanvas.getContext('2d'),scale=Math.min((W-20)/f.width,(H-20)/f.height);c.imageSmoothingEnabled=false;c.save();c.clearRect(0,0,W,H);c.translate(W/2,(f.anchor?H-10:H/2)-(resolved.offsetY||0));c.scale(resolved.mirror?-1:1,1);c.drawImage(image,f.x,f.y,f.width,f.height,-f.width*scale*(f.anchor?.x??.5),-f.height*scale*(f.anchor?.y??.5),f.width*scale,f.height*scale);c.restore();}).catch(()=>{});
+             }
+         };
+ 
+@@ -309,7 +337,7 @@ class BattlePresentationEditor {
+                 this.number(dimensions,'Defeated Character Index (1–8)',(g.damagedIndex||0)+1,v=>set({...get(),damagedIndex:Math.max(0,Math.min(7,Math.round(v)-1))}),1);
+                 this.field(dimensions,'Defeated Direction',this.select([[2,'Down'],[4,'Left'],[6,'Right'],[8,'Up']],g.damagedDirection||2,v=>set({...get(),damagedDirection:Number(v)})));
+             }
+-            if(resolved.type!=='model')this.rectanglePoseEditor(optionsBody,g.poses||{},value=>set({...get(),poses:value}),(name,tick)=>{previewPose=name;previewTick=tick;drawPreview(B.graphic(settings,kind,record.id,record,binding()),generation);});
++            if(resolved.type!=='model')this.rectanglePoseEditor(optionsBody,g.poses||{},value=>set({...get(),poses:value}),(name,tick)=>{previewPose=name;previewTick=tick;drawPreview(B.graphic(settings,kind,record.id,record,binding()),generation);},resolved.name?()=>loadImage(resolved):null);
+             if(['sv','character'].includes(resolved.type)){
+                 this.number(dimensions,'Frames per Motion',g.frames||3,value=>{set({...get(),frames:Math.max(1,Math.min(60,Math.round(value)))});draw();},1);
+                 this.number(dimensions,'Frames per Step',g.speed||12,value=>set({...get(),speed:Math.max(1,Math.round(value))}),1);
+diff --git a/editor/src/I18nReviewedTranslations.js b/editor/src/I18nReviewedTranslations.js
+--- a/editor/src/I18nReviewedTranslations.js
++++ b/editor/src/I18nReviewedTranslations.js
+@@ -5,6 +5,17 @@
+ globalThis.RR_REVIEWED_TRANSLATIONS = {
+   "text": {
+     "ja": {
++      "Cell Width (pixels)": "??????????",
++      "Cell Height (pixels)": "???????????",
++      "Free Rectangle": "?????",
++      "Spritesheet Picker": "??????????",
++      "Pose Timeline": "??????????",
++      "Play Pose": "??????",
++      "Pause Pose": "????????",
++      "Reset Pose": "????????",
++      "Frame must stay inside the image.": "?????????????????",
++      "Could not load spritesheet.": "????????????????????",
++      "Cell size must be a positive integer.": "?????????????????????",
+       "Tools run code from this project.": "ツールはこのプロジェクトのコードを実行します。",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "ツールはサンドボックス内で実行され、ファイルにアクセスできません。エディターを介してデータベースファイルの読み書きのみが可能です。信頼できるツールのみを実行してください。",
+       "No project tools found.": "プロジェクトツールが見つかりません。",
+@@ -141,6 +152,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "リグをバインドしました — ボーン {bones} 個、頂点 {vertices} 個"
+     },
+     "zh-Hant": {
++      "Cell Width (pixels)": "??????",
++      "Cell Height (pixels)": "??????",
++      "Free Rectangle": "????",
++      "Spritesheet Picker": "???????",
++      "Pose Timeline": "?????",
++      "Play Pose": "????",
++      "Pause Pose": "????",
++      "Reset Pose": "????",
++      "Frame must stay inside the image.": "????????????",
++      "Could not load spritesheet.": "?????????",
++      "Cell size must be a positive integer.": "???????????",
+       "Tools run code from this project.": "工具會執行此專案中的程式碼。",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "工具在沙箱中執行，無法存取檔案，只能透過編輯器讀寫資料庫檔案。請只執行你信任的工具。",
+       "No project tools found.": "找不到專案工具。",
+@@ -281,6 +303,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "骨架綁定完成 — {bones} 根骨骼，{vertices} 個頂點"
+     },
+     "zh-Hans": {
++      "Cell Width (pixels)": "??????",
++      "Cell Height (pixels)": "??????",
++      "Free Rectangle": "????",
++      "Spritesheet Picker": "???????",
++      "Pose Timeline": "?????",
++      "Play Pose": "????",
++      "Pause Pose": "????",
++      "Reset Pose": "????",
++      "Frame must stay inside the image.": "???????????",
++      "Could not load spritesheet.": "?????????",
++      "Cell size must be a positive integer.": "???????????",
+       "Tools run code from this project.": "工具会运行此项目中的代码。",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "工具在沙箱中运行，无法访问文件，只能通过编辑器读写数据库文件。请只运行你信任的工具。",
+       "No project tools found.": "未找到项目工具。",
+@@ -422,6 +455,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "骨架绑定完成 — {bones} 根骨骼，{vertices} 个顶点"
+     },
+     "ko": {
++      "Cell Width (pixels)": "? ??(??)",
++      "Cell Height (pixels)": "? ??(??)",
++      "Free Rectangle": "?? ???",
++      "Spritesheet Picker": "????? ?? ???",
++      "Pose Timeline": "?? ????",
++      "Play Pose": "?? ??",
++      "Pause Pose": "?? ?? ??",
++      "Reset Pose": "?? ???",
++      "Frame must stay inside the image.": "???? ??? ?? ??? ???.",
++      "Could not load spritesheet.": "????? ??? ??? ? ????.",
++      "Cell size must be a positive integer.": "? ??? ?? ???? ???.",
+       "Tools run code from this project.": "도구는 이 프로젝트의 코드를 실행합니다.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "도구는 샌드박스에서 실행되어 파일에 접근할 수 없으며, 에디터를 통해서만 데이터베이스 파일을 읽고 쓸 수 있습니다. 신뢰할 수 있는 도구만 실행하세요.",
+       "No project tools found.": "프로젝트 도구를 찾을 수 없습니다.",
+@@ -563,6 +607,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "리그 바인딩 완료 — 본 {bones}개, 버텍스 {vertices}개"
+     },
+     "es": {
++      "Cell Width (pixels)": "Ancho de celda (p?xeles)",
++      "Cell Height (pixels)": "Alto de celda (p?xeles)",
++      "Free Rectangle": "Rect?ngulo libre",
++      "Spritesheet Picker": "Selector de hoja de sprites",
++      "Pose Timeline": "L?nea de tiempo de pose",
++      "Play Pose": "Reproducir pose",
++      "Pause Pose": "Pausar pose",
++      "Reset Pose": "Reiniciar pose",
++      "Frame must stay inside the image.": "El fotograma debe quedar dentro de la imagen.",
++      "Could not load spritesheet.": "No se pudo cargar la hoja de sprites.",
++      "Cell size must be a positive integer.": "El tama?o de celda debe ser un entero positivo.",
+       "Tools run code from this project.": "Las herramientas ejecutan código de este proyecto.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Una herramienta se ejecuta aislada, sin acceso a archivos, y solo puede leer y escribir archivos de base de datos a través del editor. Ejecuta únicamente herramientas de confianza.",
+       "No project tools found.": "No se encontraron herramientas del proyecto.",
+@@ -737,6 +792,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Rig vinculado — {bones} huesos, {vertices} vértices"
+     },
+     "pt": {
++      "Cell Width (pixels)": "Largura da c?lula (pixels)",
++      "Cell Height (pixels)": "Altura da c?lula (pixels)",
++      "Free Rectangle": "Ret?ngulo livre",
++      "Spritesheet Picker": "Seletor de folha de sprites",
++      "Pose Timeline": "Linha do tempo da pose",
++      "Play Pose": "Reproduzir pose",
++      "Pause Pose": "Pausar pose",
++      "Reset Pose": "Reiniciar pose",
++      "Frame must stay inside the image.": "O quadro deve ficar dentro da imagem.",
++      "Could not load spritesheet.": "N?o foi poss?vel carregar a folha de sprites.",
++      "Cell size must be a positive integer.": "O tamanho da c?lula deve ser um inteiro positivo.",
+       "Tools run code from this project.": "As ferramentas executam código deste projeto.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Uma ferramenta é executada isolada, sem acesso a arquivos, e só pode ler e gravar arquivos de banco de dados através do editor. Execute apenas ferramentas confiáveis.",
+       "No project tools found.": "Nenhuma ferramenta do projeto encontrada.",
+@@ -908,6 +974,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Rig vinculado — {bones} ossos, {vertices} vértices"
+     },
+     "fr": {
++      "Cell Width (pixels)": "Largeur de cellule (pixels)",
++      "Cell Height (pixels)": "Hauteur de cellule (pixels)",
++      "Free Rectangle": "Rectangle libre",
++      "Spritesheet Picker": "S?lecteur de feuille de sprites",
++      "Pose Timeline": "Chronologie de la pose",
++      "Play Pose": "Lire la pose",
++      "Pause Pose": "Mettre la pose en pause",
++      "Reset Pose": "R?initialiser la pose",
++      "Frame must stay inside the image.": "L?image de pose doit rester dans les limites de la feuille.",
++      "Could not load spritesheet.": "Impossible de charger la feuille de sprites.",
++      "Cell size must be a positive integer.": "La taille de cellule doit ?tre un entier positif.",
+       "Tools run code from this project.": "Les outils exécutent du code provenant de ce projet.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Un outil s'exécute en bac à sable, sans accès aux fichiers, et ne peut lire et écrire que des fichiers de base de données via l'éditeur. N'exécutez que des outils de confiance.",
+       "No project tools found.": "Aucun outil de projet trouvé.",
+@@ -1077,6 +1154,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Rig lié — {bones} os, {vertices} sommets"
+     },
+     "it": {
++      "Cell Width (pixels)": "Larghezza cella (pixel)",
++      "Cell Height (pixels)": "Altezza cella (pixel)",
++      "Free Rectangle": "Rettangolo libero",
++      "Spritesheet Picker": "Selettore del foglio sprite",
++      "Pose Timeline": "Sequenza temporale della posa",
++      "Play Pose": "Riproduci posa",
++      "Pause Pose": "Pausa posa",
++      "Reset Pose": "Reimposta posa",
++      "Frame must stay inside the image.": "Il fotogramma deve restare dentro l?immagine.",
++      "Could not load spritesheet.": "Impossibile caricare il foglio sprite.",
++      "Cell size must be a positive integer.": "La dimensione della cella deve essere un intero positivo.",
+       "Tools run code from this project.": "Gli strumenti eseguono codice di questo progetto.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Uno strumento viene eseguito in sandbox, senza accesso ai file, e può solo leggere e scrivere file di database tramite l'editor. Esegui solo strumenti di cui ti fidi.",
+       "No project tools found.": "Nessuno strumento del progetto trovato.",
+@@ -1256,6 +1344,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Rig vincolato — {bones} ossa, {vertices} vertici"
+     },
+     "de": {
++      "Cell Width (pixels)": "Zellenbreite (Pixel)",
++      "Cell Height (pixels)": "Zellenh?he (Pixel)",
++      "Free Rectangle": "Freies Rechteck",
++      "Spritesheet Picker": "Spritebogen-Auswahl",
++      "Pose Timeline": "Posen-Zeitleiste",
++      "Play Pose": "Pose abspielen",
++      "Pause Pose": "Pose pausieren",
++      "Reset Pose": "Pose zur?cksetzen",
++      "Frame must stay inside the image.": "Das Einzelbild muss innerhalb des Bildes liegen.",
++      "Could not load spritesheet.": "Spritebogen konnte nicht geladen werden.",
++      "Cell size must be a positive integer.": "Die Zellengr??e muss eine positive ganze Zahl sein.",
+       "Tools run code from this project.": "Werkzeuge führen Code aus diesem Projekt aus.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Ein Werkzeug läuft in einer Sandbox ohne Dateizugriff und kann Datenbankdateien nur über den Editor lesen und schreiben. Führe nur Werkzeuge aus, denen du vertraust.",
+       "No project tools found.": "Keine Projektwerkzeuge gefunden.",
+@@ -1403,6 +1502,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Rig gebunden — {bones} Bones, {vertices} Vertices"
+     },
+     "ru": {
++      "Cell Width (pixels)": "?????? ?????? (???????)",
++      "Cell Height (pixels)": "?????? ?????? (???????)",
++      "Free Rectangle": "????????? ?????????????",
++      "Spritesheet Picker": "????? ?? ????? ????????",
++      "Pose Timeline": "????? ??????? ????",
++      "Play Pose": "????????????? ????",
++      "Pause Pose": "????????????? ????",
++      "Reset Pose": "???????? ????",
++      "Frame must stay inside the image.": "???? ?????? ?????????? ?????? ???????????.",
++      "Could not load spritesheet.": "?? ??????? ????????? ???? ????????.",
++      "Cell size must be a positive integer.": "?????? ?????? ?????? ???? ????????????? ????? ??????.",
+       "Tools run code from this project.": "Инструменты выполняют код из этого проекта.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Инструмент работает в песочнице без доступа к файлам и может только читать и записывать файлы базы данных через редактор. Запускайте только те инструменты, которым доверяете.",
+       "No project tools found.": "Инструменты проекта не найдены.",
+@@ -1557,6 +1667,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Скелет привязан — {bones} костей, {vertices} вершин"
+     },
+     "pl": {
++      "Cell Width (pixels)": "Szeroko?? kom?rki (piksele)",
++      "Cell Height (pixels)": "Wysoko?? kom?rki (piksele)",
++      "Free Rectangle": "Dowolny prostok?t",
++      "Spritesheet Picker": "Wyb?r z arkusza sprite??w",
++      "Pose Timeline": "O? czasu pozy",
++      "Play Pose": "Odtw?rz poz?",
++      "Pause Pose": "Wstrzymaj poz?",
++      "Reset Pose": "Zresetuj poz?",
++      "Frame must stay inside the image.": "Klatka musi mie?ci? si? w obrazie.",
++      "Could not load spritesheet.": "Nie uda?o si? wczyta? arkusza sprite??w.",
++      "Cell size must be a positive integer.": "Rozmiar kom?rki musi by? dodatni? liczb? ca?kowit?.",
+       "Tools run code from this project.": "Narzędzia uruchamiają kod z tego projektu.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Narzędzie działa w piaskownicy bez dostępu do plików i może jedynie odczytywać i zapisywać pliki bazy danych poprzez edytor. Uruchamiaj tylko zaufane narzędzia.",
+       "No project tools found.": "Nie znaleziono narzędzi projektu.",
+@@ -1710,6 +1831,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Szkielet powiązany — {bones} kości, {vertices} wierzchołków"
+     },
+     "el": {
++      "Cell Width (pixels)": "?????? ?????? (??????????????)",
++      "Cell Height (pixels)": "???? ?????? (??????????????)",
++      "Free Rectangle": "???????? ?????????",
++      "Spritesheet Picker": "????????? ?????? ????????",
++      "Pose Timeline": "??????????? ??????",
++      "Play Pose": "??????????? ??????",
++      "Pause Pose": "????? ??????",
++      "Reset Pose": "????????? ??????",
++      "Frame must stay inside the image.": "?? ???? ?????? ?? ????????? ???? ???? ??????.",
++      "Could not load spritesheet.": "??? ???? ?????? ? ??????? ??? ?????? ????????.",
++      "Cell size must be a positive integer.": "?? ??????? ?????? ?????? ?? ????? ??????? ????????.",
+       "Tools run code from this project.": "Τα εργαλεία εκτελούν κώδικα από αυτό το έργο.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Ένα εργαλείο εκτελείται σε sandbox χωρίς πρόσβαση σε αρχεία και μπορεί μόνο να διαβάζει και να γράφει αρχεία βάσης δεδομένων μέσω του επεξεργαστή. Εκτελείτε μόνο εργαλεία που εμπιστεύεστε.",
+       "No project tools found.": "Δεν βρέθηκαν εργαλεία έργου.",
+@@ -1863,6 +1995,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Ο σκελετός συνδέθηκε — {bones} οστά, {vertices} κορυφές"
+     },
+     "ar": {
++      "Cell Width (pixels)": "??? ?????? (????)",
++      "Cell Height (pixels)": "?????? ?????? (????)",
++      "Free Rectangle": "?????? ??",
++      "Spritesheet Picker": "????? ???? ??????",
++      "Pose Timeline": "???? ?????? ???????",
++      "Play Pose": "????? ???????",
++      "Pause Pose": "????? ??????? ??????",
++      "Reset Pose": "????? ??? ???????",
++      "Frame must stay inside the image.": "??? ?? ???? ?????? ???? ??????.",
++      "Could not load spritesheet.": "???? ????? ???? ??????.",
++      "Cell size must be a positive integer.": "??? ?? ???? ??? ?????? ????? ?????? ??????.",
+       "Tools run code from this project.": "تُشغّل الأدوات تعليمات برمجية من هذا المشروع.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "تعمل الأداة في بيئة معزولة بلا وصول إلى الملفات، ولا يمكنها سوى قراءة ملفات قاعدة البيانات وكتابتها عبر المحرر. شغّل الأدوات الموثوقة فقط.",
+       "No project tools found.": "لم يتم العثور على أدوات للمشروع.",
+@@ -2096,6 +2239,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "تم ربط الهيكل العظمي — {bones} عظمة، {vertices} رأسًا"
+     },
+     "tr": {
++      "Cell Width (pixels)": "H?cre geni?li?i (piksel)",
++      "Cell Height (pixels)": "H?cre y?ksekli?i (piksel)",
++      "Free Rectangle": "Serbest dikd?rtgen",
++      "Spritesheet Picker": "Sprite sayfas? se?ici",
++      "Pose Timeline": "Poz zaman ?izelgesi",
++      "Play Pose": "Pozu oynat",
++      "Pause Pose": "Pozu duraklat",
++      "Reset Pose": "Pozu s?f?rla",
++      "Frame must stay inside the image.": "Kare g?r?nt?n?n i?inde kalmal?d?r.",
++      "Could not load spritesheet.": "Sprite sayfas? y?klenemedi.",
++      "Cell size must be a positive integer.": "H?cre boyutu pozitif bir tam say? olmal?d?r.",
+       "Tools run code from this project.": "Araçlar bu projedeki kodu çalıştırır.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Bir araç, dosya erişimi olmadan yalıtılmış ortamda çalışır ve veritabanı dosyalarını yalnızca düzenleyici aracılığıyla okuyup yazabilir. Yalnızca güvendiğiniz araçları çalıştırın.",
+       "No project tools found.": "Proje aracı bulunamadı.",
+@@ -2345,6 +2499,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "İskelet bağlandı — {bones} kemik, {vertices} köşe"
+     },
+     "id": {
++      "Cell Width (pixels)": "Lebar sel (piksel)",
++      "Cell Height (pixels)": "Tinggi sel (piksel)",
++      "Free Rectangle": "Persegi panjang bebas",
++      "Spritesheet Picker": "Pemilih lembar sprite",
++      "Pose Timeline": "Linimasa pose",
++      "Play Pose": "Putar pose",
++      "Pause Pose": "Jeda pose",
++      "Reset Pose": "Atur ulang pose",
++      "Frame must stay inside the image.": "Bingkai harus berada di dalam gambar.",
++      "Could not load spritesheet.": "Tidak dapat memuat lembar sprite.",
++      "Cell size must be a positive integer.": "Ukuran sel harus berupa bilangan bulat positif.",
+       "Tools run code from this project.": "Alat menjalankan kode dari proyek ini.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Alat berjalan dalam sandbox tanpa akses berkas, dan hanya dapat membaca serta menulis berkas basis data melalui editor. Jalankan hanya alat yang Anda percayai.",
+       "No project tools found.": "Tidak ada alat proyek yang ditemukan.",
+@@ -2524,6 +2689,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Rig terikat — {bones} tulang, {vertices} verteks"
+     },
+     "vi": {
++      "Cell Width (pixels)": "Chi?u r?ng ? (pixel)",
++      "Cell Height (pixels)": "Chi?u cao ? (pixel)",
++      "Free Rectangle": "H?nh ch? nh?t t? do",
++      "Spritesheet Picker": "B? ch?n b?ng sprite",
++      "Pose Timeline": "D?ng th?i gian t? th?",
++      "Play Pose": "Ph?t t? th?",
++      "Pause Pose": "T?m d?ng t? th?",
++      "Reset Pose": "??t l?i t? th?",
++      "Frame must stay inside the image.": "Khung h?nh ph?i n?m trong ?nh.",
++      "Could not load spritesheet.": "Kh?ng th? t?i b?ng sprite.",
++      "Cell size must be a positive integer.": "K?ch th??c ? ph?i l? s? nguy?n d??ng.",
+       "Tools run code from this project.": "Công cụ chạy mã từ dự án này.",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "Công cụ chạy trong môi trường cách ly, không truy cập tệp, và chỉ có thể đọc và ghi tệp cơ sở dữ liệu thông qua trình chỉnh sửa. Chỉ chạy những công cụ bạn tin tưởng.",
+       "No project tools found.": "Không tìm thấy công cụ dự án nào.",
+@@ -2727,6 +2903,17 @@ globalThis.RR_REVIEWED_TRANSLATIONS = {
+       "Rig bound — {bones} bones, {vertices} vertices": "Đã liên kết rig — {bones} xương, {vertices} đỉnh"
+     },
+     "th": {
++      "Cell Width (pixels)": "????????????? (??????)",
++      "Cell Height (pixels)": "??????????? (??????)",
++      "Free Rectangle": "???????????????",
++      "Spritesheet Picker": "??????????????????",
++      "Pose Timeline": "??????????????",
++      "Play Pose": "??????????",
++      "Pause Pose": "?????????",
++      "Reset Pose": "????????????",
++      "Frame must stay inside the image.": "????????????????????",
++      "Could not load spritesheet.": "????????????????????",
++      "Cell size must be a positive integer.": "????????????????????????????",
+       "Tools run code from this project.": "เครื่องมือจะรันโค้ดจากโปรเจกต์นี้",
+       "A tool runs sandboxed with no file access, and can only read and write database files through the editor. Only run tools you trust.": "เครื่องมือทำงานในแซนด์บ็อกซ์โดยไม่มีสิทธิ์เข้าถึงไฟล์ และอ่านหรือเขียนไฟล์ฐานข้อมูลได้ผ่านโปรแกรมแก้ไขเท่านั้น เรียกใช้เฉพาะเครื่องมือที่คุณเชื่อถือ",
+       "No project tools found.": "ไม่พบเครื่องมือของโปรเจกต์",

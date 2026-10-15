@@ -1,0 +1,27 @@
+﻿{
+  "name": "diana-rpg-studio",
+  "version": "0.1.1",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "prepare:editor": "node scripts/prepare-editor.cjs",
+    "start": "node scripts/launch.cjs",
+    "test": "node --test tests/*.test.cjs tests/upstream/*.test.cjs",
+    "test:prepared": "node scripts/test-prepared.cjs",
+    "verify:prepared": "node scripts/verify-prepared.cjs",
+    "test:upstream": "npm --prefix upstream/RPGReactor/editor test",
+    "smoke:windows": "node scripts/smoke-windows.cjs",
+    "smoke:battle:windows": "node scripts/smoke-battle-windows.cjs",
+    "smoke:poses:windows": "node scripts/smoke-pose-authoring-windows.cjs",
+    "smoke:starter:windows": "node scripts/smoke-starter-windows.cjs",
+    "smoke:basic:windows": "node scripts/smoke-basic-use-windows.cjs",
+    "smoke:maps:windows": "node scripts/smoke-map-events-windows.cjs",
+    "smoke:authoring:windows": "node scripts/smoke-parallax-ui-windows.cjs",
+    "smoke:sequences:windows": "node scripts/smoke-animation-sequences-windows.cjs",
+    "smoke:package:windows": "node scripts/smoke-package-windows.cjs",
+    "package:windows": "node scripts/package-windows.cjs",
+    "export:windows": "node scripts/export-windows.cjs",
+    "report:upstream": "node scripts/report-upstream.cjs"
+  },
+  "engines": {"node": ">=22"}
+}

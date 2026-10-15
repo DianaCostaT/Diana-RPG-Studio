@@ -1,0 +1,233 @@
+# Third-Party Notices
+
+RPG Reactor-owned code is licensed under the repository's MIT License. The
+following credits and license details cover bundled third-party components.
+
+## PixiJS
+
+- Component: PixiJS 8.20.0
+- Bundled file: `runtime/libs/pixi.js`
+- Header: "PixiJS is licensed under the MIT License."
+- Upstream license URL in header: <http://www.opensource.org/licenses/mit-license>
+
+The same bundle identifies `tiny-lru` 11.4.7, copyright 2026 Jason Mulligan,
+under BSD-3-Clause.
+
+## Three.js
+
+- Component: Three.js 0.185.1 (r185.1)
+- Bundled file: `runtime/libs/three.js`
+- Copyright: 2010-2026 Three.js Authors
+- License: MIT
+- Upstream: <https://github.com/mrdoob/three.js>
+
+## Effekseer for WebGL
+
+- Component: Effekseer for WebGL 1.70b
+- Bundled files: `editor/libs/effekseer.min.js`, `editor/libs/effekseer.wasm`, `runtime/libs/effekseer.min.js`, and `runtime/libs/effekseer.wasm`
+- Upstream: <https://github.com/effekseer/EffekseerForWebGL>
+- Header: "This software is licensed under the MIT License."
+- Upstream license URL in header: <http://www.opensource.org/licenses/mit-license>
+
+## localForage
+
+- Component: localForage 1.7.3
+- Bundled file: `runtime/libs/localforage.min.js`
+- Header: "(c) 2013-2017 Mozilla, Apache License 2.0"
+- Upstream URL in header: <https://localforage.github.io/localForage>
+
+## LZ-String
+
+- Component: LZ-based compression algorithm 1.4.1
+- Bundled file: `runtime/libs/lz-string.js`
+- Header: "Copyright (c) 2013 Pieroxy" and "Distributed under the WTFPL, Version 2"
+- License URL in header: <http://www.wtfpl.net/>
+
+## Galv's Character Frames MZ
+
+- Component: Galv's Character Frames MZ 1.0
+- Bundled file: `template/Demo/js/plugins/GALV_CharacterFramesMZ.js`
+- Author: Galv
+- Project and terms: <https://galvs-scripts.com/>
+
+## Moghunter Plugins
+
+- Components: Battle Cursor, Battle HUD, Character Particles, Character Shatter
+  Effect, HP Gauge, Picture Effects, Treasure Popup, Treasure Popup Battle, and
+  Variable HUD
+- Bundled files: `template/Demo/js/plugins/MOG_*.js`
+- Author: Moghunter
+- Project: <https://mogplugins.wordpress.com/>
+
+## Poly Haven Textures
+
+- Components: the Demo's Rock, Stone, Wood, Plaster, RoofTile, Thatch, Sand and
+  Cobble materials (image, `_normal` and `_rough` maps), resized and colour-matched
+  from the Poly Haven textures rock_face_03, stone_wall, weathered_brown_planks,
+  plastered_wall, clay_roof_tiles_02, reed_roof_04, dirt_floor and
+  cobblestone_floor_01
+- Bundled files: `template/Demo/img/materials/{Rock,Stone,Wood,Plaster,RoofTile,Thatch,Sand,Cobble}*.png`
+- Source: <https://polyhaven.com/textures>
+- License: CC0 1.0 Universal (public domain dedication),
+  <https://creativecommons.org/publicdomain/zero/1.0/>
+
+## Kenney RPG Audio
+
+- Components: the Demo's door and gate sounds, renamed from Kenney's RPG Audio
+  doorOpen_1, doorOpen_2, doorClose_1, doorClose_4 and creak1; the locked rattle
+  is metalLatch and metalClick mixed together
+- Bundled files: `template/Demo/audio/se/{door-open-01,door-open-02,door-close-01,door-close-02,door-locked-01,gate-open-01}.ogg`
+- Source: <https://kenney.nl/assets/rpg-audio>
+- License: CC0 1.0 Universal (public domain dedication),
+  <https://creativecommons.org/publicdomain/zero/1.0/>
+
+## Ultra Mode 7
+
+- Component: Ultra Mode 7 2.2.0
+- Bundled file: `template/Demo/js/plugins/UltraMode7.js`
+- Author: Boris "Blizzard" Mikic
+- Project: <https://forums.rpgmakerweb.com/index.php?threads/ultra-mode-7-rmmv-rmmz.94100>
+- License: BSD 3-Clause
+
+### Ultra Mode 7 License Text
+
+```text
+Copyright (c) Boris "Blizzard" Mikic
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+## pako
+
+- Component: pako, a JavaScript zlib implementation
+- Bundled file: `runtime/libs/pako.min.js`
+- Upstream: <https://github.com/nodeca/pako>
+- License: MIT
+- Copyright: Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
+
+### pako License Text
+
+```text
+The MIT License
+
+Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+```
+
+## stb_vorbis Basis
+
+- Component: `stb_vorbis`, the Ogg Vorbis decoder on which the bundled decoder is based
+- Bundled file: `runtime/libs/vorbisdecoder.js` 1.0.1
+- Upstream source: <https://github.com/nothings/stb/blob/master/stb_vorbis.c>
+- Upstream license: dual MIT or Unlicense, at the recipient's option
+- Copyright: Copyright (c) 2017 Sean Barrett
+
+### stb License Text
+
+```text
+This software is available under 2 licenses -- choose whichever you prefer.
+------------------------------------------------------------------------------
+ALTERNATIVE A - MIT License
+Copyright (c) 2017 Sean Barrett
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+------------------------------------------------------------------------------
+ALTERNATIVE B - Public Domain (www.unlicense.org)
+This is free and unencumbered software released into the public domain.
+Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+software, either in source code form or as a compiled binary, for any purpose,
+commercial or non-commercial, and by any means.
+In jurisdictions that recognize copyright laws, the author or authors of this
+software dedicate any and all copyright interest in the software to the public
+domain. We make this dedication for the benefit of the public at large and to
+the detriment of our heirs and successors. We intend this dedication to be an
+overt act of relinquishment in perpetuity of all present and future rights to
+this software under copyright law.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+## Optional NW.js FFmpeg Codec Overlay
+
+- Component: `nwjs-ffmpeg-prebuilt`, exact-version FFmpeg binaries for NW.js
+- Upstream: <https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt>
+- Build scripts for NW.js 0.107.0, commit `44c5d44e78c457149c8bee98aeca9a7bb1d5659c`: <https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt/tree/44c5d44e78c457149c8bee98aeca9a7bb1d5659c>
+- Corresponding FFmpeg source, commit `e18f48eba6b367ac68b9c477ae6cbe224e36b031`: <https://chromium.googlesource.com/chromium/third_party/ffmpeg/+archive/e18f48eba6b367ac68b9c477ae6cbe224e36b031.tar.gz>
+- License: GNU Lesser General Public License v2.1 or later. The complete text is in `editor/build-scripts/licenses/FFmpeg-LGPL-2.1.txt` in the source tree and beside every installed overlay.
+
+Eligible full desktop editor and game packages enable this optional overlay by
+default to provide H.264/AVC and AAC playback; users may disable it. Minimal and
+Web packages do not contain it. Acquisition requires an exact NW.js release
+match, a trusted archive SHA-256 from `editor/build-scripts/release-hashes.json` in the source tree, and
+validation of the single expected platform binary. Disabling the overlay uses a
+clean official runtime rather than reusing a previously patched one. The build
+records its exact NW.js version and archive/binary SHA-256 values, immutable
+source revisions, and license metadata in `rpg-reactor-codec.json`.
+`RPG_REACTOR_CODEC_NOTICE.txt` and the complete license text are installed beside
+it.
+
+H.264/AVC and AAC may be covered by patents or licensing programs in some
+jurisdictions. The upstream project advises distributors to review the source
+license and patent obligations. Distribution of the binary does not itself
+grant patent rights.
+
+Package-manager dependencies retain the licenses recorded by their packages
+and lockfile.

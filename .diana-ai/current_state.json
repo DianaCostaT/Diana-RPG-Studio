@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "updatedOn": "2026-10-15",
+  "product": "Diana RPG Studio",
+  "version": "0.1.1",
+  "phase": "0: aplicação Windows e pacote local testados; 1: autoria integrada parcial",
+  "base": {
+    "project": "RPGReactor",
+    "commit": "dc918245cbf8f10ae6eef4ed8cb54b850fed9caa",
+    "patches": [
+      "animation-poses.patch",
+      "held-poses.patch",
+      "z-pose-localization.patch",
+      "zz-pose-authoring.patch",
+      "zzz-pose-authoring-localization.patch",
+      "zzzz-animation-mvp.patch",
+      "zzzz-windows-package.patch"
+    ]
+  },
+  "verified": [
+    "Editor real Windows NW.js 0.118.0",
+    "Criar, abrir, salvar e reabrir projeto sem Demo/plugins",
+    "Pintura por ponteiro, undo/redo e persistência de camadas",
+    "Importação de PNGs originais de tileset/personagem/parallax",
+    "Evento de diálogo e parallax de fundo no jogo executado",
+    "Poses nomeadas com recortes, duração, loop e âncoras para atores/inimigos",
+    "Formulário visual, save e leitura de poses por novo processo runtime",
+    "Ataque forçado com dano e nocaute em cenário lateral",
+    "Duas preparações equivalentes: 2212 arquivos comparados",
+    "SHA-256 do ZIP NW.js confirmado com manifest oficial",
+    "Grade e arraste por ponteiro real para atores/inimigos; recortes preservados no runtime",
+    "Prévia automática, pause/reset/seek sem alterar dados e limites da imagem com erro visível",
+    "63 testes Diana e 31 contra build preparado aprovados",
+    "Projeto inicial original: personagem, classe, progressão, ataque, defesa, nocaute, NPC e mapa transitável",
+    "Novo jogo, diálogo e batalha por teclado real até vitória, derrota permitida e fuga; paleta legível",
+    "Prévia bloqueada com aviso visual em português para classe inválida; dados do usuário não alterados",
+    "Pintar/apagar por ponteiro, colisão por seta, sprite 48x60 com tile32, foreground, drift e transferência por eventos",
+    "Referências de poses protegidas inclusive JSON e mapeamentos; controle visual Simultâneo",
+    "Pacote e export Windows relocados sem junction, jogo responde a Enter/seta/Escape; licença de distribuição ainda bloqueada",
+    "Parallax criado por ponteiro/teclado: fundo, primeiro plano, opacidade, follow e drift; save/reopen e runtime comparados",
+    "NPC renomeado e diálogo editado nas janelas por ponteiro/teclado; texto acionado no jogo por Enter",
+    "Prévia bloqueia imagens ausentes do grupo/mapa aberto com orientação em português; sem alterar dados",
+    "Launcher Windows Diana.exe compilado localmente, saída0 e janela Diana RPG Studio respondendo após abertura direta",
+    "Interface original Diana com navegação Mapas/Eventos/Banco/Inimigos/Sequências/Recursos/Parallax/Testar; sidebar compacta e identidade azul",
+    "Pacote pronto cria/salva projeto com runtime/dependências internos; barra e alternância Mapas/Eventos verificadas",
+    "Projeto novo 0.1.1 com tiles originais de terreno/objetos, mapa com caminho/lago e colisão de obstáculos",
+    "Paleta escolhe folha disponível em vez de abrir A vazia; preserva seleção válida e ignora conclusão antiga de carregamento",
+    "Uso básico por controles reais: escolher água, pintar, desfazer/refazer, salvar; runtime bloqueia água e permite caminhar",
+    "Pacote 0.1.1 cria/salva usando dependências e runtime internos; diálogo inicial descreve corretamente o projeto fornecido"
+  ],
+  "partial": [
+    "Autoria visual parcial: diálogo/parallax testados; importação, novo evento, condições e database completo pendentes",
+    "Colisão visual customizada e dimensões retangulares independentes de tile",
+    "Comparação renderizada de trajetórias/efeitos e som audível",
+    "Instalação em Windows limpo e revisão de falhas upstream"
+  ],
+  "planned": [
+    "Plugin SDK Diana versionado",
+    "Diana AI Integration",
+    "Modos futuros de RPG"
+  ],
+  "blocked": [
+    "Distribuição pública: notices oficiais NW.js/Chromium/Node completos ausentes no SDK local, texto MIT @pixi/colord e revisão WASM pendentes",
+    "Aceite global upstream pendente de falhas Windows e funcionais"
+  ],
+  "evidence": {
+    "build": "build/diana/provenance.json",
+    "reproducibility": "artifacts/prepare-verification.json",
+    "windows": "artifacts/windows-smoke.json",
+    "launch": "artifacts/launch-verification.json",
+    "battle": "artifacts/battle-smoke.json",
+    "upstream": "artifacts/upstream-test-report.json",
+    "report": "docs/VALIDATION.md",
+    "poseAuthoring": "artifacts/pose-authoring-smoke.json",
+    "starter": "artifacts/starter-smoke.json",
+    "defeat": "artifacts/starter-defeat-smoke.json",
+    "escape": "artifacts/starter-escape-smoke.json",
+    "maps": "artifacts/map-events-smoke.json",
+    "package": "artifacts/windows-package-OtaEPZ/report.json",
+    "sequences": "docs/ANIMATION_MVP_VALIDATION.md",
+    "visualAuthoring": "artifacts/parallax-ui-smoke.json",
+    "readyExecutable": "artifacts/ready-exe-smoke.json",
+    "directLaunch": "artifacts/direct-exe-launch.json",
+    "workspace": "artifacts/parallax-ui-smoke.json",
+    "basicUse": "artifacts/basic-use-smoke.json"
+  },
+  "git": {
+    "branch": "diana/phase-0-1",
+    "committed": true,
+    "reason": "Commit autorizado pelo usuário; push pendente de URL do remoto, ainda não configurado."
+  },
+  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.1.1/Diana.exe"
+}

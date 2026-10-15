@@ -1,0 +1,88 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {WebDriverClient}=require('../upstream/RPGReactor/editor/tests/smoke/webdriver-client.cjs');
+const root=path.resolve(__dirname,'..'),sdk=path.join(root,'tools/nwjs-sdk-v0.118.0-win-x64');
+async function main(){
+ const artifacts=path.join(root,'artifacts'),run=fs.mkdtempSync(path.join(artifacts,'parallax-ui-'));
+ const prior=JSON.parse(fs.readFileSync(path.join(artifacts,'starter-smoke.json'),'utf8'));assert.equal(prior.status,'passed');
+ const project=path.join(run,'Projeto parallax visual');fs.cpSync(prior.project,project,{recursive:true});
+ let driver;const evidence={status:'running',run,project};
+ const report=()=>fs.writeFileSync(path.join(artifacts,'parallax-ui-smoke.json'),JSON.stringify({...evidence,at:new Date().toISOString()},null,2));report();
+ const open=async app=>{driver=new WebDriverClient(path.join(sdk,'chromedriver.exe'));await driver.start();await driver.createSession({browserName:'chrome','goog:chromeOptions':{binary:path.join(sdk,'nw.exe'),args:['nwapp='+app,'user-data-dir='+path.join(run,app===project?'game-profile':'editor-profile'),'no-first-run']}});await driver.setScriptTimeout(90000);await driver.execute('nw.Window.get().focus();');};
+ const wait=(script)=>driver.waitForScript(script,[],{timeout:20000});
+ const click=async(selector,count=1)=>{
+  const point=await driver.execute('const n=document.querySelector(arguments[0]);if(!n)throw Error("Missing control: "+arguments[0]);n.scrollIntoView({block:"center"});const r=n.getBoundingClientRect();if(n.disabled||r.width<1||r.height<1)throw Error("Unavailable control: "+arguments[0]);return {x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)};',[selector]);
+  assert.equal(await driver.execute('return document.querySelector(arguments[0]).contains(document.elementFromPoint(arguments[1],arguments[2]));',[selector,point.x,point.y]),true,'visible control is not covered: '+selector);
+  await driver.sessionRequest('POST','/actions',{actions:[{type:'pointer',id:'author-mouse',parameters:{pointerType:'mouse'},actions:[{type:'pointerMove',origin:'viewport',duration:0,...point},...Array.from({length:count},()=>[{type:'pointerDown',button:0},{type:'pointerUp',button:0}]).flat()]}]});
+ };
+ const keys=async values=>driver.sessionRequest('POST','/actions',{actions:[{type:'key',id:'author-keyboard',actions:values.flatMap(value=>[{type:'keyDown',value},{type:'pause',duration:100},{type:'keyUp',value}])}]});
+ const number=async(selector,value)=>{await click(selector);await driver.sessionRequest('POST','/actions',{actions:[{type:'key',id:'author-keyboard',actions:[{type:'keyDown',value:'\uE009'},{type:'keyDown',value:'a'},{type:'keyUp',value:'a'},{type:'keyUp',value:'\uE009'},...String(value).split('').flatMap(value=>[{type:'keyDown',value},{type:'keyUp',value}]),{type:'keyDown',value:'\uE004'},{type:'keyUp',value:'\uE004'}]}]});};
+ const shot=async name=>fs.writeFileSync(path.join(run,name+'.png'),Buffer.from(await driver.sessionRequest('GET','/screenshot'),'base64'));
+ const add=async kind=>{await click('.rr-image-layer-add');await click('[data-choice="'+kind+'"]');};
+ try{
+  await open(path.join(root,'build/diana/editor'));
+  await driver.waitForScript('return !!window.reactor?.projectController && getComputedStyle(document.getElementById("splash-screen")).display==="none";',[],{timeout:90000});
+  const opened=await driver.executeAsync('const done=arguments[arguments.length-1];reactor.projectController.openProjectAtPath(arguments[0]).then(()=>done({loaded:!!reactor.projectController.tilemapManager.currentMap}),e=>done({failure:String(e)}));',[project]);
+  assert.equal(opened.loaded,true,opened.failure);
+  await wait('return document.querySelector("[data-diana-action=database]")?.disabled===false;');
+  await click('[data-diana-action="database"]');
+  await wait('return !!document.querySelector("input[data-actor-id][data-field=name]");');
+  await click('#database-ok-btn');
+  await click('[data-diana-action="events"]');assert.equal(await driver.execute('return reactor.eventManager.eventMode;'),true);
+  await click('[data-diana-action="maps"]');assert.equal(await driver.execute('return reactor.eventManager.eventMode;'),false);
+  evidence.workspace=await driver.execute('return {brand:document.querySelector(".diana-brand").innerText,sidebarWidth:document.getElementById("sidebar").getBoundingClientRect().width,actions:[...document.querySelectorAll("[data-diana-action]")].map(n=>n.dataset.dianaAction)};');
+  assert.ok(evidence.workspace.sidebarWidth<330);await shot('diana-workspace');
+  await click('.tool-button[data-action="image-layers"]');await wait('return !!document.querySelector(".rr-image-layer-add");');
+  await add('fog');await wait('return document.querySelector(".rr-dialog-message")?.textContent.includes("img/parallaxes");');
+  evidence.emptyFolderMessage=await driver.execute('return document.querySelector(".rr-dialog-message").textContent;');await shot('empty-folder');
+  await click('#rr-themed-dialog .rr-button-primary');
+  // Only source-image preparation uses an API. Every layer is authored through UI controls below.
+  await driver.execute('const pm=reactor.projectManager;pm.writeSolidPng(pm.path.join(arguments[0],"img/parallaxes/Névoa original.png"),128,128,[90,120,180,100]);',[project]);
+  await add('far');await click('.rr-material-option[data-name="Névoa original"]');
+  await wait('return !!document.querySelector("[data-focus=follow]");');
+  await number('[data-focus="follow"]',35);
+  await add('fog');await click('.rr-material-option[data-name="Névoa original"]');
+  await number('[data-focus="drift-x"]',24);await number('[data-focus="drift-y"]',-6);
+  await click('[data-focus="opacity"]');await keys(['\uE010',...Array(25).fill('\uE012'),'\uE004']);
+  evidence.authored=await driver.execute('return JSON.parse(JSON.stringify(reactor.projectController.tilemapManager.currentMap.rrImageLayers));');
+  assert.equal(evidence.authored.length,2);
+  const back=evidence.authored.find(l=>l.layer==='back'),over=evidence.authored.find(l=>l.layer==='over');
+  assert.equal(back.follow,.35);assert.deepEqual(over.drift,[24,-6]);assert.equal(over.opacity,191);
+  await shot('authored');await click('.rr-image-layers-close');
+  await click('.event-list-item[data-event-id="1"]',2);
+  await wait('return document.querySelector("#event-name-field")?.getBoundingClientRect().width>0;');
+  await number('#event-name-field','Conversa visual');
+  await click('#event-editor-content .command-item[data-index="0"]',2);
+  await wait('return document.querySelector(".message-command-editor-modal .message-textarea")?.getBoundingClientRect().width>0;');
+  await number('.message-command-editor-modal .message-textarea','Diálogo criado pela interface.');
+  await click('.message-command-editor-modal .rr-button-primary');
+  await click('#event-editor-ok-btn');
+  await wait('return getComputedStyle(document.getElementById("event-editor-modal")).display==="none";');
+  assert.equal(await driver.executeAsync('const done=arguments[arguments.length-1];reactor.projectController.saveProject().then(done);'),true);
+  await driver.executeAsync('const done=arguments[arguments.length-1];reactor.projectController.openProjectAtPath(arguments[0]).then(done);',[project]);
+  assert.deepEqual(await driver.execute('return JSON.parse(JSON.stringify(reactor.projectController.tilemapManager.currentMap.rrImageLayers));'),evidence.authored);
+  evidence.event=await driver.execute('return JSON.parse(JSON.stringify(reactor.projectController.tilemapManager.currentMap.events[1]));');
+  assert.equal(evidence.event.name,'Conversa visual');assert.equal(evidence.event.pages[0].list[1].parameters[0],'Diálogo criado pela interface.');
+  await driver.execute(`const pm=reactor.projectManager,file=pm.path.join(arguments[0],'img/parallaxes/Névoa original.png');
+    window.__missingImage=file;pm.fs.renameSync(file,file+'.temporarily-missing');
+    window.__missingPreview='pending';reactor.playtest().then(result=>window.__missingPreview=result);`,[project]);
+  await wait('return document.querySelector(".rr-dialog-message")?.textContent.includes("Imagem ausente: img/parallaxes/Névoa original");');
+  evidence.missingImageMessage=await driver.execute('return document.querySelector(".rr-dialog-message").textContent;');await shot('missing-image');
+  await click('#rr-themed-dialog .rr-button-primary');await wait('return window.__missingPreview===false;');
+  await driver.execute('reactor.projectManager.fs.renameSync(__missingImage+".temporarily-missing",__missingImage);');
+  await driver.close();driver=null;await open(project);
+  await driver.waitForScript('return window.SceneManager?._scene?._commandWindow?.isOpen() && SceneManager._scene.isActive() && !SceneManager._scene.isBusy();',[],{timeout:90000});await keys(['\uE007']);
+  await wait('return SceneManager._scene?.constructor.name==="Scene_Map" && !!SceneManager._scene._spriteset?._rrImageLayers?.layers?.every(l=>l.sprite);');
+  evidence.runtime=await driver.execute('return SceneManager._scene._spriteset._rrImageLayers.layers.map(l=>({z:l.sprite.z,opacity:l.sprite.opacity,live:l.live,originX:l.sprite.origin?.x}));');
+  assert.equal(evidence.runtime.length,2);assert.equal(evidence.runtime[0].opacity,255);assert.equal(evidence.runtime[1].opacity,191);assert.ok(evidence.runtime[0].z<evidence.runtime[1].z);
+  const origin=evidence.runtime[1].originX;await driver.waitForScript('return SceneManager._scene._spriteset._rrImageLayers.layers[1].sprite.origin.x!==arguments[0];',[origin],{timeout:10000});
+  await shot('runtime');
+  await wait('return SceneManager._scene.isActive() && !SceneManager._scene.isBusy() && $gamePlayer.canMove();');
+  await keys(['\uE007']);await wait('return $gameMessage.allText().includes("Diálogo criado pela interface.") && SceneManager._scene._messageWindow.pause;');await shot('dialogue');
+  evidence.status='passed';evidence.scope='Layer creation, image selection, follow, drift, opacity, event rename and dialogue editing via real WebDriver pointer/keyboard. Source image prepared by API; save/reopen by API. Runtime started and dialogue triggered by keyboard; no visual resource-import or new-event creation coverage.';
+  console.log('PASS parallax UI: '+run);
+ }catch(error){evidence.status='failed';evidence.failure=String(error.stack||error);if(driver)try{await shot('failure');evidence.diagnostic=await driver.execute('return {text:document.body.innerText,active:document.activeElement?.outerHTML};');}catch{}throw error;}
+ finally{if(driver)await driver.close();report();}
+}
+if(require.main===module)main().catch(error=>{console.error(error);process.exitCode=1;});
+module.exports={main};

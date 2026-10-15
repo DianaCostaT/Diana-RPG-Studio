@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "decisions": [
+    {
+      "id": "base-reactor",
+      "date": "2026-10-15",
+      "status": "adotado",
+      "decision": "Manter RPGReactor como único editor/runtime, fixado por commit",
+      "evidence": "docs/BASE_EVALUATION.md",
+      "limits": "EasyRPG auditado em fonte; seus builds Windows não foram executados."
+    },
+    {
+      "id": "no-demo",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Projetos novos sem Demo ou plugins pré-carregados; assets de teste originais",
+      "evidence": "artifacts/windows-smoke.json"
+    },
+    {
+      "id": "patch-build",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Exportar revisão fixada e aplicar patches; preservar build anterior",
+      "evidence": "artifacts/prepare-verification.json"
+    },
+    {
+      "id": "shared-poses",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Recortes/poses no graphicFrame compartilhado por editor, ator e inimigo; controles visuais",
+      "evidence": "artifacts/battle-smoke.json",
+      "limits": "Grade/arraste e prévia automática ainda pendentes."
+    },
+    {
+      "id": "license-boundary",
+      "date": "2026-10-15",
+      "status": "adotado",
+      "decision": "Preservar MIT e avisos; não incorporar GPL EasyRPG nem publicar pacote sem fechar terceiros",
+      "evidence": "docs/LICENSE_AUDIT.md"
+    },
+    {
+      "id": "ai-later",
+      "date": "2026-10-15",
+      "status": "planejado",
+      "decision": "IA futura por comandos validados, diff/aprovação, transação, histórico e credenciais locais seguras; sem infraestrutura paga",
+      "evidence": "docs/ARCHITECTURE.md"
+    },
+    {
+      "id": "coordination",
+      "date": "2026-10-15",
+      "status": "concluído",
+      "decision": "Quatro tarefas Orca supervisionadas com arquivos de propriedade distinta no workspace compartilhado; revisão antes de integrar",
+      "evidence": "run_cfa3ce23fb71",
+      "limits": "Fontes de integração estavam sem commit; não foram criados worktrees sem esses arquivos. Todos os workers foram liberados após entrega."
+    },
+    {
+      "id": "visual-pose-authoring",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Grade, arraste livre e prévia/seek no editor compartilhado; mesmo esquema/runtime",
+      "evidence": "artifacts/pose-authoring-smoke.json",
+      "limits": "Timeline básica de pose; composição avançada ainda planejada."
+    },
+    {
+      "id": "unicode-guard",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Correção de traduções corrompidas e testes para impedir placeholders e perda de acentos",
+      "evidence": "tests/pose-translations.test.cjs"
+    },
+    {
+      "id": "coordination-pose-authoring",
+      "date": "2026-10-15",
+      "status": "concluído",
+      "decision": "Worker Orca implementou source/testes; coordenador revisou, corrigiu Unicode e executou smokes Windows",
+      "evidence": "run_00a5bab9bb77",
+      "limits": "Worker liberado após entrega; sem instalação, publicação ou commit."
+    },
+    {
+      "id": "original-starter",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Projeto inicial original gerado por Diana, sem upstream Demo; dados mínimos e recursos MIT editáveis; somente novos projetos.",
+      "evidence": "docs/STARTER_PROJECT.md"
+    },
+    {
+      "id": "local-package-license-gate",
+      "date": "2026-10-15",
+      "status": "parcial",
+      "decision": "Pacote local físico sem junction e export real; MP3/lamejs excluído. Publicação bloqueada enquanto avisos do SDK e terceiros não estiverem completos.",
+      "evidence": "docs/WINDOWS_PACKAGE.md"
+    },
+    {
+      "id": "resume-workers",
+      "date": "2026-10-15",
+      "status": "concluído",
+      "decision": "Três workers Orca em arquivos separados; mapas e animações entregues, pacote funcional com bloqueio documental. Revisados e liberados; sem commits.",
+      "evidence": "run_610451af9442"
+    },
+    {
+      "id": "asset-preflight",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Reusar RRAssetFiles.findImage para diagnóstico de imagens antes do playtest, sem alterar referências ou arquivos; autoria de parallax e diálogo verificada por controles reais.",
+      "evidence": "docs/UI_AUTHORING_VALIDATION.md"
+    },
+    {
+      "id": "ready-windows-and-workspace",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Prioridade explícita do usuário: executável local hoje e interface com organização familiar ao RPG Maker, aparência original Diana. Launcher WinExe C# usa SDK já local; barra reusa comandos existentes, sem segunda engine.",
+      "evidence": "artifacts/ready-exe-smoke.json"
+    },
+    {
+      "id": "minimal-usability-011",
+      "date": "2026-10-15",
+      "status": "implementado e testado",
+      "decision": "Prioridade explícita: uso básico antes de amplitude. Conjunto original de tiles, colisão, paleta disponível e diálogo inicial honesto; pacote 0.1.1 separado preserva versão anterior e projetos existentes.",
+      "evidence": "docs/USAR_AGORA.md"
+    }
+  ]
+}

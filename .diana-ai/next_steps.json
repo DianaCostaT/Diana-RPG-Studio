@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "priority": 1,
+      "task": "Consolidar uso básico com criação/abertura pelo seletor do Windows, novo evento de diálogo e edição de personagem pela interface",
+      "acceptance": "Um usuário cria/salva/reabre o projeto, pinta mapa e cria diálogo sem código; roda jogo pelo botão Testar e recebe erros claros."
+    },
+    {
+      "priority": 2,
+      "task": "Comparar prévia e runtime de trajetórias, salto, efeitos, som e impactos sobrepostos",
+      "acceptance": "Aliados e inimigos com o mesmo resultado de tempo/posição; som audível e ausência de impacto duplicado."
+    },
+    {
+      "priority": 3,
+      "task": "Completar avisos de distribuição e revisão exata de dependências/recursos",
+      "acceptance": "Notices oficiais SDK completos, texto MIT @pixi/colord e revisão WASM; testar pacote em Windows limpo."
+    },
+    {
+      "priority": 4,
+      "task": "Resolver falhas upstream e dimensionamento/colisão customizados do mapa",
+      "acceptance": "Causas isoladas e contratos editor/runtime testados sem outra engine."
+    },
+    {
+      "priority": 5,
+      "task": "Formalizar Plugin SDK e comandos futuros de IA após estabilizar MVP",
+      "acceptance": "Contratos versionados, validação, aprovação e undo/redo; sem infraestrutura paga."
+    }
+  ]
+}

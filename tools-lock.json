@@ -1,0 +1,10 @@
+{
+  "sdk": "NW.js SDK",
+  "version": "0.118.0",
+  "platform": "win-x64",
+  "archive": "nwjs-sdk-v0.118.0-win-x64.zip",
+  "sha256": "687f78233a56f19185a0ca9b638e114620f3335f4c4b01f2801f3664df27b838",
+  "checksumSource": "https://dl.nwjs.io/v0.118.0/SHASUMS256.txt",
+  "verifiedOn": "2026-10-15",
+  "limits": "Archive checksum and executable FileVersion confirmed. Extracted tree and clean-machine installation not fully verified."
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "issues": [
+    {
+      "id": "upstream-tests",
+      "status": "parcial",
+      "severity": "alta",
+      "description": "Execução completa histórica: 7016 testes, 6950 aprovados, 40 falhas e 26 ignorados. Duas regressões de idioma corrigidas e 25 testes i18n aprovados depois; demais casos exigem revisão.",
+      "evidence": "artifacts/upstream-test-report.json"
+    },
+    {
+      "id": "distribution-licenses",
+      "status": "bloqueado",
+      "severity": "alta",
+      "description": "MP3/lamejs excluído do pacote e desativado na UI. Faltam notices oficiais completos NW.js/Chromium/Node, MIT @pixi/colord e revisão WASM antes da distribuição pública.",
+      "evidence": "docs/LICENSE_AUDIT.md"
+    },
+    {
+      "id": "development-package",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Build de desenvolvimento mantém junction; pacote separado e export foram relocados e testados sem links. Instalação em máquina limpa e duplo clique CMD ainda não validados."
+    },
+    {
+      "id": "pose-timeline-advanced",
+      "status": "planejado",
+      "severity": "media",
+      "description": "Cronologia de movimento/salto/recuo/impacto/som/flash sobrepostos testada por API para ambos os lados; Simultâneo visual validado. Comparação renderizada e som audível continuam parciais."
+    },
+    {
+      "id": "pose-references",
+      "status": "implementado e testado",
+      "severity": "media",
+      "description": "Rename/remove/JSON bloqueiam remoção de nomes usados em sequências ou mapeamentos. Bloqueio conservador; não há migração automática global."
+    },
+    {
+      "id": "full-battle",
+      "status": "parcial",
+      "severity": "alta",
+      "description": "Vitória, derrota permitida e fuga por teclado real aprovadas no starter. Sincronização audiovisual completa, todas as habilidades e configurações não homologadas."
+    },
+    {
+      "id": "blank-records",
+      "status": "implementado e testado",
+      "severity": "media",
+      "description": "Novos projetos incluem dados essenciais e assets originais; prévia valida grupo/classe/parâmetros/skills/nocaute e orienta em português. Não migra projetos existentes nem valida todos os campos."
+    },
+    {
+      "id": "map-coverage",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Colisão padrão, sprite variável, camadas e transferência testados. Autoria visual de parallax e edição de diálogo testadas por controles reais. Novo evento/condições/importação/database completos ainda pendentes."
+    },
+    {
+      "id": "git-uncommitted",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Arquivos novos permanecem na branch diana/phase-0-1 sem commit; upstream/build/tools/artifacts são ignorados. Preservar fontes e patches antes de qualquer limpeza."
+    },
+    {
+      "id": "asset-preflight-coverage",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Prévia valida imagens do grupo inicial e mapa aberto; não percorre todos os mapas, comandos dinâmicos, áudio, modelos ou gráficos de batalha.",
+      "evidence": "docs/UI_AUTHORING_VALIDATION.md"
+    }
+  ]
+}
