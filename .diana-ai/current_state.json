@@ -49,7 +49,8 @@
     "Pacote 0.1.1 cria/salva usando dependências e runtime internos; diálogo inicial descreve corretamente o projeto fornecido",
     "Criar projeto pela interface: nome/destino com acentos, navegador integrado, confirmar Criar e mapa carregado sem encerramento",
     "Destino ocupado, cancelamento, abertura/cancelamento e reabertura pela interface preservam projeto e arquivos",
-    "Pacote 0.1.2 validado pelo fluxo real de criação e smoke de dependências/runtime próprios"
+    "Pacote 0.1.2 validado pelo fluxo real de criação e smoke de dependências/runtime próprios",
+    "Pacote 0.1.2: botão real Testar inicia processo ativo por 12 segundos; editor responde após fechar teste; abertura direta do Diana.exe mostra janela e mapa carregado"
   ],
   "partial": [
     "Autoria visual parcial: diálogo/parallax testados; importação, novo evento, condições e database completo pendentes",

@@ -34,5 +34,15 @@ versões anteriores não foram removidos. A 0.1.2 é um pacote separado.
 Outros seletores de ferramentas avançadas ainda não foram migrados/testados.
 Nenhuma configuração de segurança foi alterada.
 
+Validação adicional em 15/10: o smoke do pacote 0.1.2 também acionou o botão
+real Testar jogo; o processo filho permaneceu ativo por 12 segundos e o editor
+respondeu após seu encerramento controlado. Isso verifica lançamento e permanência
+do processo, não interação visual dentro desse jogo. Evidência:
+`artifacts/project-ui-ulHSw4` e `artifacts/project-ui-smoke.json`.
+`npm test` voltou a passar (70/70), assim como `npm run smoke:windows`
+(`artifacts/windows-smoke-akyLwv`). Abertura direta do `Diana.exe` a partir de
+outro diretório exibiu a tela inicial; posteriormente a janela mostrou
+“Meu jogo” com mapa carregado. A janela foi deixada aberta para uso.
+
 A [documentação NW.js](https://docs.nwjs.io/References/Changes%20to%20DOM/)
 descreve `nwdirectory`; não comprova funcionamento no runtime local afetado.

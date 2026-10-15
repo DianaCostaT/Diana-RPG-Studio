@@ -46,7 +46,18 @@ async function main(){
   await wait('return !reactor.projectController._dianaProjectBusy && !document.getElementById("diana-folder-dialog");');
   assert.equal(await driver.execute('return reactor.projectController.currentProject.path;'),project);
   assert.equal(fs.readFileSync(path.join(project,'data/Map001.json'),'utf8'),before);
-  report.status='passed';report.scope='Creation from actual New Project UI, parent typed by keyboard and selected in integrated folder browser, real Create; duplicate destination and cancellation preserve existing project; editor remains responsive.';
+  await click('#toolbar [data-action="playtest"]');
+  await wait('return !!reactor.playtestManager.playtestProcess?.pid;',30000);
+  const childPid=await driver.execute('return reactor.playtestManager.playtestProcess.pid;');
+  await new Promise(resolve=>setTimeout(resolve,12000));
+  assert.equal(await driver.execute('return reactor.playtestManager.playtestProcess?.pid;'),childPid,'Playtest must stay running');
+  process.kill(childPid,0);
+  report.playtest={pid:childPid,aliveAfterSeconds:12};
+  await shot('playtest-launched');
+  await driver.execute('reactor.playtestManager.playtestProcess.kill();');
+  await wait('return !reactor.playtestManager.playtestProcess;');
+  assert.equal(await driver.execute('return reactor.projectController.currentProject.path;'),project);
+  report.status='passed';report.scope='Creation from actual New Project UI, integrated folder selection, duplicate destination, cancellation, reopening and actual Playtest button; child runtime stays running for 12 seconds, editor responds after child closes.';
   console.log('PASS project UI '+run);
  }catch(error){report.status='failed';report.failure=String(error.stack||error);if(driver)try{await shot('failure');report.diagnostic=await driver.execute('return {text:document.body.innerText,project:reactor.projectController.currentProject?.path};');}catch{}throw error;}
  finally{if(driver)await driver.close();save();}
