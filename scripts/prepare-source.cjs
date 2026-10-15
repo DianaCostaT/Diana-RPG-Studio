@@ -19,17 +19,19 @@ function brandHtml(html) {
     const entry = '    <script src="src/main.js"></script>';
     if (html.split(entry).length !== 2) throw new Error('Ponto de integração upstream mudou.');
     return html.replace(/<img id="splash-image"[\s\S]*?<\/script>/,
-        '<div data-rr-i18n-skip style="font:600 48px system-ui;color:#d9d2ff;letter-spacing:2px">Diana RPG Studio</div>')
+        '<div data-rr-i18n-skip style="font:600 48px system-ui;color:var(--color-text-strong);letter-spacing:2px">Diana RPG Studio</div>')
         .replace('<html lang="en">', '<html lang="pt-BR">')
         .replace('<title>RPG Reactor</title>', '<title>Diana RPG Studio</title>')
-        .replace('</head>', '    <link rel="stylesheet" href="src/DianaWorkspace.css">\n</head>')
-        .replace(entry, '    <script src="src/DianaStarterData.js"></script>\n    <script src="src/DianaProjectValidation.js"></script>\n    <script src="src/DianaBootstrap.js"></script>\n    <script src="src/DianaWorkspace.js"></script>\n    <script src="src/DianaWindowsFolders.js"></script>\n    <script src="src/DianaProjectMode.js"></script>\n    <script src="src/DianaBattle2D.js"></script>\n' + entry);
+        .replace('href="images/icon.png"','href="images/diana.png"')
+        .replace('</head>', '    <link rel="stylesheet" href="src/DianaWorkspace.css">\n    <link rel="stylesheet" href="src/DianaAppearance.css">\n</head>')
+        .replace(entry, '    <script src="src/DianaThemes.js"></script>\n    <script src="src/DianaStarterData.js"></script>\n    <script src="src/DianaProjectValidation.js"></script>\n    <script src="src/DianaBootstrap.js"></script>\n    <script src="src/DianaWorkspace.js"></script>\n    <script src="src/DianaWindowsFolders.js"></script>\n    <script src="src/DianaProjectMode.js"></script>\n    <script src="src/DianaBattle2D.js"></script>\n    <script src="src/DianaIcons.js"></script>\n' + entry);
 }
 
-function prepareEditor(root = path.resolve(__dirname, '..')) {
+function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
     const upstream = path.join(root, 'upstream', 'RPGReactor');
     const build = path.join(root, 'build');
-    const out = path.join(build, 'diana');
+    const out = destination ? path.resolve(destination) : path.join(build, 'diana');
+    if (path.dirname(out) !== build) throw new Error('A preparação deve ficar diretamente na pasta build do workspace.');
     const pin = JSON.parse(fs.readFileSync(path.join(root, 'upstream-lock.json'), 'utf8'));
     const actual = execFileSync('git', ['-C', upstream, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
     if (actual !== pin.commit) throw new Error('Revisão upstream inesperada: ' + actual);
@@ -72,6 +74,7 @@ function prepareEditor(root = path.resolve(__dirname, '..')) {
     pkg.version = JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8').replace(/^\uFEFF/,'')).version;
     pkg.name_for_display = 'Diana RPG Studio';
     pkg.window.title = 'Diana RPG Studio';
+    pkg.window.icon = 'images/diana.png';
     pkg.window.show = true;
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
     const htmlFile = path.join(editor, 'index.html');
@@ -79,7 +82,9 @@ function prepareEditor(root = path.resolve(__dirname, '..')) {
     fs.copyFileSync(path.join(root, 'src', 'DianaBootstrap.js'), path.join(editor, 'src', 'DianaBootstrap.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaStarterData.js'), path.join(editor, 'src', 'DianaStarterData.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaProjectValidation.js'), path.join(editor, 'src', 'DianaProjectValidation.js'));
-    for (const name of ['DianaWorkspace.js','DianaWorkspace.css','DianaWindowsFolders.js','DianaProjectMode.js','DianaBattle2D.js']) fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
+    for (const name of ['DianaWorkspace.js','DianaWorkspace.css','DianaWindowsFolders.js','DianaProjectMode.js','DianaBattle2D.js','DianaThemes.js','DianaIcons.js','DianaAppearance.css']) fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
+    require('./diana-icons.cjs').generate(path.join(editor,'images'));
+    fs.copyFileSync(path.join(editor,'images','diana.png'),path.join(editor,'images','icon.png'));
     if (fs.existsSync(path.join(root, 'LICENSE'))) fs.copyFileSync(path.join(root, 'LICENSE'), path.join(staging, 'LICENSE'));
     // Development link reuses installed dependencies; it is not a release package.
     fs.symlinkSync(dependencies, path.join(editor, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
@@ -94,6 +99,11 @@ function prepareEditor(root = path.resolve(__dirname, '..')) {
         folderServiceSha256: sha256(path.join(root,'src','DianaWindowsFolders.js')),
         projectModeSha256: sha256(path.join(root,'src','DianaProjectMode.js')),
         battle2DSha256: sha256(path.join(root,'src','DianaBattle2D.js')),
+        themesSha256: sha256(path.join(root,'src','DianaThemes.js')),
+        appearanceCssSha256: sha256(path.join(root,'src','DianaAppearance.css')),
+        iconsSha256: sha256(path.join(root,'src','DianaIcons.js')),
+        appMarkSha256: sha256(path.join(root,'src/assets/diana.svg')),
+        iconGeneratorSha256: sha256(path.join(root,'scripts/diana-icons.cjs')),
         dependencyLockSha256: sha256(path.join(upstream, 'editor', 'package-lock.json')),
         dependencies: 'Local development link to upstream/editor/node_modules; not a distributable package'
     };

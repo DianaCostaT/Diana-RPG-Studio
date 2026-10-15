@@ -77,6 +77,13 @@
       "severity": "media",
       "description": "Animações 2 reproduz organização de poses; Armas/Tipos usam editores existentes. Tela de batalha tem prévia esquemática; HUD A/B/C, ranks e comandos por ator ainda pendentes. Auditar todas as superfícies avançadas do perfil 2D.",
       "evidence": "docs/2D_WORKSPACE.md"
+    },
+    {
+      "id": "build-directory-locked",
+      "status": "parcial",
+      "severity": "baixa",
+      "description": "Windows retorna EPERM ao renomear build/diana, origem não determinada. Destino versionado build/diana-0.2.1 e parâmetros de preparação/validação permitem concluir sem encerrar janelas nem alterar segurança.",
+      "evidence": "docs/APPEARANCE.md"
     }
   ]
 }

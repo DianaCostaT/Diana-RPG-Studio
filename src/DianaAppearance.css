@@ -1,0 +1,45 @@
+/* Desktop chrome and theme-aware authoring controls; game images keep their colors. */
+html{color-scheme:dark;}body{font-family:'Segoe UI',sans-serif!important;}
+button,input,select,textarea{font-family:inherit;}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}
+#html-menu-bar{align-items:center;min-height:36px;}
+#html-menu-bar>.html-menu-item{font-size:12px;}
+#diana-appearance{margin-left:auto;margin-right:8px;display:flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid var(--color-border);border-radius:5px;background:var(--color-bg-button);color:var(--color-text);font-size:12px;cursor:pointer;}
+#language-button{margin-left:0!important;}
+#diana-workspace{gap:3px;padding:7px 10px;background:var(--color-bg-surface);flex-wrap:nowrap;overflow-x:auto;}
+#diana-mode-badge{margin-left:auto;flex-shrink:0;}
+#diana-workspace button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 9px;border-radius:5px;font-weight:500;}
+#diana-workspace .diana-play{color:var(--color-accent-on);}
+.diana-icon{width:20px;height:20px;flex-shrink:0;display:inline-block;pointer-events:none;vertical-align:middle;}
+#diana-workspace .diana-icon{width:17px;height:17px;}
+.diana-brand{display:grid;grid-template-columns:30px auto;column-gap:7px;min-width:110px;align-items:center;}
+.diana-brand .diana-mark{width:30px;height:30px;grid-row:1/3;}
+.diana-brand strong{font-size:15px;letter-spacing:1.8px;}.diana-brand span{font-size:8px;margin-top:2px;}
+.diana-welcome-mark{width:88px;height:88px;margin-bottom:18px;}
+.diana-welcome-title{font-size:36px;font-weight:600;letter-spacing:-1px;}
+.welcome-content{padding:32px!important;}.welcome-card{border:1px solid var(--color-border)!important;background:var(--color-bg-surface)!important;border-radius:8px!important;box-shadow:none!important;}
+.welcome-button{border-radius:6px!important;min-height:40px;font-weight:600;}
+#toolbar{padding:6px 10px!important;gap:4px!important;}
+#toolbar .tool-button{position:relative;width:32px;height:32px;min-width:32px;border-radius:5px!important;background:var(--color-bg-surface)!important;color:var(--color-text)!important;border:1px solid var(--color-border)!important;display:inline-flex;align-items:center;justify-content:center;}
+#toolbar .tool-button:hover:not(:disabled){border-color:var(--color-accent)!important;background:var(--color-accent-tint-10)!important;}
+#toolbar .tool-button.active{background:var(--color-accent-tint-25)!important;border-color:var(--color-accent)!important;}
+.diana-layer-number{position:absolute;right:1px;bottom:0;background:var(--color-bg-surface);font-size:9px;padding:0 2px;color:var(--color-text-strong);border-radius:2px;}
+.toolbar-separator{height:22px!important;margin:0 4px!important;background:var(--color-border)!important;}
+.toolbar-label{font-size:11px!important;color:var(--color-text-muted)!important;}
+.rr-modal,.database-window{border-radius:9px!important;border:1px solid var(--color-border-input)!important;box-shadow:var(--shadow-modal)!important;background:var(--color-bg-surface)!important;}
+.rr-modal-header,.database-header{background:var(--color-bg-toolbar)!important;color:var(--color-text-strong)!important;border-bottom:1px solid var(--color-border)!important;}
+.rr-modal-body,.rr-modal-footer,.database-footer,#database-detail{background:var(--color-bg-surface);color:var(--color-text);}
+.rr-btn-secondary,.rr-button,.database-footer-btn{background:var(--color-bg-button)!important;color:var(--color-text)!important;border:1px solid var(--color-border-input)!important;border-radius:4px!important;}
+.rr-btn-secondary:hover,.database-footer-btn:hover{background:var(--color-bg-button-hover)!important;border-color:var(--color-accent)!important;}
+.rr-button-primary,#database-ok-btn{background:var(--color-accent)!important;color:var(--color-accent-on)!important;border:1px solid var(--color-accent)!important;border-radius:4px!important;}
+.database-field-value{color:var(--color-text)!important;background:var(--color-bg-input)!important;border-color:var(--color-border-input)!important;border-radius:4px!important;}
+.diana-pose-pages [aria-pressed=true],.tree-item.selected,.database-list-item.selected{color:var(--color-text-strong)!important;background:var(--color-bg-selected)!important;}
+.diana-appearance-panel{width:min(560px,94vw);max-height:90vh;display:flex;flex-direction:column;}
+.diana-appearance-panel .rr-modal-body{overflow:auto;}
+.diana-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.diana-theme-choice{display:grid;grid-template-columns:44px 1fr;column-gap:12px;row-gap:3px;text-align:left;padding:14px;border:1px solid var(--color-border-input);border-radius:7px;background:var(--color-bg-button);color:var(--color-text);cursor:pointer;}
+.diana-theme-choice[aria-pressed=true]{outline:2px solid var(--color-accent);outline-offset:1px;background:var(--color-accent-tint-10);}
+.diana-theme-swatch{grid-row:1/3;width:44px;height:36px;box-sizing:border-box;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(30,30,40,.15);}
+.diana-theme-choice small{font-size:11px;color:var(--color-text-muted);}
+@media(max-width:1360px){#diana-workspace [data-diana-action=assets] .diana-button-label,#diana-workspace [data-diana-action=parallax] .diana-button-label,#diana-workspace [data-diana-action=enemies] .diana-button-label{display:none;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;}}

@@ -1,7 +1,11 @@
 # Usar o Diana agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.2.0/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Diana-RPG-Studio-Windows-0.2.1/Diana.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
+
+Clique em **Aparência** no canto superior direito para escolher Grafite, Claro,
+Rosa claro, Verde oliva, Azul névoa ou Ametista. A mudança é imediata e fica
+salva para as próximas aberturas. Veja [Identidade visual e temas](APPEARANCE.md).
 
 1. Clique em **Novo projeto**, escolha **Inteiramente 2D**, dê um nome e informe **Salvar o projeto em**.
 2. Use **Procurar…** para escolher a pasta no seletor integrado, confirme

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "updatedOn": "2026-10-15",
   "product": "Diana RPG Studio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "phase": "0: aplicação Windows e pacote local testados; 1: autoria integrada parcial",
   "base": {
     "project": "RPGReactor",
@@ -54,7 +54,10 @@
     "73 testes Diana e 31 contra build preparado aprovados; smoke Windows Rqv3i4 aprovado",
     "Perfis de autoria 2D e 2D + 3D persistidos; padrão de novos projetos 2D e legado preservado",
     "Animações 2 em páginas de oito, edições e cancelamento de poses para aliados/inimigos; duração salva lida pelo runtime",
-    "Tela de batalha 2D: apresentação, turnos, mensagens, comandos e posições; posição 510,280 confirmada no jogo"
+    "Tela de batalha 2D: apresentação, turnos, mensagens, comandos e posições; posição 510,280 confirmada no jogo",
+    "Identidade Diana original: marca SVG/PNG, ícones de barras e ICO multirresolução incorporado e extraído do executável Windows",
+    "Seis temas por controle visual, persistência após reiniciar, mapa e banco de poses inspecionados nas capturas",
+    "75 testes Diana, contraste AA dos tokens principais e 31 testes contra build preparado aprovados"
   ],
   "partial": [
     "Autoria visual parcial: diálogo/parallax testados; importação, novo evento, condições e database completo pendentes",
@@ -62,7 +65,8 @@
     "Comparação renderizada de trajetórias/efeitos e som audível",
     "Instalação em Windows limpo e revisão de falhas upstream",
     "Reprodução da organização clássica: Armas e Tipos reutilizam editores existentes; HUD A/B/C e comandos por ator pendentes",
-    "Filtro 2D com superfícies principais verificadas; auditoria integral de ferramentas avançadas pendente"
+    "Filtro 2D com superfícies principais verificadas; auditoria integral de ferramentas avançadas pendente",
+    "Auditoria de contraste e ícones de todas as ferramentas avançadas do upstream pendente"
   ],
   "planned": [
     "Plugin SDK Diana versionado",
@@ -74,7 +78,7 @@
     "Aceite global upstream pendente de falhas Windows e funcionais"
   ],
   "evidence": {
-    "build": "build/diana/provenance.json",
+    "build": "build/diana-0.2.1/provenance.json",
     "reproducibility": "artifacts/prepare-verification.json",
     "windows": "artifacts/windows-smoke.json",
     "launch": "artifacts/launch-verification.json",
@@ -95,12 +99,13 @@
     "basicUse": "artifacts/basic-use-smoke.json",
     "projectCreation": "artifacts/project-ui-smoke.json",
     "projectFix": "docs/PROJECT_CREATION_FIX.md",
-    "interface2d": "artifacts/2d-ui-smoke.json"
+    "interface2d": "artifacts/2d-ui-smoke.json",
+    "appearance": "artifacts/appearance-smoke.json"
   },
   "git": {
     "branch": "diana/phase-0-1",
     "committed": true,
-    "reason": "Interface 2D 0.2.0 validada; push continua pendente de URL do remoto."
+    "reason": "Identidade e temas 0.2.1 validados localmente; push pendente de URL do remoto."
   },
-  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.0/Diana.exe"
+  "readyExecutable": "dist/Diana-RPG-Studio-Windows-0.2.1/Diana.exe"
 }

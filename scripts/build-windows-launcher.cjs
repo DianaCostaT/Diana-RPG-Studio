@@ -5,7 +5,8 @@ function buildLauncher(destination){
  const system=process.env.WINDIR||'C:\\Windows';
  const compiler=['Framework64','Framework'].map(dir=>path.join(system,'Microsoft.NET',dir,'v4.0.30319','csc.exe')).find(file=>fs.existsSync(file));
  if(!compiler)throw Error('Compilador C# local não encontrado; nenhuma instalação foi realizada.');
- execFileSync(compiler,['/nologo','/target:winexe','/optimize+','/codepage:65001','/reference:System.Windows.Forms.dll','/out:'+destination,path.resolve(__dirname,'../src/windows/DianaLauncher.cs')],{stdio:'pipe',windowsHide:true});
+ const icon=require('./diana-icons.cjs').generate(path.dirname(destination));
+ execFileSync(compiler,['/nologo','/target:winexe','/optimize+','/codepage:65001','/win32icon:'+icon,'/reference:System.Windows.Forms.dll','/out:'+destination,path.resolve(__dirname,'../src/windows/DianaLauncher.cs')],{stdio:'pipe',windowsHide:true});
  if(!fs.existsSync(destination))throw Error('Compilador não produziu Diana.exe.');
  return destination;
 }

@@ -43,3 +43,7 @@ Modos frontal, no mapa, tático, estratégia, primeira pessoa, 2.5D, isométrico
 ## Interface 2D — 0.2.0
 
 Perfil 2D padrão, escolha 2D + 3D, grade Animações 2 e Tela de batalha integrados. Recursos verificados, contrato de posições no runtime e limites da reprodução clássica estão em [Interface 2D](docs/2D_WORKSPACE.md).
+
+## Aparência 0.2.1
+
+Implementado e testado: identidade própria, ícones e seis temas com persistência. Ver [evidências e limites](docs/APPEARANCE.md).

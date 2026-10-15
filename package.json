@@ -1,6 +1,6 @@
 {
   "name": "diana-rpg-studio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -23,7 +23,8 @@
     "package:windows": "node scripts/package-windows.cjs",
     "export:windows": "node scripts/export-windows.cjs",
     "report:upstream": "node scripts/report-upstream.cjs",
-    "smoke:2d:windows": "node scripts/smoke-2d-windows.cjs"
+    "smoke:2d:windows": "node scripts/smoke-2d-windows.cjs",
+    "smoke:appearance:windows": "node scripts/smoke-appearance-windows.cjs"
   },
   "engines": {
     "node": ">=22"

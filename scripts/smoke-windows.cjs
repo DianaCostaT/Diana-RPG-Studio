@@ -5,7 +5,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname,'..');
 const {WebDriverClient} = require('../upstream/RPGReactor/editor/tests/smoke/webdriver-client.cjs');
 const sdk = path.join(root,'tools','nwjs-sdk-v0.118.0-win-x64');
-const editor = path.join(root,'build','diana','editor');
+const editor = process.argv[2]?path.resolve(process.argv[2]):path.join(root,'build','diana','editor');
 async function main() {
     const artifacts = path.join(root,'artifacts');
     fs.mkdirSync(artifacts,{recursive:true});

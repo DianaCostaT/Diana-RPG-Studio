@@ -38,3 +38,7 @@ Validação adicional: smoke project-ui-ulHSw4 cobre botão Testar real e filho 
 ## Interface 2D 0.2.0
 
 Prioridade explícita: separar 2D/3D e aproximar Animações 2 e Battle Screen do RM2003. Perfil persistido; legado preservado; seletor no topo. DianaProjectMode filtra controles e DianaBattle2D reutiliza o banco, snapshots, recortes e runtime. Oito poses por página, aliados/inimigos e rascunho cancelável. Tela de batalha configura apresentação, turnos, mensagens, comandos e posições dos quatro primeiros aliados; runtime patch com revisão diana-0.2.0. Não é réplica pixel a pixel: HUD A/B/C, ranks/comandos por ator e abas Armas/Tipos clássicas continuam parciais. Ver docs/2D_WORKSPACE.md. Executável dist/Diana-RPG-Studio-Windows-0.2.0/Diana.exe. Versões anteriores preservadas; não fechar janelas do usuário.
+
+## Aparência 0.2.1
+
+Marca e ícones Diana originais; launcher com ICO próprio e NW com PNG. Aparência no topo escolhe seis paletas e persiste em rr-settings.theme; tokens substituem cores fixas. Smoke do pacote confirmou todas as paletas, inspeção de mapa/poses e persistência após reiniciar (artifacts/appearance-sh6q8k). 75 testes e 31 contra preparado passaram. Build padrão bloqueado por EPERM desconhecido: usar npm run prepare:editor -- --out build/diana-0.2.1 e empacotar --prepared nesse diretório. Pacote final dist/Diana-RPG-Studio-Windows-0.2.1/Diana.exe, versões anteriores preservadas. Ver docs/APPEARANCE.md. Auditoria de todas as superfícies avançadas permanece parcial.
