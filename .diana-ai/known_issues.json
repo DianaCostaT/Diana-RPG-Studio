@@ -2,6 +2,13 @@
   "schemaVersion": 1,
   "issues": [
     {
+      "id": "rtp-generation-license",
+      "status": "bloqueado",
+      "severity": "alta",
+      "description": "O smoke local carregou SD 1.5 e gerou PNG valido fora do repositorio, mas o checkpoint e CreativeML Open RAIL-M, nao MIT. Nenhuma imagem foi promovida ao RTP; escolher e auditar cadeia de geracao compativel antes de distribuir assets como MIT.",
+      "evidence": "docs/RTP_PROVENANCE.md"
+    },
+    {
       "id": "upstream-tests",
       "status": "parcial",
       "severity": "alta",
@@ -89,8 +96,29 @@
       "id": "jrpg-art-review",
       "status": "parcial",
       "severity": "baixa",
-      "description": "Arte de teste gerada: uma orientação incoerente do guardião é excluída na importação; variações de detalhes e alinhamento ainda exigem revisão artística. Duas poses por lado, estados adicionais reutilizam imagens. Colisão do mapa aproximada por grid.",
-      "evidence": "assets/jrpg-test/README.md"
+      "description": "Vila 48x40 com terrenos, arquitetura e interiores originais; Mira, Orin, Nila e Ivo têm sprites próprios de seis quadros por direção; Brann e três inimigos têm atlas originais6x6. Recortes visíveis, baseline e contratos testados; continuidade artística e contatos dos pés continuam parciais.",
+      "evidence": "docs/JRPG_GENERATION_REVIEW.md"
+    },
+    {
+      "id": "sprite-audio-smoke",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Contrato e testes Node cobrem grade, sequencias extensas, paridade ator/inimigo e validacao de loop BGM. Smoke visual de mapa/batalha e audio audivel do intervalo nao foram executados; inspetor visual de mapa ainda pendente.",
+      "evidence": "docs/SPRITE_AUDIO_CONTRACT.md"
+    },
+    {
+      "id": "battle-preparation-visual",
+      "status": "parcial",
+      "severity": "media",
+      "description": "Preparar combate ainda não recebeu smoke visual Windows; estados e persistência foram verificados somente por Node.",
+      "evidence": "docs/BATTLE_PREPARATION.md"
+    },
+    {
+      "id": "village-interior-visual",
+      "status": "parcial",
+      "severity": "media",
+      "description": "A tecla de a??o transfere para Map006 e o mapa carrega sem erros JS; smoke WebDriver observa viewport preta/fade parado e n?o confirma di?logos ou sa?das dos interiores.",
+      "evidence": "docs/VILLAGE_EXPANSION.md; artifacts/village-navigation-windows-YfIEKj/report.json"
     }
   ]
 }

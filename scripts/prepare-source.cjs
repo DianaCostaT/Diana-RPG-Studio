@@ -23,7 +23,9 @@ function brandHtml(html) {
         .replace('<html lang="en">', '<html lang="pt-BR">')
         .replace('<title>RPG Reactor</title>', '<title>Diana RPG Studio</title>')
         .replace('href="images/icon.png"','href="images/diana.png"')
-        .replace('</head>', '    <link rel="stylesheet" href="src/DianaWorkspace.css">\n    <link rel="stylesheet" href="src/DianaAppearance.css">\n</head>')
+        .replaceAll('src="images/logo.png"','src="images/diana.png"')
+        .replaceAll('alt="RPG Reactor"','alt="Diana RPG Studio"')
+        .replace('</head>', '    <link rel="stylesheet" href="src/DianaWorkspace.css">\n    <link rel="stylesheet" href="src/DianaAppearance.css">\n    <link rel="stylesheet" href="src/DianaStudio.css">\n    <script src="src/DianaStudio.js" defer></script>\n</head>')
         .replace(entry, '    <script src="src/DianaThemes.js"></script>\n    <script src="src/DianaStarterData.js"></script>\n    <script src="src/DianaProjectValidation.js"></script>\n    <script src="src/DianaBootstrap.js"></script>\n    <script src="src/DianaWorkspace.js"></script>\n    <script src="src/DianaWindowsFolders.js"></script>\n    <script src="src/DianaProjectMode.js"></script>\n    <script src="src/DianaBattle2D.js"></script>\n    <script src="src/DianaIcons.js"></script>\n' + entry);
 }
 
@@ -78,8 +80,13 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
     pkg.window.show = true;
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
     const htmlFile = path.join(editor, 'index.html');
-    const branded=brandHtml(fs.readFileSync(htmlFile, 'utf8')).replace('    <script src="src/main.js"></script>','    <script src="src/DianaJRPGSample.js"></script>\n    <script src="src/DianaClassicEditor.js"></script>\n    <script src="src/main.js"></script>');
-    fs.writeFileSync(htmlFile, branded);
+    const branded=brandHtml(fs.readFileSync(htmlFile, 'utf8')).replace('    <script src="src/main.js"></script>','    <script src="src/DianaTileKit.js"></script>\n    <script src="src/DianaJRPGSample.js"></script>\n    <script src="src/DianaClassicEditor.js"></script>\n    <script src="src/main.js"></script>');
+    const featureScripts=['DianaRTPExpansion.js','DianaVillageExpansion.js','DianaCombatModes.js','DianaStudio.js'];
+    const expanded=branded.replace('    <script src="src/main.js"></script>',featureScripts.filter(name=>!branded.includes('src="src/'+name+'"')).map(name=>'    <script src="src/'+name+'"></script>').join('\n')+'\n    <script src="src/main.js"></script>');
+    fs.writeFileSync(htmlFile, expanded.includes('href="src/DianaStudio.css"')?expanded:expanded.replace('</head>','    <link rel="stylesheet" href="src/DianaStudio.css">\n</head>'));
+    for(const name of featureScripts)fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
+    fs.copyFileSync(path.join(root,'src','DianaStudio.css'),path.join(editor,'src','DianaStudio.css'));
+    fs.copyFileSync(path.join(root,'src','DianaCombatModes.js'),path.join(staging,'runtime','DianaCombatModes.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaBootstrap.js'), path.join(editor, 'src', 'DianaBootstrap.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaStarterData.js'), path.join(editor, 'src', 'DianaStarterData.js'));
     fs.copyFileSync(path.join(root, 'src', 'DianaProjectValidation.js'), path.join(editor, 'src', 'DianaProjectValidation.js'));
@@ -87,13 +94,23 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
     require('./diana-icons.cjs').generate(path.join(editor,'images'));
     fs.copyFileSync(path.join(editor,'images','diana.png'),path.join(editor,'images','icon.png'));
     fs.copyFileSync(path.join(root,'src','DianaJRPGSample.js'),path.join(editor,'src','DianaJRPGSample.js'));
+    fs.copyFileSync(path.join(root,'src','DianaTileKit.js'),path.join(editor,'src','DianaTileKit.js'));
     fs.copyFileSync(path.join(root,'src','DianaClassicEditor.js'),path.join(editor,'src','DianaClassicEditor.js'));
+    for(const name of ['DianaStudio.js','DianaStudio.css'])fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
+    fs.copyFileSync(path.join(root,'src','DianaCombatModes.js'),path.join(staging,'runtime','DianaCombatModes.js'));
     fs.cpSync(path.join(root,'assets','jrpg-test','pack'),path.join(editor,'diana-assets','jrpg-test'),{recursive:true});
+    fs.cpSync(path.join(root,'assets','rtp','medieval','pack'),path.join(editor,'diana-assets','rtp-medieval'),{recursive:true});
+    fs.cpSync(path.join(root,'assets','defense','pack'),path.join(editor,'diana-assets','defense'),{recursive:true});
+    fs.cpSync(path.join(root,'assets','vehicles','pack'),path.join(editor,'diana-assets','vehicles'),{recursive:true});
+    fs.cpSync(path.join(root,'assets','village','pack'),path.join(editor,'diana-assets','village'),{recursive:true});
     if (fs.existsSync(path.join(root, 'LICENSE'))) fs.copyFileSync(path.join(root, 'LICENSE'), path.join(staging, 'LICENSE'));
     // Development link reuses installed dependencies; it is not a release package.
     fs.symlinkSync(dependencies, path.join(editor, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
     const provenance = {
         base: pin, preparedAt: new Date().toISOString(), demoIncluded: false,
+        featureSources:Object.fromEntries([...featureScripts,'DianaStudio.css'].map(name=>[name,sha256(path.join(root,'src',name))])),
+        vehicleAssetManifestSha256:sha256(path.join(root,'assets','vehicles','pack','manifest.json')),
+        villageAssetManifestSha256:sha256(path.join(root,'assets','village','pack','manifest.json')),
         patches: patches.map(file => ({ file, sha256: sha256(path.join(root, 'patches', file)) })),
         bootstrapSha256: sha256(path.join(root, 'src', 'DianaBootstrap.js')),
         starterSha256: sha256(path.join(root, 'src', 'DianaStarterData.js')),
@@ -109,8 +126,14 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
         appMarkSha256: sha256(path.join(root,'src/assets/diana.svg')),
         iconGeneratorSha256: sha256(path.join(root,'scripts/diana-icons.cjs')),
         jrpgSampleSha256: sha256(path.join(root,'src','DianaJRPGSample.js')),
+        tileKitSha256: sha256(path.join(root,'src','DianaTileKit.js')),
         classicEditorSha256: sha256(path.join(root,'src','DianaClassicEditor.js')),
+        studioSha256: sha256(path.join(root,'src','DianaStudio.js')),
+        studioCssSha256: sha256(path.join(root,'src','DianaStudio.css')),
+        combatModesSha256: sha256(path.join(root,'src','DianaCombatModes.js')),
         jrpgAssetManifestSha256: sha256(path.join(root,'assets','jrpg-test','pack','manifest.json')),
+        nativeRtpManifestSha256: sha256(path.join(root,'assets','rtp','medieval','pack','manifest.json')),
+        defenseAssetManifestSha256: sha256(path.join(root,'assets','defense','pack','manifest.json')),
         dependencyLockSha256: sha256(path.join(upstream, 'editor', 'package-lock.json')),
         dependencies: 'Local development link to upstream/editor/node_modules; not a distributable package'
     };

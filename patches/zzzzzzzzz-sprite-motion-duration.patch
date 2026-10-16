@@ -1,0 +1,7 @@
+diff --git a/runtime/reactor_battle_presentation.js b/runtime/reactor_battle_presentation.js
+--- a/runtime/reactor_battle_presentation.js
++++ b/runtime/reactor_battle_presentation.js
+@@ -801,2 +801,2 @@
+-        if(motion){const mapping=graphic.motions?.[motion.name]||{},pose=B.graphicPose(graphic,motion.name),length=pose?B.graphicPoseDuration(pose):(mapping.frames||graphic.frames||3)*(mapping.speed||graphic.speed||12),loop=mapping.loop??pose?.loop??(pose?true:undefined);
++        if(motion){const mapping=graphic.motions?.[motion.name]||{},pose=B.graphicPose(graphic,motion.name),grid=graphic.spriteAnimation,animation=!B.validateSpriteAnimation(grid).length&&(grid.animations[motion.name]||grid.animations[mapping.pose]||grid.animations.idle),length=animation?animation.frames.length*animation.speed:pose?B.graphicPoseDuration(pose):(mapping.frames||graphic.frames||3)*(mapping.speed||graphic.speed||12),loop=mapping.loop??animation?.loop??pose?.loop??(pose?true:undefined);
+             if(loop!==true&&loop!=='once'&&time-motion.start>=length&&!['idle','moving','walk','run','guard','chant','victory','dead'].includes(motion.name))sprite._rrGraphicMotion=motion=null;}

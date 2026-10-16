@@ -73,6 +73,9 @@ O preparo usa um link local para os `node_modules` já instalados. Portanto
 - Aviso de imagens ausentes antes da prévia; parallax e diálogo validados por
   controles reais. [Cobertura de autoria visual](docs/UI_AUTHORING_VALIDATION.md).
 - Pacote Windows e export local relocáveis; [distribuição pública ainda bloqueada](docs/WINDOWS_PACKAGE.md).
+- Vila da Clareira é um tileset nativo editável de 32 px (A5/B), com mapa
+  inicial, rota de colisão e arena de animação/batalha; o parallax original é
+  apenas referência opcional. Consulte [recursos JRPG](docs/JRPG_ASSETS.md).
 
 Os cenários e limites estão em [VALIDATION.md](docs/VALIDATION.md).
 Não há validação completa de todos os fluxos ou conclusão do MVP.

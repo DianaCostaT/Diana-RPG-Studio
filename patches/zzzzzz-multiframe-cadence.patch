@@ -1,0 +1,16 @@
+diff --git a/runtime/reactor_objects_legacy.js b/runtime/reactor_objects_legacy.js
+--- a/runtime/reactor_objects_legacy.js
++++ b/runtime/reactor_objects_legacy.js
+@@ -456,2 +456,12 @@ Game_CharacterBase.prototype.straighten = function() {
+     this._animationCount = 0;
+ };
++// Diana: opt-in cadence keeps a complete [fN] gait as fast as the stock
++// four-step cycle. Existing imported projects keep their previous timing.
++const _dianaMultiAnimationWait = Game_CharacterBase.prototype.animationWait;
++Game_CharacterBase.prototype.animationWait = function() {
++    const wait = _dianaMultiAnimationWait.call(this);
++    const frames = Game_CharacterBase.rrFramesOf(this._characterName);
++    return $dataSystem?.rrMultiFrameCadence === true && frames
++        ? Math.max(1, wait * 4 / frames)
++        : wait;
++};

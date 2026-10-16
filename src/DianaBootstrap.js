@@ -11,7 +11,9 @@
     };
     const translate = I18nManager.prototype.t;
     I18nManager.prototype.t = function (key, ...args) {
-        return key === 'app.title' ? 'Diana RPG Studio' : translate.call(this, key, ...args);
+        const labels={'app.title':'Diana RPG Studio','menu.about':'Sobre o Diana','about.title':'Sobre o Diana RPG Studio','about.version':'Diana RPG Studio 0.2.6','about.description':'Crie JRPGs com mapas, personagens, eventos e combate editáveis.','about.compatibility':'Versão local em desenvolvimento. Licenças e avisos de terceiros acompanham o aplicativo.'};
+        if(Object.prototype.hasOwnProperty.call(labels,key))return labels[key];
+        const value=translate.call(this,key,...args);return typeof value==='string'?value.replace(/RPG Reactor/g,'Diana RPG Studio'):value;
     };
     if (typeof window !== 'undefined' && window.I18n) window.I18n.language = window.I18n._readSavedLanguage();
     ProjectManager.prototype.getTemplateProjectPath = function () { return null; };
@@ -26,7 +28,7 @@
         const ok = await create.call(this, target, name, {...options, blank:true});
         if (!ok) return false;
         try {
-            const illustrated = options.dianaSample !== false;
+            const illustrated = true;
             if (typeof DianaStarterData !== 'undefined') DianaStarterData.writeAssets(this, target, {illustrated});
             if (illustrated && typeof DianaJRPGSample !== 'undefined') DianaJRPGSample.installProject(this,target);
             const file = this.path.join(target, 'project.rpgreactor');
@@ -35,7 +37,7 @@
             for (const notice of ['LICENSE', 'THIRD_PARTY_NOTICES.md']) {
                 this.fs.copyFileSync(this.path.join(distribution, notice), this.path.join(target, notice));
             }
-            data.diana = {schemaVersion:1, studioVersion:'0.2.4',mode:options.dianaMode==='hybrid'?'hybrid':'2d',sample:illustrated?'vila-da-clareira':undefined};
+            data.diana = {schemaVersion:1, studioVersion:'0.2.6',mode:options.dianaMode==='hybrid'?'hybrid':'2d',sample:'vila-da-clareira'};
             this._writeFileAtomic(this.fs, file, JSON.stringify(data,null,2), 'utf8');
             return true;
         } catch (error) {
@@ -51,7 +53,7 @@
         const description=choice?.lastElementChild;
         if(description?.children.length>=2){
             description.children[0].textContent='Projeto inicial Diana';
-            description.children[1].textContent='Mapa, tiles básicos, personagem e batalha de treino prontos para editar e testar.';
+            description.children[1].textContent='Vila da Clareira, RTP Medieval nativo e batalha prontos para editar. Este é o ponto de partida obrigatório; após criar, substitua qualquer asset livremente.';
             description.setAttribute('data-rr-i18n-skip','');
         }
         return result;

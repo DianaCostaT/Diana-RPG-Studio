@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "diana-native-vehicles",
+  "version": 1,
+  "license": "MIT",
+  "origin": "Sprites originais Diana, desenhados especificamente para este projeto; sem recursos de jogos comerciais.",
+  "grid": {
+    "characters": [
+      144,
+      192
+    ],
+    "columns": 3,
+    "rows": 4,
+    "cell": [
+      48,
+      48
+    ]
+  },
+  "files": [
+    {
+      "path": "img/characters/$DianaAirship.png",
+      "width": 144,
+      "height": 192,
+      "sha256": "7d716acd1e6b913d7c81e07c69263718171447105bcde0b9a51383e8b760cb8b"
+    },
+    {
+      "path": "img/characters/$DianaBoat.png",
+      "width": 144,
+      "height": 192,
+      "sha256": "72adc8e9f7d804f51fb207f0deac9b6f6a21c0df88cd9a8e3eeb0f1bb50194b0"
+    },
+    {
+      "path": "img/characters/$DianaShip.png",
+      "width": 144,
+      "height": 192,
+      "sha256": "5607090aaed20addfa6f20a9ff682b5e9c7c78214f8bc315baca9ee9433e210e"
+    }
+  ]
+}

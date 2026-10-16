@@ -95,7 +95,7 @@ async function main() {
             p.currentLayer='B';p.selectedTiles=[{layer:'B',x:3,y:0}];
             const point=t.container.toGlobal(new PIXI.Point(6.5*t.TILE_WIDTH,4.5*t.TILE_HEIGHT));
             const rect=t.app.canvas.getBoundingClientRect();
-            return {x:Math.round(rect.left+point.x*rect.width/t.app.screen.width),y:Math.round(rect.top+point.y*rect.height/t.app.screen.height)};
+            return {x:Math.round(rect.left+point.x*rect.width/t.app.screen.width),y:Math.round(rect.top+point.y*rect.height/t.app.screen.height),before:t.getTileAt(6,4,0)};
         `);
         assert.equal(await driver.execute('return document.elementFromPoint(arguments[0],arguments[1]) === reactor.projectController.tilemapManager.app.canvas;',[pointer.x,pointer.y]),true,'pointer targets the visible map canvas');
         await driver.sessionRequest('POST','/actions',{actions:[{type:'pointer',id:'map-mouse',parameters:{pointerType:'mouse'},actions:[
@@ -104,7 +104,7 @@ async function main() {
         ]}]});
         assert.equal(await driver.execute('return reactor.projectController.tilemapManager.getTileAt(6,4,0);'),3,'mouse stroke paints selected tile');
         const history = await driver.execute('const m=reactor.mapEditor,t=reactor.projectController.tilemapManager;m.undo();const undo=t.getTileAt(6,4,0);m.redo();return {undo,redo:t.getTileAt(6,4,0)};');
-        assert.deepEqual(history,{undo:1,redo:3});
+        assert.deepEqual(history,{undo:pointer.before,redo:3});
         assert.equal(await driver.executeAsync('const done=arguments[arguments.length-1];reactor.projectController.saveProject().then(done,e=>done({failure:String(e)}));'),true);
         result.pointer={paintedTile:3,cell:[6,4],history};
         const map=JSON.parse(fs.readFileSync(path.join(project,'data','Map001.json'),'utf8'));
@@ -119,7 +119,7 @@ async function main() {
         assert.ok(fs.existsSync(path.join(project,'js','reactor_main.js')));
         assert.deepEqual(fs.readdirSync(path.join(project,'js','plugins')),[]);
         for (const notice of ['LICENSE','THIRD_PARTY_NOTICES.md']) {
-            assert.equal(fs.readFileSync(path.join(project,notice),'utf8'),fs.readFileSync(path.join(root,'build','diana',notice),'utf8'));
+            assert.equal(fs.readFileSync(path.join(project,notice),'utf8'),fs.readFileSync(path.join(editor,'..',notice),'utf8'));
         }
         const screenshot=await driver.sessionRequest('GET','/screenshot');
         fs.writeFileSync(path.join(run,'editor.png'),Buffer.from(screenshot,'base64'));
@@ -143,7 +143,7 @@ async function main() {
         assert.equal(runtime.message,'Olá, Diana!');
         assert.deepEqual(runtime.errors,[]);
         fs.writeFileSync(path.join(run,'game.png'),Buffer.from(await driver.sessionRequest('GET','/screenshot'),'base64'));
-        writeReport({status:'passed',result,runtime,provenance:JSON.parse(fs.readFileSync(path.join(root,'build','diana','provenance.json'),'utf8')),
+        writeReport({status:'passed',result,runtime,provenance:JSON.parse(fs.readFileSync(path.join(editor,'..','provenance.json'),'utf8')),
             limits:'APIs de projeto/assets/eventos/parallax, duas camadas persistidas, pintura por ponteiro WebDriver real e undo/redo por API; jogo e diálogo executados; não cobre colisão, foreground ou batalha completa',
             screenshot:path.join(run,'editor.png'),gameScreenshot:path.join(run,'game.png')});
         console.log('PASS: editor Windows, português, assets, evento, parallax, persistência e jogo executado. '+run);

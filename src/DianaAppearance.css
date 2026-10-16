@@ -53,3 +53,9 @@ html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar .toolbar-label[da
 @media(max-width:1360px){#diana-workspace [data-diana-action=animations] .diana-button-label{display:none;}}
 @media(max-width:1360px){#diana-workspace [data-diana-action=assets] .diana-button-label,#diana-workspace [data-diana-action=parallax] .diana-button-label,#diana-workspace [data-diana-action=enemies] .diana-button-label{display:none;}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;}}
+.diana-grid-modal .rr-modal{width:min(760px,94vw);max-height:92vh;display:flex;flex-direction:column;}.diana-grid-modal .rr-modal-body{overflow:auto;}
+.diana-grid-controls{display:flex;gap:8px;align-items:end;flex-wrap:wrap;}.diana-grid-controls .diana-classic-field{min-width:118px;}
+.diana-grid-sheet{display:grid;gap:3px;margin:14px 0;overflow:auto;max-height:300px;padding:5px;background:var(--color-bg-panel);}
+.diana-grid-cell{width:42px;height:42px;padding:0;background-size:calc(var(--diana-sheet-width, 100%) * 1);background-color:var(--color-bg-button);font-size:11px;}
+.diana-grid-frames{display:flex;gap:7px;overflow:auto;list-style:none;padding:0;margin:12px 0;}.diana-grid-frames li{display:grid;grid-template-columns:36px auto auto auto;gap:3px;align-items:center;padding:5px;border:1px solid var(--color-border);background:var(--color-bg-panel);font-size:11px;}.diana-grid-frames button{padding:2px 5px;font-size:11px;}.diana-grid-thumb{image-rendering:pixelated;background:#26384a;}
+.diana-grid-preview{display:block;max-width:100%;border:1px solid var(--color-border);image-rendering:pixelated;}.diana-map-grid-composer{margin-top:8px;}

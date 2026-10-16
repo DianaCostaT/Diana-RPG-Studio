@@ -38,10 +38,17 @@ test('novo projeto vazio persiste identificação Diana',async()=>{
     assert.equal(manager.getTemplateProjectPath(),null);
     assert.equal(manager.written.name,'Teste');
     assert.equal(manager.written.diana.schemaVersion,1);
+    assert.equal(manager.written.diana.sample,'vila-da-clareira');
     assert.equal(copied.length,2);
     const options=new UIManager().showNewProjectDialog({hasTemplate:true});
     assert.equal(options.hasTemplate,false);
     assert.equal(options.defaultName,'Meu jogo');
+});
+test('Vila da Clareira não aceita opt-out em projetos novos',async()=>{
+    const {ProjectManager}=context(null),manager=new ProjectManager();
+    manager.path={join(){return 'project.rpgreactor';}};manager.fs={readFileSync(){return '{}';},copyFileSync(){}};
+    assert.equal(await manager.createNewProject('target','Teste',{dianaSample:false}),true);
+    assert.equal(manager.written.diana.sample,'vila-da-clareira');
 });
 
 test('marca Diana permanece no título ao abrir projeto e traduz outros textos',()=>{

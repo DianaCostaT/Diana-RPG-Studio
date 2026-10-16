@@ -15,13 +15,43 @@
       "path": "img/characters/$Guardiao.png",
       "width": 144,
       "height": 192,
-      "sha256": "fb5b55501b1d52e0b21bc21df66fc50cb391358a9ea852f4febc485f8cfb390b"
+      "sha256": "18a33853b83a006239678871d2df359d6468831e0c950b79261a0e0248d1d3fd"
+    },
+    {
+      "path": "img/characters/$Ivo.png",
+      "width": 288,
+      "height": 192,
+      "sha256": "5e0f75336b4c79a3d25c2d9067fa4433599a94ab3b5cc8dfd27278d6774fe0e4"
     },
     {
       "path": "img/characters/$Liora.png",
-      "width": 144,
+      "width": 288,
       "height": 192,
-      "sha256": "d8d0e952ec8d0fc31b2cb4f15c45e7b1cae392443c7b96d90131b653e66138ba"
+      "sha256": "cac482e8fed4c68ca342cd0c0d47ec22cf47eb5aa0247bf207de5dfa861437f2"
+    },
+    {
+      "path": "img/characters/$Liora[f6].png",
+      "width": 288,
+      "height": 192,
+      "sha256": "cac482e8fed4c68ca342cd0c0d47ec22cf47eb5aa0247bf207de5dfa861437f2"
+    },
+    {
+      "path": "img/characters/$Mira.png",
+      "width": 288,
+      "height": 192,
+      "sha256": "ac2fe9330d9a288240088a393f4ff5c03de6322236311384149c4bbca63c409f"
+    },
+    {
+      "path": "img/characters/$Nila.png",
+      "width": 288,
+      "height": 192,
+      "sha256": "ba3a20c2db008074db92948f8c81cdcebc6a696e6614ee3a84cd95160cd6c193"
+    },
+    {
+      "path": "img/characters/$Orin.png",
+      "width": 288,
+      "height": 192,
+      "sha256": "5b2e2ef25ada5f563946f097e8cbf2e4821cc896a8800172c1b1681c712c580a"
     },
     {
       "path": "img/faces/ClareiraRostos.png",
@@ -36,16 +66,46 @@
       "sha256": "fba82c035eaa01c30e13f5beba5a51c5c7d47cb182db4d9c828f5987a5813e29"
     },
     {
+      "path": "img/parallaxes/!VilaClareiraExpandida.png",
+      "width": 2560,
+      "height": 2048,
+      "sha256": "6746938f855d4861a2393756f845aeb79d97c566872c5eff7176ec38a7808a1d"
+    },
+    {
       "path": "img/sv_actors/ClareiraCombate.png",
-      "width": 768,
-      "height": 1152,
-      "sha256": "4bd144467c897f3a762c081bb22710b9200922b32de3e7a79ad1783d9a5ac0c8"
+      "width": 1152,
+      "height": 1536,
+      "sha256": "d6e13c8203245919ddfca8b36fd65ecc98fb722960ce1b24286efc9c890cd69b"
     },
     {
       "path": "img/tilesets/ClareiraColisao.png",
       "width": 768,
       "height": 48,
       "sha256": "ae501b32774b5d2684010c3722133e4f84ac35ff2105918fc03516ec96056a54"
+    },
+    {
+      "path": "img/tilesets/ClareiraInteriores.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "7a31f4eba6e561bebf5e686cbbb722afced095f8d20c4a4744b4517cbedd0915"
+    },
+    {
+      "path": "img/tilesets/ClareiraObjetos.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "911df83e489cab94269e62286831712ead0886491e42e4dafa15d1264e9f69e2"
+    },
+    {
+      "path": "img/tilesets/ClareiraPaisagem.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "2e2affaed557a18323827b4580a6dc84fd5161a79cf101810ae4b30726203681"
+    },
+    {
+      "path": "img/tilesets/ClareiraTerrenos.png",
+      "width": 256,
+      "height": 224,
+      "sha256": "268c94f21e9e6aca781b44c43b4efbd36e1d00517b741ee7aae325730cfefd27"
     }
   ]
 }

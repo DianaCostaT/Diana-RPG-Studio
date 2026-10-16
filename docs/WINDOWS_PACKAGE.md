@@ -49,3 +49,7 @@ Cada pacote contém `diana-package.json`: inventário por arquivo com tamanho/SH
 **Bloqueado:** `@pixi/colord` 2.9.6 declara MIT, mas não contém texto de licença no pacote instalado. `gif.js` 0.2.0 contém MIT completo no README, que é preservado e inventariado. WASM/decoders e terceiros embutidos ainda requerem revisão da cadeia exata. Todos os manifests marcam `distributionStatus: blocked-license-review`; resolver esses pontos antes de publicar. A rotina oferece pacote local para revisão, sem promover seu conteúdo a distribuição liberada.
 
 **Resolvido por exclusão:** MP3 opcional não é oferecido pelo AudioExport, carregar lamejs lança erro explícito, e o pacote/manifest de dependências não transporta lamejs. A discrepância GPL/LGPL histórica permanece documentada na auditoria e não é reinterpretada.
+
+## Prévia local da Clareira — 16/10/2026
+
+O executável de revisão é `dist/Diana-RPG-Studio-Clareira-preview-2026-10-16/Diana.exe`. Mantenha toda a pasta do pacote ao lado de `Diana.exe`; este é um bundle local de revisão, não um binário único nem uma liberação pública. `node scripts/smoke-ready-windows.cjs dist/Diana-RPG-Studio-Clareira-preview-2026-10-16` passou. Capturas reais do editor, do mapa, dos comandos de batalha e de um golpe ficam em `artifacts/clareira-restaurada-5z8mlD/`.

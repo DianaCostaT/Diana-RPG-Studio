@@ -1,0 +1,192 @@
+diff --git a/runtime/reactor_objects_legacy.js b/runtime/reactor_objects_legacy.js
+--- a/runtime/reactor_objects_legacy.js
++++ b/runtime/reactor_objects_legacy.js
+@@ -465,3 +465,59 @@ Game_CharacterBase.prototype.animationWait = function() {
+         ? Math.max(1, wait * 4 / frames)
+         : wait;
+ };
++
++// Diana stores arbitrary walking grids in System.json rather than filenames.
++Game_CharacterBase.dianaSpriteAnimation = function(name) {
++    const library = $dataSystem?.dianaSpriteAnimations;
++    const grid = library?.version === 1 && library.characters?.[String(name || "")];
++    const animation = grid?.animations?.walk;
++    const validCell = cell => Number.isInteger(cell) && cell >= 0 && cell < grid.columns * grid.rows;
++    if (!grid || !Number.isInteger(grid.columns) || !Number.isInteger(grid.rows) ||
++            grid.columns < 1 || grid.rows < 1 || !Array.isArray(animation?.frames) ||
++            !animation.frames.length || !animation.frames.every(validCell) ||
++            !Number.isInteger(animation.speed) || animation.speed < 1 ||
++            ![true, false, "once"].includes(animation.loop)) return null;
++    return grid;
++};
++
++Game_CharacterBase.prototype.dianaWalkAnimation = function() {
++    return Game_CharacterBase.dianaSpriteAnimation(this._characterName)?.animations.walk || null;
++};
++
++const _dianaGridMaxPattern = Game_CharacterBase.prototype.maxPattern;
++Game_CharacterBase.prototype.maxPattern = function() {
++    return this.dianaWalkAnimation()?.frames.length || _dianaGridMaxPattern.call(this);
++};
++
++const _dianaGridPattern = Game_CharacterBase.prototype.pattern;
++Game_CharacterBase.prototype.pattern = function() {
++    return this.dianaWalkAnimation() ? this._pattern : _dianaGridPattern.call(this);
++};
++
++const _dianaGridAnimationWait = Game_CharacterBase.prototype.animationWait;
++Game_CharacterBase.prototype.animationWait = function() {
++    return this.dianaWalkAnimation()?.speed || _dianaGridAnimationWait.call(this);
++};
++
++const _dianaGridUpdatePattern = Game_CharacterBase.prototype.updatePattern;
++Game_CharacterBase.prototype.updatePattern = function() {
++    const animation = this.dianaWalkAnimation();
++    if (!animation) return _dianaGridUpdatePattern.call(this);
++    if (this.hasStepAnime() || this.hasWalkAnime()) {
++        this._pattern++;
++        if (this._pattern >= animation.frames.length) this._pattern = animation.loop === true ? 0 : animation.frames.length - 1;
++    } else {
++        this.resetPattern();
++    }
++};
++
++const _dianaGridResetPattern = Game_CharacterBase.prototype.resetPattern;
++Game_CharacterBase.prototype.resetPattern = function() {
++    if (this.dianaWalkAnimation()) this.setPattern(0);
++    else _dianaGridResetPattern.call(this);
++};
++
++const _dianaGridIsOriginalPattern = Game_CharacterBase.prototype.isOriginalPattern;
++Game_CharacterBase.prototype.isOriginalPattern = function() {
++    return this.dianaWalkAnimation() ? this.pattern() === 0 : _dianaGridIsOriginalPattern.call(this);
++};
+diff --git a/runtime/reactor_sprites.js b/runtime/reactor_sprites.js
+--- a/runtime/reactor_sprites.js
++++ b/runtime/reactor_sprites.js
+@@ -6972,3 +6972,37 @@ Sprite_Character.prototype.isReactorLookBeat = function() {
+     if (!character || typeof character.eventId !== "function" || typeof ReactorFight === "undefined" || !ReactorFight) return false;
+     return (Graphics.frameCount + character.eventId()) % (ReactorFight.LOOK_BEAT || 12) === 0;
+ };
++
++// The grid contract takes precedence only after complete validation.
++const dianaGridForCharacter = character => Game_CharacterBase.dianaSpriteAnimation(
++    character?.characterName?.() || character?._characterName);
++const _dianaGridPatternWidth = Sprite_Character.prototype.patternWidth;
++Sprite_Character.prototype.patternWidth = function() {
++    const grid = dianaGridForCharacter(this._character);
++    return grid && this.bitmap ? this.bitmap.width / grid.columns : _dianaGridPatternWidth.call(this);
++};
++const _dianaGridPatternHeight = Sprite_Character.prototype.patternHeight;
++Sprite_Character.prototype.patternHeight = function() {
++    const grid = dianaGridForCharacter(this._character);
++    return grid && this.bitmap ? this.bitmap.height / grid.rows : _dianaGridPatternHeight.call(this);
++};
++const _dianaGridPatternX = Sprite_Character.prototype.characterPatternX;
++Sprite_Character.prototype.characterPatternX = function() {
++    const grid = dianaGridForCharacter(this._character);
++    const animation = this._character?.dianaWalkAnimation?.();
++    if (!grid || !animation) return _dianaGridPatternX.call(this);
++    const index = animation.frames[Math.min(animation.frames.length - 1, Math.max(0, this._character.pattern()))];
++    return index % grid.columns;
++};
++const _dianaGridPatternY = Sprite_Character.prototype.characterPatternY;
++Sprite_Character.prototype.characterPatternY = function() {
++    const grid = dianaGridForCharacter(this._character);
++    const animation = this._character?.dianaWalkAnimation?.();
++    if (!grid || !animation) return _dianaGridPatternY.call(this);
++    const index = animation.frames[Math.min(animation.frames.length - 1, Math.max(0, this._character.pattern()))];
++    return Math.floor(index / grid.columns);
++};
++const _dianaGridBlockX = Sprite_Character.prototype.characterBlockX;
++Sprite_Character.prototype.characterBlockX = function() {
++    return dianaGridForCharacter(this._character) ? 0 : _dianaGridBlockX.call(this);
++};
++const _dianaGridBlockY = Sprite_Character.prototype.characterBlockY;
++Sprite_Character.prototype.characterBlockY = function() {
++    return dianaGridForCharacter(this._character) ? 0 : _dianaGridBlockY.call(this);
++};
+diff --git a/runtime/reactor_core_io.js b/runtime/reactor_core_io.js
+--- a/runtime/reactor_core_io.js
++++ b/runtime/reactor_core_io.js
+@@ -849,6 +849,10 @@ WebAudio.prototype._onDecode = function(buffer) {
+         this._loopStartTime = 0;
+         this._loopLengthTime = this._totalTime;
+     }
++    if (this._dianaLoop) {
++        this._loopStartTime = this._dianaLoop.start;
++        this._loopLengthTime = this._dianaLoop.end - this._dianaLoop.start;
++    }
+     if (this._sourceNodes.length > 0) {
+         this._refreshSourceNode();
+     }
+diff --git a/runtime/reactor_managers.js b/runtime/reactor_managers.js
+--- a/runtime/reactor_managers.js
++++ b/runtime/reactor_managers.js
+@@ -1438,6 +1438,20 @@ Object.defineProperty(AudioManager, "seVolume", {
+     configurable: true
+ });
+ 
++// BGM intervals are validated before playback and installed after decoding.
++AudioManager.dianaBgmLoop = function(bgm) {
++    const loop = bgm?.dianaLoop || $dataSystem?.dianaAudioLoops?.bgm?.[bgm?.name];
++    if (!loop) return null;
++    if (!Number.isFinite(loop.start) || !Number.isFinite(loop.end) || loop.start < 0 || loop.end <= loop.start) {
++        throw new Error('Loop de BGM inv?lido para "' + (bgm?.name || "") + '": in?cio deve ser menor que fim.');
++    }
++    return {start: loop.start, end: loop.end};
++};
++AudioManager.applyDianaBgmLoop = function(buffer, bgm) {
++    const loop = this.dianaBgmLoop(bgm);
++    if (loop) buffer._dianaLoop = loop;
++};
++
+ AudioManager.playBgm = function(bgm, pos) {
+     if (bgm && bgm.sequence) {
+         this.playBgmSequence(bgm);
+@@ -1450,6 +1464,7 @@ AudioManager.playBgm = function(bgm, pos) {
+         if (bgm.name) {
+             this._bgmBuffer = this.createBuffer("bgm/", bgm.name);
+             this.updateBgmParameters(bgm);
++            this.applyDianaBgmLoop(this._bgmBuffer, bgm);
+             if (!this._meBuffer) {
+                 this._bgmBuffer.play(true, pos || 0);
+             }
+diff --git a/editor/src/battle/BattleData.js b/editor/src/battle/BattleData.js
+--- a/editor/src/battle/BattleData.js
++++ b/editor/src/battle/BattleData.js
+@@ -175,12 +175,15 @@
+         }
+         return errors;
+     };
++    B.validateSpriteAnimation=value=>{const errors=[],integer=v=>Number.isInteger(v)&&v>0;if(!value||value.version!==1||!integer(value.columns)||!integer(value.rows)||!value.animations||typeof value.animations!=='object')return ['Sprite grid needs version 1, positive columns/rows, and animations.'];for(const [name,animation] of Object.entries(value.animations))if(!name.trim()||!Array.isArray(animation.frames)||!animation.frames.length||!animation.frames.every(i=>Number.isInteger(i)&&i>=0&&i<value.columns*value.rows)||!integer(animation.speed)||![true,false,'once'].includes(animation.loop))errors.push(name+': frames, speed, and loop are invalid.');return errors;};
++    B.spriteGridFrame=(graphic,width,height,motion,frame)=>{const grid=graphic.spriteAnimation,animation=grid?.animations?.[motion]||grid?.animations?.idle;if(B.validateSpriteAnimation(grid).length||!animation)return null;const tick=Math.floor(Math.max(0,number(frame))/animation.speed),index=animation.loop===true?tick%animation.frames.length:Math.min(animation.frames.length-1,tick),cell=animation.frames[index],anchor=grid.anchor||{x:.5,y:1};return {x:cell%grid.columns*width/grid.columns,y:Math.floor(cell/grid.columns)*height/grid.rows,width:width/grid.columns,height:height/grid.rows,anchor:{x:anchor.x??.5,y:anchor.y??1}};};
+     B.graphicPose = (graphic,motion) => {
+         const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
+         return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
+     };
+     B.graphicPoseDuration = pose => pose.frames.reduce((sum,f)=>sum+f.duration,0);
+     B.graphicFrame = (graphic,width,height,motion='idle',frame=0,facingYaw=-90,heldFrame=null) => {
++        const gridFrame=B.spriteGridFrame(graphic,width,height,motion,frame);if(gridFrame)return gridFrame;
+         const pose=B.graphicPose(graphic,motion);
+         if(pose){
+             const duration=B.graphicPoseDuration(pose),loop=graphic.motions?.[motion]?.loop??pose.loop??true;
+diff --git a/runtime/reactor_battle_data.js b/runtime/reactor_battle_data.js
+--- a/runtime/reactor_battle_data.js
++++ b/runtime/reactor_battle_data.js
+@@ -175,12 +175,15 @@
+         }
+         return errors;
+     };
++    B.validateSpriteAnimation=value=>{const errors=[],integer=v=>Number.isInteger(v)&&v>0;if(!value||value.version!==1||!integer(value.columns)||!integer(value.rows)||!value.animations||typeof value.animations!=='object')return ['Sprite grid needs version 1, positive columns/rows, and animations.'];for(const [name,animation] of Object.entries(value.animations))if(!name.trim()||!Array.isArray(animation.frames)||!animation.frames.length||!animation.frames.every(i=>Number.isInteger(i)&&i>=0&&i<value.columns*value.rows)||!integer(animation.speed)||![true,false,'once'].includes(animation.loop))errors.push(name+': frames, speed, and loop are invalid.');return errors;};
++    B.spriteGridFrame=(graphic,width,height,motion,frame)=>{const grid=graphic.spriteAnimation,animation=grid?.animations?.[motion]||grid?.animations?.idle;if(B.validateSpriteAnimation(grid).length||!animation)return null;const tick=Math.floor(Math.max(0,number(frame))/animation.speed),index=animation.loop===true?tick%animation.frames.length:Math.min(animation.frames.length-1,tick),cell=animation.frames[index],anchor=grid.anchor||{x:0.5,y:1};return {x:cell%grid.columns*width/grid.columns,y:Math.floor(cell/grid.columns)*height/grid.rows,width:width/grid.columns,height:height/grid.rows,anchor:{x:anchor.x??.5,y:anchor.y??1}};};
+     B.graphicPose = (graphic,motion) => {
+         const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
+         return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
+     };
+     B.graphicPoseDuration = pose => pose.frames.reduce((sum,f)=>sum+f.duration,0);
+     B.graphicFrame = (graphic,width,height,motion='idle',frame=0,facingYaw=-90,heldFrame=null) => {
++        const gridFrame=B.spriteGridFrame(graphic,width,height,motion,frame);if(gridFrame)return gridFrame;
+         const pose=B.graphicPose(graphic,motion);
+         if(pose){
+             const duration=B.graphicPoseDuration(pose),loop=graphic.motions?.[motion]?.loop??pose.loop??true;

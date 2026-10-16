@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "tileSize": 32,
+  "pages": {
+    "A5": {
+      "name": "ClareiraTerrenos",
+      "tileIdStart": 1536,
+      "columns": 8
+    },
+    "B": {
+      "name": "ClareiraObjetos",
+      "tileIdStart": 0,
+      "columns": 16
+    },
+    "C": {
+      "name": "ClareiraInteriores",
+      "tileIdStart": 256,
+      "columns": 16
+    },
+    "D": {
+      "name": "ClareiraPaisagem",
+      "tileIdStart": 512,
+      "columns": 16
+    }
+  },
+  "terrain": {
+    "grass": 1536,
+    "dirt": 1537,
+    "water": 1538,
+    "stone": 1539,
+    "wood": 1540,
+    "sand": 1541,
+    "shade": 1542,
+    "soil": 1543
+  },
+  "objects": {
+    "tree": {
+      "page": "B",
+      "x": 0,
+      "y": 1,
+      "width": 3,
+      "height": 4
+    },
+    "house": {
+      "page": "B",
+      "x": 4,
+      "y": 1,
+      "width": 4,
+      "height": 4
+    },
+    "well": {
+      "page": "B",
+      "x": 8,
+      "y": 1,
+      "width": 2,
+      "height": 2
+    },
+    "bush": {
+      "page": "B",
+      "x": 10,
+      "y": 1,
+      "width": 2,
+      "height": 2
+    },
+    "rock": {
+      "page": "B",
+      "x": 12,
+      "y": 1,
+      "width": 2,
+      "height": 2
+    },
+    "flowers": {
+      "page": "B",
+      "x": 14,
+      "y": 1,
+      "width": 1,
+      "height": 1
+    },
+    "lamp": {
+      "page": "B",
+      "x": 15,
+      "y": 1,
+      "width": 1,
+      "height": 2
+    },
+    "fence": {
+      "page": "B",
+      "x": 8,
+      "y": 4,
+      "width": 4,
+      "height": 1
+    },
+    "sign": {
+      "page": "C",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    "market": {
+      "page": "C",
+      "x": 1,
+      "y": 0,
+      "width": 3,
+      "height": 2
+    },
+    "innSign": {
+      "page": "C",
+      "x": 4,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    "counter": {
+      "page": "C",
+      "x": 0,
+      "y": 3,
+      "width": 3,
+      "height": 1
+    },
+    "table": {
+      "page": "C",
+      "x": 3,
+      "y": 3,
+      "width": 2,
+      "height": 2
+    },
+    "bed": {
+      "page": "C",
+      "x": 5,
+      "y": 3,
+      "width": 2,
+      "height": 3
+    },
+    "shelf": {
+      "page": "C",
+      "x": 7,
+      "y": 3,
+      "width": 2,
+      "height": 2
+    },
+    "shrine": {
+      "page": "D",
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 7
+    },
+    "bridge": {
+      "page": "D",
+      "x": 8,
+      "y": 0,
+      "width": 4,
+      "height": 3
+    },
+    "pine": {
+      "page": "D",
+      "x": 0,
+      "y": 9,
+      "width": 3,
+      "height": 5
+    },
+    "cliff": {
+      "page": "D",
+      "x": 4,
+      "y": 9,
+      "width": 3,
+      "height": 3
+    },
+    "stump": {
+      "page": "D",
+      "x": 8,
+      "y": 9,
+      "width": 2,
+      "height": 2
+    }
+  }
+}

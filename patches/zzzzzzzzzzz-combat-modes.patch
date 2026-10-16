@@ -1,0 +1,11 @@
+diff --git a/runtime/reactor_main.js b/runtime/reactor_main.js
+--- a/runtime/reactor_main.js
++++ b/runtime/reactor_main.js
+@@ -69,6 +69,7 @@ const scriptUrls = [
+     "js/reactor_vehicles_drive.js",
+     "js/reactor_vehicles_feel.js",
+     "js/reactor_vehicles_hints.js",
++    "js/DianaCombatModes.js",
+     "js/reactor_vehicles_mount.js",
+     "js/reactor_plugins.js"
+ ];

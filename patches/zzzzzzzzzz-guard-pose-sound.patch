@@ -1,0 +1,93 @@
+diff --git a/editor/src/battle/BattleData.js b/editor/src/battle/BattleData.js
+--- a/editor/src/battle/BattleData.js
++++ b/editor/src/battle/BattleData.js
+@@ -177,6 +177,24 @@
+     };
+     B.validateSpriteAnimation=value=>{const errors=[],integer=v=>Number.isInteger(v)&&v>0;if(!value||value.version!==1||!integer(value.columns)||!integer(value.rows)||!value.animations||typeof value.animations!=='object')return ['Sprite grid needs version 1, positive columns/rows, and animations.'];for(const [name,animation] of Object.entries(value.animations))if(!name.trim()||!Array.isArray(animation.frames)||!animation.frames.length||!animation.frames.every(i=>Number.isInteger(i)&&i>=0&&i<value.columns*value.rows)||!integer(animation.speed)||![true,false,'once'].includes(animation.loop))errors.push(name+': frames, speed, and loop are invalid.');return errors;};
+     B.spriteGridFrame=(graphic,width,height,motion,frame)=>{const grid=graphic.spriteAnimation,animation=grid?.animations?.[motion]||grid?.animations?.[graphic.motions?.[motion]?.pose]||grid?.animations?.idle;if(B.validateSpriteAnimation(grid).length||!animation)return null;const tick=Math.floor(Math.max(0,number(frame))/animation.speed),index=animation.loop===true?tick%animation.frames.length:Math.min(animation.frames.length-1,tick),cell=animation.frames[index],anchor=grid.anchor||{x:.5,y:1};return {x:cell%grid.columns*width/grid.columns,y:Math.floor(cell/grid.columns)*height/grid.rows,width:width/grid.columns,height:height/grid.rows,anchor:{x:anchor.x??.5,y:anchor.y??1}};};
++    // Optional defense atlases share the same grid contract for allies and enemies.
++    B.motionGraphic = (graphic,motion,armors=[]) => {
++        if(motion!=='guard'||!graphic.guardGraphics)return graphic;
++        const variant=armors.some(item=>item?.etypeId===2)?'shield':'weapon',selected=graphic.guardGraphics[variant];
++        return selected?{...graphic,...selected,poses:{},motions:{...graphic.motions,guard:{pose:'guard'}}}:graphic;
++    };
++    B.poseKey = (graphic,motion) => {
++        if(Object.hasOwn(graphic.poseSounds||{},motion))return motion;
++        const alias=graphic.motions?.[motion]?.pose,animations=graphic.spriteAnimation?.animations;
++        if(animations)return animations[motion]?motion:animations[alias]?alias:animations.idle?'idle':motion;
++        return alias||motion;
++    };
++    B.poseSound = (graphic,motion) => {
++        const value=graphic.poseSounds?.[motion]??graphic.poseSounds?.[B.poseKey(graphic,motion)];
++        if(!value?.name||typeof value.name!=='string'||/^[/\\]|[:\\]|(^|\/)\.\.(\/|$)/.test(value.name))return null;
++        const clamp=(v,f,min,max)=>Number.isFinite(v)?Math.max(min,Math.min(max,v)):f;
++        return {name:value.name,volume:clamp(value.volume,90,0,100),pitch:clamp(value.pitch,100,50,150),pan:clamp(value.pan,0,-100,100)};
++    };
+     B.graphicPose = (graphic,motion) => {
+         const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
+         return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
+diff --git a/runtime/reactor_battle_data.js b/runtime/reactor_battle_data.js
+--- a/runtime/reactor_battle_data.js
++++ b/runtime/reactor_battle_data.js
+@@ -177,6 +177,24 @@
+     };
+     B.validateSpriteAnimation=value=>{const errors=[],integer=v=>Number.isInteger(v)&&v>0;if(!value||value.version!==1||!integer(value.columns)||!integer(value.rows)||!value.animations||typeof value.animations!=='object')return ['Sprite grid needs version 1, positive columns/rows, and animations.'];for(const [name,animation] of Object.entries(value.animations))if(!name.trim()||!Array.isArray(animation.frames)||!animation.frames.length||!animation.frames.every(i=>Number.isInteger(i)&&i>=0&&i<value.columns*value.rows)||!integer(animation.speed)||![true,false,'once'].includes(animation.loop))errors.push(name+': frames, speed, and loop are invalid.');return errors;};
+     B.spriteGridFrame=(graphic,width,height,motion,frame)=>{const grid=graphic.spriteAnimation,animation=grid?.animations?.[motion]||grid?.animations?.[graphic.motions?.[motion]?.pose]||grid?.animations?.idle;if(B.validateSpriteAnimation(grid).length||!animation)return null;const tick=Math.floor(Math.max(0,number(frame))/animation.speed),index=animation.loop===true?tick%animation.frames.length:Math.min(animation.frames.length-1,tick),cell=animation.frames[index],anchor=grid.anchor||{x:0.5,y:1};return {x:cell%grid.columns*width/grid.columns,y:Math.floor(cell/grid.columns)*height/grid.rows,width:width/grid.columns,height:height/grid.rows,anchor:{x:anchor.x??.5,y:anchor.y??1}};};
++    // Optional defense atlases share the same grid contract for allies and enemies.
++    B.motionGraphic = (graphic,motion,armors=[]) => {
++        if(motion!=='guard'||!graphic.guardGraphics)return graphic;
++        const variant=armors.some(item=>item?.etypeId===2)?'shield':'weapon',selected=graphic.guardGraphics[variant];
++        return selected?{...graphic,...selected,poses:{},motions:{...graphic.motions,guard:{pose:'guard'}}}:graphic;
++    };
++    B.poseKey = (graphic,motion) => {
++        if(Object.hasOwn(graphic.poseSounds||{},motion))return motion;
++        const alias=graphic.motions?.[motion]?.pose,animations=graphic.spriteAnimation?.animations;
++        if(animations)return animations[motion]?motion:animations[alias]?alias:animations.idle?'idle':motion;
++        return alias||motion;
++    };
++    B.poseSound = (graphic,motion) => {
++        const value=graphic.poseSounds?.[motion]??graphic.poseSounds?.[B.poseKey(graphic,motion)];
++        if(!value?.name||typeof value.name!=='string'||/^[/\\]|[:\\]|(^|\/)\.\.(\/|$)/.test(value.name))return null;
++        const clamp=(v,f,min,max)=>Number.isFinite(v)?Math.max(min,Math.min(max,v)):f;
++        return {name:value.name,volume:clamp(value.volume,90,0,100),pitch:clamp(value.pitch,100,50,150),pan:clamp(value.pan,0,-100,100)};
++    };
+     B.graphicPose = (graphic,motion) => {
+         const pose=graphic.poses?.[graphic.motions?.[motion]?.pose||motion];
+         return pose&&!B.validateGraphicPoses({pose}).length?pose:null;
+diff --git a/runtime/reactor_battle_presentation.js b/runtime/reactor_battle_presentation.js
+--- a/runtime/reactor_battle_presentation.js
++++ b/runtime/reactor_battle_presentation.js
+@@ -757,7 +757,8 @@
+         const states=(battler.states?.()||[]).map(state=>({priority:state.priority,...P.settings.states?.[state.id]?.graphicMotion})).sort((a,b)=>(b.priority||0)-(a.priority||0));
+         const state=states.find(state=>state.motion||state.index!==undefined),name=P.battlerState(battler,{}),speed=(graphic.motions?.[name]?.speed||graphic.speed||12)*states.reduce((n,state)=>n*(state.speedMultiplier||1),1);
+         if(state||states.some(state=>state.speedMultiplier))graphic={...graphic,motions:{...graphic.motions,[name]:{...graphic.motions?.[name],...(state?{index:state.index??B.spriteMotions[state.motion]??1,frames:state.frames||undefined,direction:state.direction||undefined,loop:state.loop??true}:{}),speed:Math.max(1,state?.speed||speed)}}};
+-        return graphic;
++        graphic={...graphic,_dianaStateMotion:state?.motion||null};
++        return B.motionGraphic(graphic,state?.motion||name,battler.armors?.()||[]);
+     };
+     P.requestGraphicMotion = (sprite,name) => {sprite._rrGraphicMotion={name,start:sprite._rrGraphicFrame||0};};
+     // The engine asks an undecided side-view actor for 'walk' and a decided one for 'wait': the idle bob of a side-view sheet. On a character sheet those are the walk cycle, so a battler drawn from one stands still on them unless a sequence or battler state is the one asking.
+@@ -794,6 +795,12 @@
+             if(kind==='enemies'){sprite.initVisibility?.();sprite.setHue?.(sprite._enemy.battlerHue?.()||0);}
+         }
+     };
++    P.updatePoseSound = (sprite,graphic,motion) => {
++        const key=B.poseKey(graphic,motion);
++        if(sprite._dianaSoundPose===key)return;
++        sprite._dianaSoundPose=key;
++        const sound=B.poseSound(graphic,motion);if(sound)AudioManager.playSe(sound);
++    };
+     P.updateGraphicFrame = (sprite,graphic) => {
+         const main=sprite._mainSprite||sprite,bitmap=main.bitmap;if(!bitmap?.isReady?.()||!bitmap.width||!bitmap.height)return;
+         const battler=sprite._actor||sprite._enemy,time=sprite._rrGraphicFrame||0;
+@@ -802,7 +809,9 @@
+             if(loop!==true&&loop!=='once'&&time-motion.start>=length&&!['idle','moving','walk','run','guard','chant','victory','dead'].includes(motion.name))sprite._rrGraphicMotion=motion=null;}
+         const override=sprite._rrMotionOverride;if(override&&motion?.name===override.name)graphic={...graphic,motions:{...graphic.motions,[override.name]:{...graphic.motions?.[override.name],...override}}};
+         const held=sprite._rrHeldPose,facingYaw=sprite._reactorRoomPosition?.facing??P.spriteYaw(sprite);
+-        const frame=B.graphicFrame(graphic,bitmap.width,bitmap.height,held?.motion||motion?.name||P.battlerState(battler,sprite),motion?time-motion.start:time,facingYaw,held?held.frame:null);
++        const selectedMotion=held?.motion||motion?.name||graphic._dianaStateMotion||P.battlerState(battler,sprite);
++        P.updatePoseSound(sprite,graphic,selectedMotion);
++        const frame=B.graphicFrame(graphic,bitmap.width,bitmap.height,selectedMotion,motion?time-motion.start:time,facingYaw,held?held.frame:null);
+         if(main!==sprite)main.y=-(graphic.offsetY||0);
+         sprite._rrPoseFrame=frame;
+         if(main.anchor){sprite._rrGraphicBaseAnchor||={x:main.anchor.x,y:main.anchor.y};const a=frame.anchor||sprite._rrGraphicBaseAnchor;main.anchor.set(a.x,a.y);}

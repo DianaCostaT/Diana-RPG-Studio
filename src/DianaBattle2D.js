@@ -2,10 +2,35 @@
 (function(root){
  'use strict';
  const defaults=[['idle','Normal (parado)'],['attack','Ataque — mão direita'],['attackLeft','Ataque — mão esquerda'],['skill','Habilidade'],['dead','Nocaute'],['damage','Dano'],['abnormal','Estado alterado'],['guard','Defesa'],['walk','Caminhar — esquerda'],['walkRight','Caminhar — direita'],['victory','Vitória'],['item','Item']];
- const poseNames=graphic=>[...new Set([...defaults.map(([id])=>id),...Object.keys(graphic?.poses||{})])];
+ const poseNames=graphic=>[...new Set([...defaults.map(([id])=>id),...Object.keys(graphic?.poses||{}),...Object.keys(graphic?.spriteAnimation?.animations||{}),...Object.keys(graphic?.poseSounds||{})])];
  const label=id=>defaults.find(row=>row[0]===id)?.[1]||id;
  const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
  const button=(text,fn)=>{const b=el('button','rr-btn-secondary',text);b.type='button';b.onclick=fn;return b;};
+ const copy=value=>JSON.parse(JSON.stringify(value));
+ const defaultGrid=()=>({version:1,columns:3,rows:4,anchor:{x:.5,y:1},animations:{idle:{frames:[0],speed:12,loop:true}}});
+ class SpriteComposer{
+  static mount(host,{value,onchange,image,motions=[]}={}){
+   let grid=copy(value||defaultGrid()),selected=Object.keys(grid.animations)[0]||'idle',previewTick=0,raf=0,stopped=false;
+   const commit=()=>onchange?.(copy(grid));
+   const animation=()=>grid.animations[selected];
+   const canvas=el('canvas','diana-grid-preview');canvas.width=180;canvas.height=120;
+   const drawPreview=()=>{const a=animation(),frames=a?.frames||[],cell=frames.length?frames[a.loop===true?Math.floor(previewTick/a.speed)%frames.length:Math.min(frames.length-1,Math.floor(previewTick/a.speed))]:0,c=canvas.getContext?.('2d');if(!c)return;c.clearRect(0,0,canvas.width,canvas.height);c.fillStyle='#26384a';c.fillRect(0,0,canvas.width,canvas.height);if(image?.width&&image?.height){const w=image.width/grid.columns,h=image.height/grid.rows,x=cell%grid.columns*w,y=Math.floor(cell/grid.columns)*h,s=Math.min((canvas.width-12)/w,(canvas.height-12)/h,3);c.imageSmoothingEnabled=false;c.drawImage(image,x,y,w,h,(canvas.width-w*s)/2,canvas.height-h*s,w*s,h*s);}};
+   const tick=()=>{if(stopped)return;previewTick++;drawPreview();raf=requestAnimationFrame(tick);};
+   const field=(labelText,value,change,min,max,step=1)=>{const input=el('input','database-field-value');input.type='number';input.min=min;input.max=max;input.step=step;input.value=value;input.onchange=()=>{const n=input.valueAsNumber;if(Number.isFinite(n)&&n>=min&&n<=max){change(n);input.setCustomValidity('');}else{input.setCustomValidity('Informe um valor válido.');input.reportValidity?.();}};const row=el('label','diana-classic-field');row.append(el('span','',labelText),input);return row;};
+   const render=()=>{host.replaceChildren();const controls=el('div','diana-grid-controls');host.append(controls);
+    controls.append(field('Colunas',grid.columns,n=>{grid.columns=Math.floor(n);render();commit();},1,99),field('Linhas',grid.rows,n=>{grid.rows=Math.floor(n);render();commit();},1,99),field('Âncora X',grid.anchor?.x??.5,n=>{grid.anchor={...grid.anchor,x:n};commit();},0,1,.05),field('Âncora Y',grid.anchor?.y??1,n=>{grid.anchor={...grid.anchor,y:n};commit();},0,1,.05));
+    const name=el('input','database-field-value');name.placeholder='Nova animação';name.setAttribute('aria-label','Nova animação');
+    controls.append(name,button('Adicionar animação',()=>{const key=name.value.trim();if(key&&!grid.animations[key]){grid.animations[key]={frames:[],speed:12,loop:true};selected=key;render();commit();}}));
+    const names=[...new Set([...Object.keys(grid.animations),...motions])];const choose=el('select','database-field-value');choose.setAttribute('aria-label','Animação');for(const key of names){const option=el('option','',key);option.value=key;choose.append(option);}choose.value=selected;choose.onchange=()=>{selected=choose.value;render();};controls.append(choose);
+    const a=animation();controls.append(field('Velocidade (quadros)',a.speed,n=>{a.speed=Math.floor(n);commit();},1,999),select([[true,'Repetir'],[false,'Parar no último'],['once','Uma vez']],String(a.loop),v=>{a.loop=v==='true'?true:v==='false'?false:'once';commit();}));
+    const sheet=el('div','diana-grid-sheet');sheet.style.gridTemplateColumns=`repeat(${grid.columns}, 42px)`;for(let index=0;index<grid.columns*grid.rows;index++){const cell=button(String(index),()=>{a.frames.push(index);previewTick=0;render();commit();});cell.className='diana-grid-cell';cell.dataset.dianaGridCell=String(index);if(image?.src)cell.style.backgroundImage=`url("${image.src}")`;sheet.append(cell);}host.append(sheet);
+    const frames=el('ol','diana-grid-frames');frames.setAttribute('aria-label','Quadros em ordem');a.frames.forEach((index,position)=>{const item=el('li','');item.dataset.dianaFrame=String(position);const thumb=el('canvas','diana-grid-thumb');thumb.width=36;thumb.height=36;if(image?.width){const c=thumb.getContext?.('2d'),w=image.width/grid.columns,h=image.height/grid.rows;if(c)c.drawImage(image,index%grid.columns*w,Math.floor(index/grid.columns)*h,w,h,0,0,36,36);}item.append(thumb,el('span','',String(index)),button('↑',()=>{if(position){[a.frames[position-1],a.frames[position]]=[a.frames[position],a.frames[position-1]];render();commit();}}),button('↓',()=>{if(position<a.frames.length-1){[a.frames[position+1],a.frames[position]]=[a.frames[position],a.frames[position+1]];render();commit();}}),button('Remover',()=>{a.frames.splice(position,1);render();commit();}));frames.append(item);});host.append(frames,canvas);drawPreview();
+   };render();raf=requestAnimationFrame(tick);return {get value(){return copy(grid);},dispose(){stopped=true;cancelAnimationFrame(raf);}};
+  }
+  static open({title='Compor animação por grade',...options}={}){
+   const overlay=el('div','rr-modal-overlay diana-grid-modal'),modal=el('div','rr-modal');overlay.append(modal);modal.append(el('div','rr-modal-header',title));const body=el('div','rr-modal-body');modal.append(body);document.body.append(overlay);const composer=SpriteComposer.mount(body,options);const close=()=>{composer.dispose();overlay.remove();};const footer=el('div','rr-modal-footer');footer.append(button('Fechar',close));modal.append(footer);return composer;
+  }
+ }
  function field(host,title,input){const row=el('label','diana-classic-field');row.append(el('span','',title),input);host.append(row);return input;}
  function select(values,value,change){const s=el('select','database-field-value');for(const [id,text] of values){const o=el('option','',text);o.value=id;s.append(o);}s.value=value;s.onchange=()=>change(s.value);return s;}
  function number(host,title,value,change,min=0,max=816){const n=el('input','database-field-value');n.type='number';n.step=1;n.min=min;n.max=max;n.value=value;n.onchange=()=>{const v=n.valueAsNumber;if(Number.isInteger(v)&&v>=min&&v<=max){n.setCustomValidity('');change(v);}else{n.setCustomValidity(`Informe um inteiro entre ${min} e ${max}.`);n.reportValidity();}};return field(host,title,n);}
@@ -33,6 +58,24 @@
    poses.disabled=screen.disabled=!window.reactor?.projectController?.getCurrentProject();
    sequences.before(poses,screen);
   }
+  installMapComposer();
+ }
+ function installMapComposer(){
+  if(typeof CharacterGraphicPicker==='undefined'||CharacterGraphicPicker.prototype._dianaGridComposer)return;
+  const create=CharacterGraphicPicker.prototype.createSheet;
+  CharacterGraphicPicker.prototype.createSheet=function(image,layout){
+   const sheet=create.call(this,image,layout),picker=this;
+   const action=button('Compor animação por grade…',()=>{
+    const system=window.reactor?.databaseManager?.data?.system;
+    if(!system||!picker._file)return;
+    const library=system.dianaSpriteAnimations||={version:1,characters:{}};
+    const current=library.characters[picker._file]||{version:1,columns:layout.columns,rows:layout.rows,anchor:{x:.5,y:1},animations:{walk:{frames:[0],speed:12,loop:true}}};
+    SpriteComposer.open({title:'Compor caminhada no mapa',value:current,image,motions:['walk'],onchange:value=>{library.characters[picker._file]=value;system.dianaSpriteAnimations=library;window.reactor?.updateStatus?.('Animação de mapa modificada');}});
+   });action.className='rr-btn-secondary diana-map-grid-composer';
+   requestAnimationFrame(()=>{if(picker._parts?.sheet===sheet&&sheet.isConnected)picker._parts.sheetBox.append(action);});
+   return sheet;
+  };
+  CharacterGraphicPicker.prototype._dianaGridComposer=true;
  }
  class Battle2D{
   constructor(parent,host){this.parent=parent;this.host=host;this.db=parent.databaseManager;this.presentation=parent.battlePresentationEditor;this.images=new Map();this.previews=[];this.dead=false;this.raf=0;this.speed=1;
@@ -45,7 +88,19 @@
   async image(g){if(!g.name||g.type==='model')return null;const path=require('path'),url=RRAssetFiles.urlFor(path.join(this.parent.currentProject.path,'img',g.folder),g.name,['.png']);
    if(!this.images.has(url))this.images.set(url,new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=url;}));return this.images.get(url);
   }
-  preview(canvas,g,motion,kind){const item={canvas,g,motion,kind,image:null};this.previews.push(item);this.image(g).then(img=>{if(!this.dead&&canvas.isConnected)item.image=img;});}
+  preview(canvas,g,motion,kind){const record=this.db.data[kind]?.[this.previewRecordId],armors=kind==='actors'?(record?.equips||[]).slice(1).map(id=>this.db.data.armors?.[id]).filter(Boolean):[];g=ReactorBattleData.motionGraphic(g,motion,armors);const item={canvas,g,motion,kind,image:null};this.previews.push(item);this.image(g).then(img=>{if(!this.dead&&canvas.isConnected)item.image=img;});}
+  soundControls(card,kind,id,name,g){
+   const path=require('path'),folder=path.join(this.parent.currentProject.path,'audio','se'),extensions=RRAssetFiles.AUDIO_EXTENSIONS;
+   const files=RRAssetFiles.listNames(folder,extensions),current=g.poseSounds?.[name]||{name:'',volume:90,pitch:100,pan:0};
+   let sound={...current};const persist=()=>{this.setGraphic(kind,id,{poseSounds:{...this.settings()[kind]?.[id]?.graphic?.poseSounds,[name]:{...sound}}});};
+   if(current.name&&!files.includes(current.name))files.push(current.name);
+   const picker=select([['','Sem som'],...files.map(file=>[file,file])],current.name,value=>{sound.name=value;persist();play.disabled=!value;});
+   picker.setAttribute('aria-label','Som da pose '+label(name));field(card,'Som ao entrar',picker);
+   const play=button('Ouvir uma vez',()=>{this.poseAudio?.pause();const url=RRAssetFiles.urlFor(folder,sound.name,extensions);if(!url)return;const audio=this.poseAudio=new Audio(url);audio.loop=false;audio.volume=(sound.volume??90)/100;audio.playbackRate=(sound.pitch??100)/100;audio.preservesPitch=false;audio.play().catch(()=>this.parent.updateStatus('Não foi possível reproduzir o som selecionado.'));});play.disabled=!sound.name;card.append(play);
+   number(card,'Volume',sound.volume??90,value=>{sound.volume=value;persist();},0,100);
+   number(card,'Tom',sound.pitch??100,value=>{sound.pitch=value;persist();},50,150);
+   card.append(el('small','','Uma vez ao entrar na pose/status. Sem loop. Biblioteca: Áudio → SE.'));
+  }
   animate(){if(this.raf||this.dead||document.hidden)return;const draw=now=>{this.raf=0;if(this.dead||!this.host.isConnected||document.hidden)return;const viewport=this.host.getBoundingClientRect();for(const p of this.previews){if(!p.canvas.isConnected)continue;
     const rect=p.canvas.getBoundingClientRect();if(rect.bottom<viewport.top||rect.top>viewport.bottom||rect.right<viewport.left||rect.left>viewport.right)continue;
     const w=p.canvas.width,h=p.canvas.height,f=p.image?ReactorBattleData.graphicFrame(p.g,p.image.width,p.image.height,p.motion,Math.floor(now*60/1000*this.speed),p.kind==='actors'?-90:90):null;
@@ -70,14 +125,14 @@
     resources.append(el('span','',g.name||'Nenhuma imagem selecionada'),button('Definir gráfico…',()=>{
      const path=require('path'),folder=g.folder||'sv_actors',dir=path.join(this.parent.currentProject.path,'img',folder),files=RRAssetFiles.listNames(dir,['.png']);
      this.parent.showImagePicker('Gráfico de batalha',files,(name,index)=>{if(this.dead)return;this.setGraphic(kind,id,{mode:g.type==='model'?'static':g.type,name,index:index||0,folder});draw();},name=>RRAssetFiles.urlFor(dir,name,['.png']),g.name,{allowNone:true,...(g.type==='character'?{sheetType:'character',currentIndex:g.index||0}:{})});
-    }));shell.append(resources);
+    }),button('Compor grade…',()=>this.editSpriteGrid(kind,id,g,draw)));shell.append(resources);
     const tabs=el('div','diana-classic-tabs');tabs.append(button('Armas',()=>this.parent.openDatabase('weapons')),el('strong','','Poses'),button('Tipos / sequências de animação',()=>this.parent.openDatabase('actionSequences')));shell.append(tabs);
     const names=poseNames(g),pages=el('div','diana-pose-pages');shell.append(pages);page=Math.min(page,Math.floor((names.length-1)/8));
     for(let p=0;p<Math.ceil(names.length/8);p++){const b=button(`${p*8+1}–${Math.min(p*8+8,names.length)}`,()=>{page=p;draw();});b.setAttribute('aria-pressed',String(page===p));pages.append(b);}
     const grid=el('div','diana-pose-grid');shell.append(grid);
-    names.slice(page*8,page*8+8).forEach((name,index)=>{const card=el('fieldset','diana-pose-card');card.dataset.pose=name;card.append(el('legend','',String(page*8+index+1)));
+    this.previewRecordId=id;names.slice(page*8,page*8+8).forEach((name,index)=>{const card=el('fieldset','diana-pose-card');card.dataset.pose=name;card.append(el('legend','',String(page*8+index+1)));
      const canvas=el('canvas','');canvas.width=128;canvas.height=92;card.append(canvas);this.preview(canvas,g,name,kind);
-     card.append(button('Definir…',()=>this.editPose(kind,id,name,draw)),el('div','diana-pose-name',label(name)),el('small','',g.poses?.[name]?`${g.poses[name].frames.length} quadros`:'Movimento padrão'));grid.append(card);
+     card.append(button('Definir…',()=>this.editPose(kind,id,name,draw)),el('div','diana-pose-name',label(name)),el('small','',g.poses?.[name]?`${g.poses[name].frames.length} quadros`:'Movimento padrão'));this.soundControls(card,kind,id,name,g);grid.append(card);
     });
     const newRow=el('div','diana-classic-top'),name=el('input','database-field-value');name.placeholder='Nome da nova pose';name.setAttribute('aria-label','Nome da nova pose');
     newRow.append(name,button('Adicionar pose…',()=>{const key=name.value.trim();if(!key||names.includes(key)){name.setCustomValidity('Informe um nome novo.');name.reportValidity();return;}name.setCustomValidity('');this.editPose(kind,id,key,()=>{page=Math.floor((poseNames(this.graphic(kind,id)).length-1)/8);draw();});}));shell.append(newRow);
@@ -111,6 +166,16 @@
    const keys=root.RRKeyboardNavigation?.modal?.(overlay,{container:()=>modal,onEscape:close});keys?.enter();
    this.parent.registerDetailModal(overlay,close);
   }
+  async editSpriteGrid(kind,id,g,refresh){
+   const image=await this.image(g);if(this.dead)return;
+   if(!image){await RRDialog.alert('Selecione primeiro um gráfico 2D válido.',{title:'Grade de animação',kind:'warning'});return;}
+   const motions=poseNames(g),original=copy(g.spriteAnimation||defaultGrid());
+   const overlay=el('div','rr-modal-overlay diana-grid-modal'),modal=el('div','rr-modal');overlay.append(modal);modal.append(el('div','rr-modal-header','Compor animação por grade'));
+   const body=el('div','rr-modal-body');modal.append(body);document.body.append(overlay);
+   let draft=original;const composer=SpriteComposer.mount(body,{value:draft,image,motions,onchange:value=>{draft=value;}});
+   const close=()=>{composer.dispose();overlay.remove();};const footer=el('div','rr-modal-footer');
+   footer.append(button('Cancelar',close),button('Aplicar grade',async()=>{const errors=ReactorBattleData.validateSpriteAnimation(draft);if(errors.length){await RRDialog.alert('A grade precisa de ao menos um quadro, velocidade e repetição válidos em cada animação.',{title:'Grade de animação',kind:'warning'});return;}this.setGraphic(kind,id,{spriteAnimation:draft});close();refresh();}));modal.append(footer);
+  }
   screen(){
    const shell=el('div','diana-classic diana-battle-screen');this.host.append(shell);const system=this.db.data.system;
    const layout=el('div','diana-screen-columns'),controls=el('div'),right=el('div');layout.append(controls,right);shell.append(layout);
@@ -119,6 +184,8 @@
    field(mode,'Apresentação',select([['side','Lateral (2D)'],['front','Frontal (2D)']],system.optSideView?'side':'front',v=>{system.optSideView=v==='side';this.changed();draw();}));
    field(mode,'Turnos',select([['0','Por turnos'],['1','Tempo ativo'],['2','Tempo com espera']],String(system.battleSystem||0),v=>{system.battleSystem=Number(v);this.changed();}));
    const options=group(controls,'Mensagens');
+   if(root.DianaRTPExpansion)root.DianaRTPExpansion.mountEditor(controls,{system,onChange:()=>this.changed(),openDatabase:type=>this.parent.openDatabase(type),projectPath:this.parent.currentProject.path});
+   if(root.DianaCombatModes){const rules=el('details','diana-combat-rules'),body=el('div');rules.append(el('summary','','Modos, combos e preparação tática'),body);controls.append(rules);root.DianaCombatModes.mountEditor(body,{system,skills:this.db.data.skills,onChange:()=>this.changed()});}
    for(const [key,title] of [['startMessages','Anunciar inimigos'],['escapeMessages','Mostrar mensagens de fuga']]){const box=el('input');box.type='checkbox';box.checked=this.settings()[key]!==false;box.onchange=()=>{this.settings()[key]=box.checked;this.changed();};field(options,title,box);}
    const commands=group(controls,'Nomes dos comandos');system.terms||={};system.terms.commands||=[];
    for(const [index,title] of [[0,'Lutar'],[1,'Fugir'],[2,'Atacar'],[3,'Defender'],[4,'Item']]){const input=el('input','database-field-value');input.value=system.terms.commands[index]||title;input.onchange=()=>{system.terms.commands[index]=input.value;this.changed();draw();};field(commands,title,input);}
@@ -137,8 +204,8 @@
     c.fillText(system.terms.commands[0]||'Lutar',30,535);c.fillText(system.terms.commands[1]||'Fugir',30,575);c.fillText('Aliado       PV 100 / 100       PM 30 / 30',250,550);
    };draw();
   }
-  dispose(){this.dead=true;cancelAnimationFrame(this.raf);document.removeEventListener('visibilitychange',this.visibility);this.previews=[];this.images.clear();}
+  dispose(){this.dead=true;this.poseAudio?.pause();cancelAnimationFrame(this.raf);document.removeEventListener('visibilitychange',this.visibility);this.previews=[];this.images.clear();}
  }
- root.DianaBattle2D={poseNames,defaults};if(typeof module!=='undefined')module.exports=root.DianaBattle2D;
+ root.DianaBattle2D={poseNames,defaults};root.DianaSpriteComposer=SpriteComposer;if(typeof module!=='undefined')module.exports=root.DianaBattle2D;
  if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',install);
 })(globalThis);

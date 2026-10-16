@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "license": "MIT",
+  "origin": "Arquitetura original Diana gerada com imagegen, variante de telhados azul-petróleo; fonte preservada.",
+  "sourceSha256": "1c41294668e585b83795128c0df4199e234c16a1f1942d69cbbb9391c64ec91b",
+  "files": [
+    {
+      "path": "img/tilesets/ClareiraArquitetura.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "28d837689d7906594a03516b8f897679d573a8edc96f8e15f03f5ad6d2328d08"
+    }
+  ]
+}

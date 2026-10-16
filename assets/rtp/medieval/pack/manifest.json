@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "id": "diana-native-medieval-rtp",
+  "version": 2,
+  "license": "MIT",
+  "origin": "Arte original imagegen (BatalhadoresOriginais.png e BrannCaminhada.png), Liora original do pack Clareira; efeitos, ícones e props procedurais Diana. Prompts em docs/JRPG_GENERATION_REVIEW.md; sem assets de jogos comerciais.",
+  "grid": {
+    "characters": [
+      288,
+      192
+    ],
+    "battlers": [
+      1152,
+      1152
+    ],
+    "effects": [
+      960,
+      192
+    ],
+    "icons": [
+      512,
+      512
+    ],
+    "props": [
+      512,
+      512
+    ]
+  },
+  "files": [
+    {
+      "path": "img/animations/EfeitoAgua.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "33e1bdfd6b3ace2a1f987c63192ee46c041bdb0470fbd2ce7b32fd580dc52f46"
+    },
+    {
+      "path": "img/animations/EfeitoArcano.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "ef07c8cd72972e70af48255a6e2d5fdc19025509e3578cadf8d13bc44c7b27c1"
+    },
+    {
+      "path": "img/animations/EfeitoCorte.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "cdd27d8a928111382d1c6f1cfff4a8f0b62599b4c1679e592af38da2ec5a72bc"
+    },
+    {
+      "path": "img/animations/EfeitoFogo.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "b8ec6dee0b9b9aa14b2700cf94adacebc10bc038a3107a45fbce699ea8eb2f4c"
+    },
+    {
+      "path": "img/animations/EfeitoGelo.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "7b8b81aeeb56b3a6ddc5eac5bac9bea231c253577eee3629b0f186167c42d93b"
+    },
+    {
+      "path": "img/animations/EfeitoImpacto.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "cb1d574e7ebf8eef28f82db9a50b116bee673fe2d191aa4663779c5f21b90abd"
+    },
+    {
+      "path": "img/animations/EfeitoRaio.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "748ff2258970f886ecd6f700f6bd9822871a6d50e685075b2983520becea9f70"
+    },
+    {
+      "path": "img/characters/$Brann.png",
+      "width": 288,
+      "height": 192,
+      "sha256": "5ac4e945ba17aca8c4e9821ab9360b87fb5a1811a58e0177beb3d39f0c0e13e7"
+    },
+    {
+      "path": "img/characters/$LioraMedieval.png",
+      "width": 288,
+      "height": 192,
+      "sha256": "cac482e8fed4c68ca342cd0c0d47ec22cf47eb5aa0247bf207de5dfa861437f2"
+    },
+    {
+      "path": "img/enemies/BruxaCinza.png",
+      "width": 1152,
+      "height": 1152,
+      "sha256": "90741fbe95e8db6a31bcef645fabe2ddbe3015344b318cc82421ad4c07d8e675"
+    },
+    {
+      "path": "img/enemies/LoboCinza.png",
+      "width": 1152,
+      "height": 1152,
+      "sha256": "19acacf9487bd9519fdf1822088156375dee2ee4571d29419a6dd9a188a3f506"
+    },
+    {
+      "path": "img/enemies/MusgoVivo.png",
+      "width": 1152,
+      "height": 1152,
+      "sha256": "1bce4b249a839758699e39f33323aac3fcb329ec6136f4ee9b4bd0cc9abe5b5a"
+    },
+    {
+      "path": "img/sv_actors/BrannMedieval.png",
+      "width": 1152,
+      "height": 1152,
+      "sha256": "3565806aebf92d6419e4c4b847b120af91561e729bc692ff5369e2e789aa57d5"
+    },
+    {
+      "path": "img/sv_actors/LioraMedieval.png",
+      "width": 1152,
+      "height": 1152,
+      "sha256": "e74b9f453e0fb90bba1550921abce7067f382ded63bf3474fa6c9461e7aa5060"
+    },
+    {
+      "path": "img/system/IconSet.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "3b041fe03e0315da7ca6862b8b3c7776d1a3f48ca87cc3613008d87b0f22fafc"
+    },
+    {
+      "path": "img/tilesets/MedievalProps.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "084f796ec3652e5d1ff74a0efca308a29ef5e72f162d0eab6154df81ac183a14"
+    }
+  ]
+}

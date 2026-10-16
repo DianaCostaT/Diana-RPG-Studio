@@ -1,0 +1,250 @@
+diff --git a/editor/src/database/BattleTestConfigModal.js b/editor/src/database/BattleTestConfigModal.js
+index f4c866c..ae2c77d 100644
+--- a/editor/src/database/BattleTestConfigModal.js
++++ b/editor/src/database/BattleTestConfigModal.js
+@@ -64,6 +64,56 @@ class BattleTestConfigModal {
+         }
+     }
+ 
++    _assetState(folder, name) {
++        if (!name) return { state: 'not-selected', path: null };
++        const relative = `img/${folder}/${name}`;
++        if (!window.RRAssetFiles?.findImage || !this.project?.path) return { state: 'unverified', path: relative };
++        const path = require('path');
++        return { state: window.RRAssetFiles.findImage(path.join(this.project.path, 'img', folder), name) ? 'valid' : 'missing', path: relative };
++    }
++
++    _battlerAsset(kind, record) {
++        if (!record) return { state: 'missing', path: null };
++        const config = this.databaseManager.data?.battlePresentation?.[kind]?.[record.id]?.graphic;
++        if (config?.mode === 'model') return { state: config.model ? 'not-applicable' : 'missing', path: config.model || null };
++        const folder = config?.mode === 'character' ? (config.folder || 'characters') : config?.mode === 'static' ? (config.folder || (kind === 'actors' ? 'sv_actors' : 'enemies')) : kind === 'actors' ? 'sv_actors' : 'enemies';
++        return this._assetState(folder, config?.mode && config.mode !== 'auto' ? config.name : record.battlerName);
++    }
++
++    preparedArtifact() {
++        const troop = this.databaseManager.getTroop?.(Number(this.troopId));
++        const party = this.battlers.map(battler => {
++            const actor = this.databaseManager.getActor?.(Number(battler.actorId));
++            const asset = this._battlerAsset('actors', actor);
++            return { actorId: Number(battler.actorId) || 0, name: actor?.name || null, level: Number(battler.level) || 1, equips: (battler.equips || []).map(id => Number(id) || 0), asset, valid: !!actor };
++        });
++        const enemies = (troop?.members || []).map((member, index) => {
++            const enemy = this.databaseManager.getEnemy?.(Number(member.enemyId));
++            const asset = this._battlerAsset('enemies', enemy);
++            return { index: index + 1, enemyId: Number(member.enemyId) || 0, name: enemy?.name || null, x: Number(member.x) || 0, y: Number(member.y) || 0, hidden: !!member.hidden, asset, valid: !!enemy };
++        });
++        const backgrounds = {
++            battleback1: { name: this.battleback1Name || '', ...this._assetState('battlebacks1', this.battleback1Name) },
++            battleback2: { name: this.battleback2Name || '', ...this._assetState('battlebacks2', this.battleback2Name) }
++        };
++        const issues = [];
++        if (!troop) issues.push(`Grupo #${Number(this.troopId) || 0} não existe.`);
++        if (troop && !enemies.length) issues.push(`Grupo #${Number(this.troopId)} não possui inimigos.`);
++        for (const actor of party) if (!actor.valid) issues.push(`Herói #${actor.actorId} não existe.`);
++        for (const enemy of enemies) if (!enemy.valid) issues.push(`Inimigo #${enemy.enemyId} não existe.`);
++        for (const [key, background] of Object.entries(backgrounds)) if (background.state === 'missing') issues.push(`${key === 'battleback1' ? 'Fundo inferior' : 'Fundo superior'} ausente: ${background.path}.`);
++        return { version: 1, troopId: Number(this.troopId) || 0, troopName: troop?.name || null, backgrounds, party, enemies, counts: { party: party.length, enemies: enemies.length }, valid: issues.length === 0 && party.some(actor => actor.valid), issues };
++    }
++
++    persistPreparation() {
++        const system = this.databaseManager?.getSystem?.();
++        if (!system) return;
++        system.testBattlers = JSON.parse(JSON.stringify(this.battlers));
++        system.testTroopId = Number(this.troopId) || 0;
++        system.dianaBattlePreparation = this.preparedArtifact();
++        this.databaseManager.markDirty?.('system');
++    }
++
+     show() {
+         this.modal = document.createElement('div');
+         this.modal.className = 'battle-test-config-modal';
+@@ -82,7 +132,7 @@ class BattleTestConfigModal {
+         header.style.flexShrink = '0';
+         const title = document.createElement('div');
+         title.className = 'rr-modal-title';
+-        title.textContent = this._t('Battle Test Configuration');
++        title.textContent = 'Preparar combate';
+         header.appendChild(title);
+         const closeX = document.createElement('button');
+         closeX.type = 'button';
+@@ -109,18 +159,24 @@ class BattleTestConfigModal {
+         body.appendChild(configArea);
+         dialog.appendChild(body);
+ 
++        const preparation = document.createElement('section');
++        preparation.className = 'diana-battle-preparation';
++        preparation.id = 'diana-battle-preparation';
++        preparation.style.cssText = 'margin-top:12px;border-top:1px solid var(--color-border);padding-top:12px;';
++        body.appendChild(preparation);
++
+         // Buttons
+         const btnRow = document.createElement('div');
+         btnRow.className = 'rr-modal-footer battle-test-config-footer';
+         btnRow.style.flexShrink = '0';
+ 
+-        const cancelBtn = this.createButton('Cancel', () => this.close());
++        const cancelBtn = this.createButton('Cancelar', () => this.close());
+         cancelBtn.style.backgroundColor = 'var(--color-bg-button)';
+         cancelBtn.onmouseenter = () => { cancelBtn.style.backgroundColor = 'var(--color-accent-tint-25)'; cancelBtn.style.borderColor = 'var(--color-accent)'; };
+         cancelBtn.onmouseleave = () => { cancelBtn.style.backgroundColor = 'var(--color-bg-button)'; cancelBtn.style.borderColor = 'var(--color-text-dim)'; };
+ 
+         const okBtn = document.createElement('button');
+-        okBtn.textContent = this._t('OK');
++        okBtn.textContent = 'Testar combate';
+         okBtn.className = 'rr-button-primary';
+         okBtn.onclick = () => this.launch();
+ 
+@@ -135,21 +191,69 @@ class BattleTestConfigModal {
+ 
+         this.renderTabs();
+         this.renderConfig();
++        this.renderPreparation();
+     }
+ 
+     close() {
+         if (this.modal && this.modal.parentNode) {
+             document.body.removeChild(this.modal);
+         }
+-        // The party assembled here is the battle test party whether or not a test was started, so the troop preview can field it.
+-        const system = this.databaseManager?.getSystem?.();
+-        if (system && JSON.stringify(system.testBattlers || null) !== JSON.stringify(this.battlers)) {
+-            system.testBattlers = JSON.parse(JSON.stringify(this.battlers));
+-            this.databaseManager.markDirty?.('system');
+-        }
++        // The prepared test is useful to the troop preview even without launching it.
++        this.persistPreparation();
+         if (typeof this.onClose === 'function') this.onClose();
+     }
+ 
++    renderPreparation() {
++        const host = document.getElementById('diana-battle-preparation');
++        if (!host) return;
++        host.replaceChildren();
++        const heading = document.createElement('h3');
++        heading.textContent = 'Preparar combate';
++        heading.style.cssText = 'margin:0 0 4px;font-size:15px;color:var(--color-text-strong);';
++        host.appendChild(heading);
++        const hint = document.createElement('p');
++        hint.textContent = 'Escolha o grupo, os fundos e os heróis. O resumo abaixo é exatamente o que o teste gravará.';
++        hint.style.cssText = 'margin:0 0 8px;color:var(--color-text-muted);font-size:12px;line-height:1.4;';
++        host.appendChild(hint);
++        const selectRow = (label, options, value, change) => {
++            const row = this.createFormRow(label);
++            const select = document.createElement('select');
++            select.className = 'database-field-value';
++            for (const [id, text] of options) { const option = document.createElement('option'); option.value = id; option.textContent = text; select.appendChild(option); }
++            select.value = String(value || '');
++            select.onchange = () => { change(select.value); this.renderPreparation(); };
++            row.appendChild(select); host.appendChild(row);
++        };
++        const troops = this.databaseManager.getTroops?.() || [];
++        const troopOptions = troops.filter(Boolean).map(troop => [troop.id, `#${troop.id} ${troop.name}`]);
++        if (this.troopId && !troopOptions.some(([id]) => Number(id) === Number(this.troopId))) troopOptions.push([this.troopId, `#${this.troopId} (ausente)`]);
++        selectRow('Grupo inimigo:', troopOptions, this.troopId, value => { this.troopId = Number(value) || 0; });
++        const path = require('path');
++        const backgrounds = (folder, current) => {
++            const names = window.RRAssetFiles?.listNames && this.project?.path ? window.RRAssetFiles.listNames(path.join(this.project.path, 'img', folder), ['.png']) : [];
++            const choices = ['', ...new Set(names)];
++            if (current && !choices.includes(current)) choices.push(current);
++            return choices.map(name => [name, name || '(nenhum)']);
++        };
++        selectRow('Fundo inferior:', backgrounds('battlebacks1', this.battleback1Name), this.battleback1Name, value => { this.battleback1Name = value; });
++        selectRow('Fundo superior:', backgrounds('battlebacks2', this.battleback2Name), this.battleback2Name, value => { this.battleback2Name = value; });
++        const artifact = this.preparedArtifact();
++        const summary = document.createElement('div');
++        summary.className = 'diana-battle-preparation-summary';
++        summary.setAttribute('role', 'status');
++        summary.setAttribute('aria-live', 'polite');
++        summary.style.cssText = `padding:8px;border-radius:4px;white-space:pre-wrap;font-size:12px;line-height:1.45;background:var(--color-bg-menubar);color:${artifact.valid ? 'var(--color-text)' : 'var(--color-danger-bright)'};`;
++        const state = item => item.state === 'valid' ? 'válido' : item.state === 'not-selected' ? 'não selecionado' : item.state === 'unverified' ? 'não verificado' : 'AUSENTE';
++        summary.textContent = [
++            `Teste: grupo #${artifact.troopId}${artifact.troopName ? ` — ${artifact.troopName}` : ''}; ${artifact.counts.enemies} inimigo(s).`,
++            `Fundos: inferior ${artifact.backgrounds.battleback1.name || '(nenhum)'} [${state(artifact.backgrounds.battleback1)}]; superior ${artifact.backgrounds.battleback2.name || '(nenhum)'} [${state(artifact.backgrounds.battleback2)}].`,
++            `Heróis (${artifact.counts.party}): ${artifact.party.map(actor => `#${actor.actorId} ${actor.name || 'AUSENTE'} Nv.${actor.level}; equip. ${actor.equips.join(',') || 'nenhum'} [${state(actor.asset)}]`).join('; ') || '(nenhum)'}.`,
++            `Inimigos: ${artifact.enemies.map(enemy => `#${enemy.enemyId} ${enemy.name || 'AUSENTE'} em ${enemy.x},${enemy.y}; ${enemy.hidden ? 'oculto' : 'visível'} [${state(enemy.asset)}]`).join('; ') || '(nenhum)'}.`,
++            artifact.issues.length ? `Impedimentos: ${artifact.issues.join(' ')}` : 'Pronto para testar.'
++        ].join('\n');
++        host.appendChild(summary);
++    }
++
+     createButton(label, onclick) {
+         const btn = document.createElement('button');
+         btn.textContent = this._t(label);
+@@ -224,6 +328,7 @@ class BattleTestConfigModal {
+         this.selectedBattlerIndex = this.battlers.length - 1;
+         this.renderTabs();
+         this.renderConfig();
++        this.renderPreparation();
+     }
+ 
+     removeBattler() {
+@@ -234,6 +339,7 @@ class BattleTestConfigModal {
+         }
+         this.renderTabs();
+         this.renderConfig();
++        this.renderPreparation();
+     }
+ 
+     // ==========================================
+@@ -299,7 +405,7 @@ class BattleTestConfigModal {
+         battler.level = Math.max(1, Math.min(actorLevelLimit, Number(battler.level) || 1));
+ 
+         // Actor selector
+-        const actorRow = this.createFormRow('Actor:');
++        const actorRow = this.createFormRow('Her\u00f3i:');
+         const actorSelect = document.createElement('select');
+         actorSelect.style.cssText = 'width:100%;min-width:0;background:var(--color-bg-menubar);border:1px solid var(--color-border-input);color:var(--color-text);padding:4px;border-radius:3px;';
+         actors.forEach(actor => {
+@@ -317,6 +423,7 @@ class BattleTestConfigModal {
+             battler.equips = (newActor && newActor.equips) ? [...newActor.equips] : [0, 0, 0, 0, 0];
+             this.renderTabs();
+             this.renderConfig();
++            this.renderPreparation();
+         };
+         actorRow.appendChild(actorSelect);
+         area.appendChild(actorRow);
+@@ -331,7 +438,7 @@ class BattleTestConfigModal {
+         }
+ 
+         // Level
+-        const levelRow = this.createFormRow('Level:');
++        const levelRow = this.createFormRow('N\u00edvel:');
+         const levelInput = document.createElement('input');
+         levelInput.type = 'number';
+         levelInput.className = 'database-field-value';
+@@ -343,6 +450,7 @@ class BattleTestConfigModal {
+             battler.level = Math.max(1, Math.min(actorLevelLimit, parseInt(levelInput.value) || 1));
+             levelInput.value = battler.level;
+             this.renderStats(area, battler);
++            this.renderPreparation();
+         };
+         levelRow.appendChild(levelInput);
+         area.appendChild(levelRow);
+@@ -613,6 +721,12 @@ class BattleTestConfigModal {
+             return;
+         }
+ 
++        const preparation = this.preparedArtifact();
++        if (!preparation.valid) {
++            await RRDialog.alert('Revise Preparar combate antes de testar.\n' + preparation.issues.join('\n'), { title: 'Preparar combate', kind: 'warning' });
++            return;
++        }
++
+         const missing = this.missingBattlerGraphics();
+         if (missing.length) {
+             await RRDialog.alert(this._t('Missing battle graphic. Choose another actor or set their graphic in Actors.') + '\n' + missing.join('\n'), { title: this._t('Battle Test Configuration'), kind: 'warning' });
+@@ -624,6 +738,7 @@ class BattleTestConfigModal {
+         // Test_ copy and must not overwrite the game's default battlebacks.
+         system.testBattlers = this.battlers;
+         system.testTroopId = this.troopId;
++        system.dianaBattlePreparation = preparation;
+ 
+         const testSystem = JSON.parse(JSON.stringify(system));
+         testSystem.battleback1Name = this.battleback1Name;
+@@ -723,3 +838,5 @@ class BattleTestConfigModal {
+         return [];
+     }
+ }
++
++if (typeof module !== 'undefined' && module.exports) module.exports = BattleTestConfigModal;

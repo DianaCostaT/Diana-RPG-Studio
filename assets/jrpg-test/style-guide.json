@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "id": "clareira-canonica",
+  "status": "padrao-obrigatorio",
+  "reference": "originals/Clareira.png",
+  "direction": "Pixel art JRPG detalhada, vista superior em tres quartos, telhados azul-petroleo, casas de reboco claro, floresta densa, ruinas de pedra com musgo e caminhos naturais em ocre.",
+  "terrainSource": "originals/ClareiraTerrenosPadrao.png",
+  "objectSource": "originals/ClareiraObjetosPadrao.png",
+  "tileSize": 32,
+  "authoring": "tiles-nativos",
+  "layers": ["terreno", "objetos", "copas-e-primeiro-plano"],
+  "requirements": ["Preservar cores, perspectiva e linguagem da referencia", "Oferecer pecas na paleta visual do editor", "Manter colisao e oclusao no runtime", "Nao substituir o mapa por uma imagem unica"]
+}

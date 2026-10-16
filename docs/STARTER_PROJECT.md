@@ -29,3 +29,7 @@ A prévia também identifica imagens ausentes do grupo inicial e do mapa aberto,
 reutilizando o resolvedor de recursos da base. O aviso mostra o caminho lógico;
 nenhum arquivo é alterado. Cobertura e teste visual em
 [UI_AUTHORING_VALIDATION.md](UI_AUTHORING_VALIDATION.md).
+
+## Vila da Clareira obrigatória
+
+Todo projeto novo começa com a **Vila da Clareira** e o RTP Medieval nativo editável. Não há opção de criar sem esse ponto de partida: depois de criado, o autor pode livremente editar, apagar ou substituir quaisquer mapas, dados e assets. Liora e Guardião mantêm o comportamento existente; Brann, três inimigos, poção e habilidades elementais ampliam o banco de dados.

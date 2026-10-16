@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "license": "MIT",
+  "origin": "Defesa original gerada com imagegen para Diana; cenário e ícones originais reutilizados dos packs Diana.",
+  "files": [
+    {
+      "path": "img/sv_actors/DefesaClareira.png",
+      "width": 1152,
+      "height": 768,
+      "sha256": "2bf594eddd7f268be632c0e6c5ef4f809c50ed508367d94ecadd719dd6ef48c1"
+    },
+    {
+      "path": "img/titles1/BosqueClareira.png",
+      "width": 1000,
+      "height": 740,
+      "sha256": "d43d7112743289ce1dfeff4a98f6066563be10c5113979d63c558cd31a5c3b6b"
+    },
+    {
+      "path": "img/system/IconSet.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "868b3c52a2461402a64e7097923bff6d221bc47cf09cf6f7a1641b6eff68ab63"
+    }
+  ]
+}

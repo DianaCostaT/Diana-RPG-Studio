@@ -1,0 +1,30 @@
+{
+  "updatedOn": "2026-10-16",
+  "request": "Projeto inicial profissional, defesa por equipamento, áudio único por entrada, RTP, seguidores, veículos, combos, campo e preparação tática",
+  "implementedAndTested": [
+    "Aliases de movimento com paridade entre editor e runtime",
+    "Som SE selecionável por pose no editor, persistência e disparo único ao entrar",
+    "Defesa sem aproximação ao próprio alvo ou giro, variantes de espada e escudo equipado",
+    "Dois heróis equipados, poções, éter, tônico, loja e desafios de exemplo",
+    "Suprimentos por autorun com self switch, sem repetição ao retornar ao mapa"
+  ],
+  "evidence": [
+    "tests/pose-sound-defense.test.cjs: 10 regressões passaram",
+    "tests/starter-experience.test.cjs: 3 testes passaram",
+    "artifacts/defense-sound-smoke.json: passed, seleção/persistência por controles WebDriver, execução de jogo e 100 quadros sem repetir som"
+  ],
+  "inIntegration": [
+    "Nova camada visual Diana Studio",
+    "Catálogo RTP, seguidores e veículos nativos",
+    "Combos e modo de campo",
+    "Expansão da vila em camadas e interiores exploráveis",
+    "Novos atlas de terreno, objetos, arquitetura e veículos originais"
+  ],
+  "partial": [
+    "Modo tático: preparação de grade, obstáculos, alcance e caminhos; combate tático completo ainda não homologado"
+  ],
+  "limits": [
+    "Teste de disparos de áudio não comprova audibilidade humana",
+    "Integração global e smoke final devem ser repetidos após todos os módulos"
+  ]
+}

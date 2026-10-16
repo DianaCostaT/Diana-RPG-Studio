@@ -22,3 +22,9 @@ suas limitações ficam em `docs/BASE_EVALUATION.md` e `docs/LICENSE_AUDIT.md`.
   use worktrees quando houver conflito. Integre após revisão; não faça commit sem autorização.
 - IA futura usa comandos internos validados, prévia, aprovação e undo/redo. Nunca
   grave credenciais no projeto ou modifique arquivos do usuário arbitrariamente.
+
+## Direção visual permanente — Vila da Clareira
+
+A primeira versão aprovada da Vila da Clareira é a referência visual permanente para o projeto. Todo agente deve preservar e desenvolver essa direção: sprites grandes e legíveis, cenários ricos em camadas, vegetação e arquitetura detalhadas, e animações de batalha fluidas no mesmo estilo. Não troque essa identidade por arte menor, simplificada ou visualmente genérica; ao melhorar um recurso, mantenha o padrão da Clareira e confira o resultado dentro do jogo.
+
+Consulte `docs/CLAREIRA_VISUAL_DIRECTION.md` antes de alterar arte, sprites, mapas ou apresentação de batalha. Trate mudanças de estilo como regressões a corrigir, não como nova direção.

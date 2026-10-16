@@ -1,0 +1,2240 @@
+{
+  "schemaVersion": 1,
+  "id": "diana-rtp-vertical-slice",
+  "version": "0.1.0",
+  "language": "pt-BR",
+  "status": "bloqueado: geracao experimental validada localmente; promocao de assets depende de revisao de licenca",
+  "license": {
+    "spdx": "MIT",
+    "scope": "Especifica??o e futuros recursos originais aprovados; n?o licencia engine, depend?ncias ou recursos externos.",
+    "copyright": "Copyright (c) 2026 Diana RPG Studio contributors",
+    "text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+  },
+  "generation": {
+    "status": "smoke tecnico local executado; nenhuma saida aceita no RTP",
+    "promptDocument": "GENERATION_PROMPTS.md",
+    "promptSectionRule": "## <asset.id>",
+    "originalOnly": true,
+    "forbidden": [
+      "personagens protegidos",
+      "RTP comercial",
+      "Demo upstream",
+      "logos e marcas",
+      "imita??o de franquias ou artistas identific?veis",
+      "extra??o de jogos comerciais"
+    ],
+    "provenanceRequiredBeforeRelease": [
+      "creator",
+      "tool",
+      "model",
+      "modelVersion",
+      "seed",
+      "generatedAt",
+      "sourceSha256",
+      "outputSha256",
+      "rightsReview"
+    ],
+    "regenerationDeterministic": false
+  },
+  "compilation": {
+    "status": "planejado; compilador n?o implementado por esta especifica??o",
+    "inputPolicy": "Somente fontes aprovadas com SHA-256 registrado; nunca regenerar durante build.",
+    "order": "Ordenar assets por id em ordem ASCII; ordenar chaves JSON; UTF-8 LF; sem timestamps vari?veis.",
+    "imagePolicy": "PNG RGBA8 sRGB, sem metadados vari?veis; sem redimensionar, interpolar ou recortar automaticamente; origem superior esquerda; grade row-major base zero; padding 0.",
+    "mapPolicy": "JSON nativo Reactor gerado de recipe; serializa??o est?vel; IDs de mapas locais ao m?dulo; nenhuma imagem de mapa achatado.",
+    "compilerVersion": null,
+    "dependencyLock": null
+  },
+  "boundaries": {
+    "modulesIndependent": true,
+    "allowedDependencies": "Somente entradas do pr?prio m?dulo; sem depend?ncia de assets/jrpg-test, Demo ou m?dulos irm?os.",
+    "installation": "Cada m?dulo ? um modelo de projeto separado; Map001/Map002 e IDs locais nunca se fundem implicitamente.",
+    "naming": "IDs <module>.<kind>.<slug>; arquivos ASCII Diana_<Module>_<Subject>_<Kind>.png; nomes n?o mudam entre gera??o e compila??o.",
+    "editor": "Pastas img/* e data/* relativas ao projeto exportado; fontes em sources/<module>/; sa?das em pack/<module>/."
+  },
+  "contracts": {
+    "walk": {
+      "width": 192,
+      "height": 256,
+      "columns": 3,
+      "rows": 4,
+      "cellWidth": 64,
+      "cellHeight": 64,
+      "anchor": [
+        0.5,
+        1
+      ],
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "framesPerDirection": [
+        0,
+        1,
+        2
+      ],
+      "speed": 12,
+      "loop": true,
+      "adapter": "System.json dianaSpriteAnimations version 1; selecionar linha pela dire??o, sem percorrer dire??es no mesmo ciclo."
+    },
+    "battle": {
+      "width": 1152,
+      "height": 1152,
+      "columns": 6,
+      "rows": 6,
+      "cellWidth": 192,
+      "cellHeight": 192,
+      "anchor": [
+        0.5,
+        1
+      ],
+      "facing": "left",
+      "poses": [
+        {
+          "name": "idle",
+          "row": 0,
+          "speed": 10,
+          "loop": true
+        },
+        {
+          "name": "attack",
+          "row": 1,
+          "speed": 6,
+          "loop": false
+        },
+        {
+          "name": "damage",
+          "row": 2,
+          "speed": 8,
+          "loop": false
+        },
+        {
+          "name": "guard",
+          "row": 3,
+          "speed": 10,
+          "loop": true
+        },
+        {
+          "name": "victory",
+          "row": 4,
+          "speed": 8,
+          "loop": "once"
+        },
+        {
+          "name": "dead",
+          "row": 5,
+          "speed": 10,
+          "loop": "once"
+        }
+      ],
+      "frameRule": "Pose usa os seis ?ndices row*6+[0..5]. Mesmo contrato para atores e inimigos; estados entry/input/ready/wait usam idle, evade usa guard, dying/abnormal/sleep usam damage; adapter deve declarar esses aliases.",
+      "adapter": "BattlePresentation.json graphic.spriteAnimation; confirmar aliases e comportamento no editor/runtime antes de distribuir."
+    },
+    "portrait": {
+      "width": 576,
+      "height": 288,
+      "columns": 4,
+      "rows": 2,
+      "cellWidth": 144,
+      "cellHeight": 144,
+      "occupied": [
+        0
+      ],
+      "empty": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    "terrain": {
+      "width": 256,
+      "height": 256,
+      "columns": 8,
+      "rows": 8,
+      "cellWidth": 32,
+      "cellHeight": 32,
+      "slot": "A5",
+      "tileIdBase": 1536,
+      "occupied": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "empty": "8..63",
+      "tileMeaning": [
+        "ground",
+        "path",
+        "water",
+        "floor",
+        "bridge",
+        "edge",
+        "accent",
+        "rough"
+      ],
+      "blocked": [
+        2
+      ],
+      "adapter": "Tiles nativos simples A5; bordas expl?citas, sem inferir autotiles."
+    },
+    "objects": {
+      "width": 512,
+      "height": 512,
+      "columns": 16,
+      "rows": 16,
+      "cellWidth": 32,
+      "cellHeight": 32,
+      "slot": "B",
+      "tileIdBase": 0,
+      "empty": [
+        0
+      ],
+      "adapter": "Arquitetura e props s?o fontes separadas; compor B final sem sobreposi??o: arquitetura c?lulas 1..63, props c?lulas 64..127; restante transparente.",
+      "collision": "Arquitetura bloqueia 1..63 exceto 3 (porta); props bloqueiam 64..127 exceto 67 (piso decorativo)."
+    },
+    "background": {
+      "width": 1280,
+      "height": 720,
+      "columns": 1,
+      "rows": 1,
+      "cellWidth": 1280,
+      "cellHeight": 720
+    },
+    "icons": {
+      "width": 256,
+      "height": 128,
+      "columns": 8,
+      "rows": 4,
+      "cellWidth": 32,
+      "cellHeight": 32,
+      "occupied": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "empty": "8..31",
+      "adapter": "Fontes separadas; compor IconSet 512x512: armas ?ndices 0..7, itens 16..23; demais transparentes; banco referencia ?ndices finais."
+    },
+    "effects": {
+      "width": 960,
+      "height": 576,
+      "columns": 5,
+      "rows": 3,
+      "cellWidth": 192,
+      "cellHeight": 192,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "frames": "0..14",
+      "speed": 4,
+      "loop": false,
+      "adapter": "img/animations; registrar anima??o de sprites em Animations.json com 15 frames, c?lula de origem i e destino central, sem Effekseer."
+    }
+  },
+  "modules": [
+    {
+      "id": "medieval",
+      "label": "Medieval",
+      "version": "0.1.0",
+      "heroCount": 2,
+      "monsterCount": 3,
+      "maps": [
+        "Map001",
+        "Map002"
+      ],
+      "theme": "vila de pedra clara, madeira e pradaria",
+      "dependencies": []
+    },
+    {
+      "id": "moderno",
+      "label": "Moderno",
+      "version": "0.1.0",
+      "heroCount": 2,
+      "monsterCount": 3,
+      "maps": [
+        "Map001",
+        "Map002"
+      ],
+      "theme": "bairro urbano de tijolo, concreto e jardim comunit?rio",
+      "dependencies": []
+    }
+  ],
+  "assets": [
+    {
+      "id": "medieval.walk.hero-1",
+      "module": "medieval",
+      "kind": "walk",
+      "subject": "Alva, cart?grafa de capa ocre e tran?a curta",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.walk.hero-1",
+      "source": "sources/medieval/Diana_Medieval_hero1_Walk.png",
+      "output": "pack/medieval/img/characters/Diana_Medieval_hero1_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.hero-1",
+      "role": "hero"
+    },
+    {
+      "id": "medieval.battle.hero-1",
+      "module": "medieval",
+      "kind": "battle",
+      "subject": "Alva, cart?grafa de capa ocre e tran?a curta",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.battle.hero-1",
+      "source": "sources/medieval/Diana_Medieval_hero1_Battle.png",
+      "output": "pack/medieval/img/pictures/Diana_Medieval_hero1_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.hero-1",
+      "role": "hero"
+    },
+    {
+      "id": "medieval.portrait.hero-1",
+      "module": "medieval",
+      "kind": "portrait",
+      "subject": "Alva, cart?grafa de capa ocre e tran?a curta",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.portrait.hero-1",
+      "source": "sources/medieval/Diana_Medieval_hero1_Face.png",
+      "output": "pack/medieval/img/faces/Diana_Medieval_hero1_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.hero-1",
+      "role": "hero"
+    },
+    {
+      "id": "medieval.walk.hero-2",
+      "module": "medieval",
+      "kind": "walk",
+      "subject": "Breno, herbalista de t?nica verde e bolsa de couro",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.walk.hero-2",
+      "source": "sources/medieval/Diana_Medieval_hero2_Walk.png",
+      "output": "pack/medieval/img/characters/Diana_Medieval_hero2_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.hero-2",
+      "role": "hero"
+    },
+    {
+      "id": "medieval.battle.hero-2",
+      "module": "medieval",
+      "kind": "battle",
+      "subject": "Breno, herbalista de t?nica verde e bolsa de couro",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.battle.hero-2",
+      "source": "sources/medieval/Diana_Medieval_hero2_Battle.png",
+      "output": "pack/medieval/img/pictures/Diana_Medieval_hero2_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.hero-2",
+      "role": "hero"
+    },
+    {
+      "id": "medieval.portrait.hero-2",
+      "module": "medieval",
+      "kind": "portrait",
+      "subject": "Breno, herbalista de t?nica verde e bolsa de couro",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.portrait.hero-2",
+      "source": "sources/medieval/Diana_Medieval_hero2_Face.png",
+      "output": "pack/medieval/img/faces/Diana_Medieval_hero2_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.hero-2",
+      "role": "hero"
+    },
+    {
+      "id": "medieval.walk.monster-1",
+      "module": "medieval",
+      "kind": "walk",
+      "subject": "Musgoso, pequeno golem de argila coberto de musgo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.walk.monster-1",
+      "source": "sources/medieval/Diana_Medieval_monster1_Walk.png",
+      "output": "pack/medieval/img/characters/Diana_Medieval_monster1_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-1",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.battle.monster-1",
+      "module": "medieval",
+      "kind": "battle",
+      "subject": "Musgoso, pequeno golem de argila coberto de musgo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.battle.monster-1",
+      "source": "sources/medieval/Diana_Medieval_monster1_Battle.png",
+      "output": "pack/medieval/img/pictures/Diana_Medieval_monster1_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-1",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.portrait.monster-1",
+      "module": "medieval",
+      "kind": "portrait",
+      "subject": "Musgoso, pequeno golem de argila coberto de musgo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.portrait.monster-1",
+      "source": "sources/medieval/Diana_Medieval_monster1_Face.png",
+      "output": "pack/medieval/img/faces/Diana_Medieval_monster1_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-1",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.walk.monster-2",
+      "module": "medieval",
+      "kind": "walk",
+      "subject": "Mariposa ?mbar de seis patas e asas arredondadas",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.walk.monster-2",
+      "source": "sources/medieval/Diana_Medieval_monster2_Walk.png",
+      "output": "pack/medieval/img/characters/Diana_Medieval_monster2_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-2",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.battle.monster-2",
+      "module": "medieval",
+      "kind": "battle",
+      "subject": "Mariposa ?mbar de seis patas e asas arredondadas",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.battle.monster-2",
+      "source": "sources/medieval/Diana_Medieval_monster2_Battle.png",
+      "output": "pack/medieval/img/pictures/Diana_Medieval_monster2_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-2",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.portrait.monster-2",
+      "module": "medieval",
+      "kind": "portrait",
+      "subject": "Mariposa ?mbar de seis patas e asas arredondadas",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.portrait.monster-2",
+      "source": "sources/medieval/Diana_Medieval_monster2_Face.png",
+      "output": "pack/medieval/img/faces/Diana_Medieval_monster2_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-2",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.walk.monster-3",
+      "module": "medieval",
+      "kind": "walk",
+      "subject": "Caranguejo de basalto com cristais foscos",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.walk.monster-3",
+      "source": "sources/medieval/Diana_Medieval_monster3_Walk.png",
+      "output": "pack/medieval/img/characters/Diana_Medieval_monster3_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-3",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.battle.monster-3",
+      "module": "medieval",
+      "kind": "battle",
+      "subject": "Caranguejo de basalto com cristais foscos",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.battle.monster-3",
+      "source": "sources/medieval/Diana_Medieval_monster3_Battle.png",
+      "output": "pack/medieval/img/pictures/Diana_Medieval_monster3_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-3",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.portrait.monster-3",
+      "module": "medieval",
+      "kind": "portrait",
+      "subject": "Caranguejo de basalto com cristais foscos",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.portrait.monster-3",
+      "source": "sources/medieval/Diana_Medieval_monster3_Face.png",
+      "output": "pack/medieval/img/faces/Diana_Medieval_monster3_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "medieval.monster-3",
+      "role": "monster"
+    },
+    {
+      "id": "medieval.tiles.terrain",
+      "module": "medieval",
+      "kind": "tiles",
+      "subject": "Terrenos de vila de pedra clara, madeira e pradaria: solo, caminho, ?gua, piso, ponte, borda, acento e terreno ?spero",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.tiles.terrain",
+      "source": "sources/medieval/Diana_Medieval_Terrain_A5.png",
+      "output": "pack/medieval/img/tilesets/Diana_Medieval_Terrain_A5.png",
+      "editorFolder": "img/tilesets",
+      "contract": "terrain",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "medieval.tiles.architecture",
+      "module": "medieval",
+      "kind": "tiles",
+      "subject": "Kit de arquitetura de vila de pedra clara, madeira e pradaria: parede, telhado, porta, janela, escada, canto e soleira; m?dulos de 32 px",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.tiles.architecture",
+      "source": "sources/medieval/Diana_Medieval_Architecture_Source.png",
+      "output": "pack/medieval/img/tilesets/Diana_Medieval_Architecture_Source.png",
+      "editorFolder": "img/tilesets",
+      "contract": "objects",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "Diana_Medieval_Objects_B.png",
+        "cells": [
+          1,
+          63
+        ],
+        "reservedTransparent": "0 e 64..255"
+      }
+    },
+    {
+      "id": "medieval.tiles.props",
+      "module": "medieval",
+      "kind": "tiles",
+      "subject": "?rvore modular, cerca, barril, banco, canteiro e placa sem texto",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.tiles.props",
+      "source": "sources/medieval/Diana_Medieval_Props_Source.png",
+      "output": "pack/medieval/img/tilesets/Diana_Medieval_Props_Source.png",
+      "editorFolder": "img/tilesets",
+      "contract": "objects",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "Diana_Medieval_Objects_B.png",
+        "cells": [
+          64,
+          127
+        ],
+        "reservedTransparent": "0..63 e 128..255"
+      }
+    },
+    {
+      "id": "medieval.background.area-1",
+      "module": "medieval",
+      "kind": "background",
+      "subject": "vila de pedra clara, madeira e pradaria; pra?a externa ao amanhecer, ch?o livre na metade inferior, sem personagens",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.background.area-1",
+      "source": "sources/medieval/Diana_Medieval_Area1_Background.png",
+      "output": "pack/medieval/img/battlebacks1/Diana_Medieval_Area1_Background.png",
+      "editorFolder": "img/battlebacks1",
+      "contract": "background",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "medieval.background.area-2",
+      "module": "medieval",
+      "kind": "background",
+      "subject": "vila de pedra clara, madeira e pradaria; ?rea de confronto ao entardecer, ch?o livre na metade inferior, sem personagens",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.background.area-2",
+      "source": "sources/medieval/Diana_Medieval_Area2_Background.png",
+      "output": "pack/medieval/img/battlebacks1/Diana_Medieval_Area2_Background.png",
+      "editorFolder": "img/battlebacks1",
+      "contract": "background",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "medieval.weapons.set",
+      "module": "medieval",
+      "kind": "weapons",
+      "subject": "Oito armas originais: espada curta, bast?o, arco, lan?a, ma?a, adaga, escudo e varinha",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.weapons.set",
+      "source": "sources/medieval/Diana_Medieval_Weapons_Source.png",
+      "output": "pack/medieval/img/system/Diana_Medieval_Weapons_Source.png",
+      "editorFolder": "img/system",
+      "contract": "icons",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "IconSet.png",
+        "indices": [
+          0,
+          7
+        ]
+      }
+    },
+    {
+      "id": "medieval.items.set",
+      "module": "medieval",
+      "kind": "items",
+      "subject": "Oito itens originais: frasco de cura, frasco de energia, ant?doto, chave, lanterna, corda, alimento e cristal de recurso; coerentes com o m?dulo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.items.set",
+      "source": "sources/medieval/Diana_Medieval_Items_Source.png",
+      "output": "pack/medieval/img/system/Diana_Medieval_Items_Source.png",
+      "editorFolder": "img/system",
+      "contract": "icons",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "IconSet.png",
+        "indices": [
+          16,
+          23
+        ]
+      }
+    },
+    {
+      "id": "medieval.effects.impact",
+      "module": "medieval",
+      "kind": "effects",
+      "subject": "Impacto de fa?scas douradas e folhas luminosas, expans?o e dissipa??o",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.effects.impact",
+      "source": "sources/medieval/Diana_Medieval_Impact.png",
+      "output": "pack/medieval/img/animations/Diana_Medieval_Impact.png",
+      "editorFolder": "img/animations",
+      "contract": "effects",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "medieval.map.area-1",
+      "module": "medieval",
+      "kind": "map",
+      "subject": "?rea inicial explor?vel de vila de pedra clara, madeira e pradaria",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.map.area-1",
+      "source": "sources/medieval/Map001.recipe.json",
+      "output": "pack/medieval/data/Map001.json",
+      "editorFolder": "data",
+      "contract": null,
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "format": "Reactor Map JSON",
+      "dimensions": {
+        "width": 24,
+        "height": 18,
+        "tileWidth": 32,
+        "tileHeight": 32,
+        "pixelWidth": 768,
+        "pixelHeight": 576,
+        "layers": 6
+      },
+      "dependencies": [
+        "medieval.tiles.terrain",
+        "medieval.tiles.architecture",
+        "medieval.tiles.props",
+        "medieval.background.area-1",
+        "medieval.walk.hero-1",
+        "medieval.walk.hero-2",
+        "medieval.battle.hero-1",
+        "medieval.battle.hero-2",
+        "medieval.battle.monster-1",
+        "medieval.battle.monster-2",
+        "medieval.battle.monster-3"
+      ],
+      "recipe": {
+        "version": 1,
+        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "fill": {
+          "layer": 0,
+          "tileId": 1536
+        },
+        "rectangles": [
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 0,
+            "x2": 23,
+            "y2": 0,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 17,
+            "x2": 23,
+            "y2": 17,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 1,
+            "x2": 0,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 23,
+            "y1": 1,
+            "x2": 23,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 1,
+            "y1": 8,
+            "x2": 22,
+            "y2": 9,
+            "tileId": 1537
+          },
+          {
+            "layer": 2,
+            "x1": 4,
+            "y1": 3,
+            "x2": 8,
+            "y2": 5,
+            "tileId": 1
+          }
+        ],
+        "placements": [
+          {
+            "layer": 2,
+            "x": 6,
+            "y": 5,
+            "tileId": 3
+          },
+          {
+            "layer": 2,
+            "x": 10,
+            "y": 7,
+            "tileId": 64
+          }
+        ],
+        "start": {
+          "x": 2,
+          "y": 8,
+          "direction": 6
+        },
+        "events": [
+          {
+            "id": 1,
+            "x": 22,
+            "y": 8,
+            "trigger": "player-touch",
+            "action": "transfer",
+            "targetMap": "Map002",
+            "targetX": 2,
+            "targetY": 8
+          },
+          {
+            "id": 2,
+            "x": 12,
+            "y": 8,
+            "trigger": "action-button",
+            "action": "dialogue",
+            "text": "A rota segue pela sa?da leste.",
+            "portrait": "medieval.portrait.hero-2",
+            "troop": null
+          }
+        ],
+        "emptyLayers": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "emptyTileId": 0,
+        "randomEncounters": [],
+        "parallax": null,
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+      }
+    },
+    {
+      "id": "medieval.map.area-2",
+      "module": "medieval",
+      "kind": "map",
+      "subject": "Rota com arena de batalha de vila de pedra clara, madeira e pradaria",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "medieval.map.area-2",
+      "source": "sources/medieval/Map002.recipe.json",
+      "output": "pack/medieval/data/Map002.json",
+      "editorFolder": "data",
+      "contract": null,
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "format": "Reactor Map JSON",
+      "dimensions": {
+        "width": 24,
+        "height": 18,
+        "tileWidth": 32,
+        "tileHeight": 32,
+        "pixelWidth": 768,
+        "pixelHeight": 576,
+        "layers": 6
+      },
+      "dependencies": [
+        "medieval.tiles.terrain",
+        "medieval.tiles.architecture",
+        "medieval.tiles.props",
+        "medieval.background.area-2",
+        "medieval.walk.hero-1",
+        "medieval.walk.hero-2",
+        "medieval.battle.hero-1",
+        "medieval.battle.hero-2",
+        "medieval.battle.monster-1",
+        "medieval.battle.monster-2",
+        "medieval.battle.monster-3"
+      ],
+      "recipe": {
+        "version": 1,
+        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "fill": {
+          "layer": 0,
+          "tileId": 1536
+        },
+        "rectangles": [
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 0,
+            "x2": 23,
+            "y2": 0,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 17,
+            "x2": 23,
+            "y2": 17,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 1,
+            "x2": 0,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 23,
+            "y1": 1,
+            "x2": 23,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 1,
+            "y1": 8,
+            "x2": 22,
+            "y2": 9,
+            "tileId": 1537
+          },
+          {
+            "layer": 2,
+            "x1": 4,
+            "y1": 3,
+            "x2": 8,
+            "y2": 5,
+            "tileId": 1
+          }
+        ],
+        "placements": [
+          {
+            "layer": 2,
+            "x": 6,
+            "y": 5,
+            "tileId": 3
+          },
+          {
+            "layer": 2,
+            "x": 10,
+            "y": 7,
+            "tileId": 64
+          }
+        ],
+        "start": null,
+        "events": [
+          {
+            "id": 1,
+            "x": 22,
+            "y": 8,
+            "trigger": "player-touch",
+            "action": "transfer",
+            "targetMap": "Map001",
+            "targetX": 2,
+            "targetY": 8
+          },
+          {
+            "id": 2,
+            "x": 12,
+            "y": 8,
+            "trigger": "action-button",
+            "action": "battle",
+            "text": null,
+            "portrait": null,
+            "troop": {
+              "members": [
+                "medieval.monster-1",
+                "medieval.monster-2",
+                "medieval.monster-3"
+              ],
+              "canEscape": true,
+              "canLose": false
+            }
+          }
+        ],
+        "emptyLayers": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "emptyTileId": 0,
+        "randomEncounters": [],
+        "parallax": null,
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+      }
+    },
+    {
+      "id": "moderno.walk.hero-1",
+      "module": "moderno",
+      "kind": "walk",
+      "subject": "Cora, t?cnica de manuten??o com macac?o azul e cabelo crespo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.walk.hero-1",
+      "source": "sources/moderno/Diana_Moderno_hero1_Walk.png",
+      "output": "pack/moderno/img/characters/Diana_Moderno_hero1_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.hero-1",
+      "role": "hero"
+    },
+    {
+      "id": "moderno.battle.hero-1",
+      "module": "moderno",
+      "kind": "battle",
+      "subject": "Cora, t?cnica de manuten??o com macac?o azul e cabelo crespo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.battle.hero-1",
+      "source": "sources/moderno/Diana_Moderno_hero1_Battle.png",
+      "output": "pack/moderno/img/pictures/Diana_Moderno_hero1_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.hero-1",
+      "role": "hero"
+    },
+    {
+      "id": "moderno.portrait.hero-1",
+      "module": "moderno",
+      "kind": "portrait",
+      "subject": "Cora, t?cnica de manuten??o com macac?o azul e cabelo crespo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.portrait.hero-1",
+      "source": "sources/moderno/Diana_Moderno_hero1_Face.png",
+      "output": "pack/moderno/img/faces/Diana_Moderno_hero1_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.hero-1",
+      "role": "hero"
+    },
+    {
+      "id": "moderno.walk.hero-2",
+      "module": "moderno",
+      "kind": "walk",
+      "subject": "Davi, mensageiro de jaqueta terracota e mochila refletiva",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.walk.hero-2",
+      "source": "sources/moderno/Diana_Moderno_hero2_Walk.png",
+      "output": "pack/moderno/img/characters/Diana_Moderno_hero2_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.hero-2",
+      "role": "hero"
+    },
+    {
+      "id": "moderno.battle.hero-2",
+      "module": "moderno",
+      "kind": "battle",
+      "subject": "Davi, mensageiro de jaqueta terracota e mochila refletiva",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.battle.hero-2",
+      "source": "sources/moderno/Diana_Moderno_hero2_Battle.png",
+      "output": "pack/moderno/img/pictures/Diana_Moderno_hero2_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.hero-2",
+      "role": "hero"
+    },
+    {
+      "id": "moderno.portrait.hero-2",
+      "module": "moderno",
+      "kind": "portrait",
+      "subject": "Davi, mensageiro de jaqueta terracota e mochila refletiva",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.portrait.hero-2",
+      "source": "sources/moderno/Diana_Moderno_hero2_Face.png",
+      "output": "pack/moderno/img/faces/Diana_Moderno_hero2_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.hero-2",
+      "role": "hero"
+    },
+    {
+      "id": "moderno.walk.monster-1",
+      "module": "moderno",
+      "kind": "walk",
+      "subject": "Drone hexagonal de manuten??o desgovernado sem marca",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.walk.monster-1",
+      "source": "sources/moderno/Diana_Moderno_monster1_Walk.png",
+      "output": "pack/moderno/img/characters/Diana_Moderno_monster1_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-1",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.battle.monster-1",
+      "module": "moderno",
+      "kind": "battle",
+      "subject": "Drone hexagonal de manuten??o desgovernado sem marca",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.battle.monster-1",
+      "source": "sources/moderno/Diana_Moderno_monster1_Battle.png",
+      "output": "pack/moderno/img/pictures/Diana_Moderno_monster1_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-1",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.portrait.monster-1",
+      "module": "moderno",
+      "kind": "portrait",
+      "subject": "Drone hexagonal de manuten??o desgovernado sem marca",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.portrait.monster-1",
+      "source": "sources/moderno/Diana_Moderno_monster1_Face.png",
+      "output": "pack/moderno/img/faces/Diana_Moderno_monster1_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-1",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.walk.monster-2",
+      "module": "moderno",
+      "kind": "walk",
+      "subject": "Criatura de espuma azul com olhos geom?tricos",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.walk.monster-2",
+      "source": "sources/moderno/Diana_Moderno_monster2_Walk.png",
+      "output": "pack/moderno/img/characters/Diana_Moderno_monster2_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-2",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.battle.monster-2",
+      "module": "moderno",
+      "kind": "battle",
+      "subject": "Criatura de espuma azul com olhos geom?tricos",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.battle.monster-2",
+      "source": "sources/moderno/Diana_Moderno_monster2_Battle.png",
+      "output": "pack/moderno/img/pictures/Diana_Moderno_monster2_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-2",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.portrait.monster-2",
+      "module": "moderno",
+      "kind": "portrait",
+      "subject": "Criatura de espuma azul com olhos geom?tricos",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.portrait.monster-2",
+      "source": "sources/moderno/Diana_Moderno_monster2_Face.png",
+      "output": "pack/moderno/img/faces/Diana_Moderno_monster2_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-2",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.walk.monster-3",
+      "module": "moderno",
+      "kind": "walk",
+      "subject": "Rob? coletor sobre tr?s rodas e carca?a amarela",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.walk.monster-3",
+      "source": "sources/moderno/Diana_Moderno_monster3_Walk.png",
+      "output": "pack/moderno/img/characters/Diana_Moderno_monster3_Walk.png",
+      "editorFolder": "img/characters",
+      "contract": "walk",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-3",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.battle.monster-3",
+      "module": "moderno",
+      "kind": "battle",
+      "subject": "Rob? coletor sobre tr?s rodas e carca?a amarela",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.battle.monster-3",
+      "source": "sources/moderno/Diana_Moderno_monster3_Battle.png",
+      "output": "pack/moderno/img/pictures/Diana_Moderno_monster3_Battle.png",
+      "editorFolder": "img/pictures",
+      "contract": "battle",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-3",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.portrait.monster-3",
+      "module": "moderno",
+      "kind": "portrait",
+      "subject": "Rob? coletor sobre tr?s rodas e carca?a amarela",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.portrait.monster-3",
+      "source": "sources/moderno/Diana_Moderno_monster3_Face.png",
+      "output": "pack/moderno/img/faces/Diana_Moderno_monster3_Face.png",
+      "editorFolder": "img/faces",
+      "contract": "portrait",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "entityId": "moderno.monster-3",
+      "role": "monster"
+    },
+    {
+      "id": "moderno.tiles.terrain",
+      "module": "moderno",
+      "kind": "tiles",
+      "subject": "Terrenos de bairro urbano de tijolo, concreto e jardim comunit?rio: solo, caminho, ?gua, piso, ponte, borda, acento e terreno ?spero",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.tiles.terrain",
+      "source": "sources/moderno/Diana_Moderno_Terrain_A5.png",
+      "output": "pack/moderno/img/tilesets/Diana_Moderno_Terrain_A5.png",
+      "editorFolder": "img/tilesets",
+      "contract": "terrain",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "moderno.tiles.architecture",
+      "module": "moderno",
+      "kind": "tiles",
+      "subject": "Kit de arquitetura de bairro urbano de tijolo, concreto e jardim comunit?rio: parede, telhado, porta, janela, escada, canto e soleira; m?dulos de 32 px",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.tiles.architecture",
+      "source": "sources/moderno/Diana_Moderno_Architecture_Source.png",
+      "output": "pack/moderno/img/tilesets/Diana_Moderno_Architecture_Source.png",
+      "editorFolder": "img/tilesets",
+      "contract": "objects",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "Diana_Moderno_Objects_B.png",
+        "cells": [
+          1,
+          63
+        ],
+        "reservedTransparent": "0 e 64..255"
+      }
+    },
+    {
+      "id": "moderno.tiles.props",
+      "module": "moderno",
+      "kind": "tiles",
+      "subject": "Poste, lixeira, banco, bicicleta gen?rica, canteiro e caixa de servi?o sem marcas",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.tiles.props",
+      "source": "sources/moderno/Diana_Moderno_Props_Source.png",
+      "output": "pack/moderno/img/tilesets/Diana_Moderno_Props_Source.png",
+      "editorFolder": "img/tilesets",
+      "contract": "objects",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "Diana_Moderno_Objects_B.png",
+        "cells": [
+          64,
+          127
+        ],
+        "reservedTransparent": "0..63 e 128..255"
+      }
+    },
+    {
+      "id": "moderno.background.area-1",
+      "module": "moderno",
+      "kind": "background",
+      "subject": "bairro urbano de tijolo, concreto e jardim comunit?rio; pra?a externa ao amanhecer, ch?o livre na metade inferior, sem personagens",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.background.area-1",
+      "source": "sources/moderno/Diana_Moderno_Area1_Background.png",
+      "output": "pack/moderno/img/battlebacks1/Diana_Moderno_Area1_Background.png",
+      "editorFolder": "img/battlebacks1",
+      "contract": "background",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "moderno.background.area-2",
+      "module": "moderno",
+      "kind": "background",
+      "subject": "bairro urbano de tijolo, concreto e jardim comunit?rio; ?rea de confronto ao entardecer, ch?o livre na metade inferior, sem personagens",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.background.area-2",
+      "source": "sources/moderno/Diana_Moderno_Area2_Background.png",
+      "output": "pack/moderno/img/battlebacks1/Diana_Moderno_Area2_Background.png",
+      "editorFolder": "img/battlebacks1",
+      "contract": "background",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "moderno.weapons.set",
+      "module": "moderno",
+      "kind": "weapons",
+      "subject": "Oito equipamentos originais: chave de manuten??o, bast?o el?trico, lan?ador de pulsos abstrato, escudo, pin?a, martelo, emissor e luvas",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.weapons.set",
+      "source": "sources/moderno/Diana_Moderno_Weapons_Source.png",
+      "output": "pack/moderno/img/system/Diana_Moderno_Weapons_Source.png",
+      "editorFolder": "img/system",
+      "contract": "icons",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "IconSet.png",
+        "indices": [
+          0,
+          7
+        ]
+      }
+    },
+    {
+      "id": "moderno.items.set",
+      "module": "moderno",
+      "kind": "items",
+      "subject": "Oito itens originais: frasco de cura, frasco de energia, ant?doto, chave, lanterna, corda, alimento e cristal de recurso; coerentes com o m?dulo",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.items.set",
+      "source": "sources/moderno/Diana_Moderno_Items_Source.png",
+      "output": "pack/moderno/img/system/Diana_Moderno_Items_Source.png",
+      "editorFolder": "img/system",
+      "contract": "icons",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "composition": {
+        "target": "IconSet.png",
+        "indices": [
+          16,
+          23
+        ]
+      }
+    },
+    {
+      "id": "moderno.effects.impact",
+      "module": "moderno",
+      "kind": "effects",
+      "subject": "Impacto de an?is ciano e part?culas quadradas, expans?o e dissipa??o",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.effects.impact",
+      "source": "sources/moderno/Diana_Moderno_Impact.png",
+      "output": "pack/moderno/img/animations/Diana_Moderno_Impact.png",
+      "editorFolder": "img/animations",
+      "contract": "effects",
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      }
+    },
+    {
+      "id": "moderno.map.area-1",
+      "module": "moderno",
+      "kind": "map",
+      "subject": "?rea inicial explor?vel de bairro urbano de tijolo, concreto e jardim comunit?rio",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.map.area-1",
+      "source": "sources/moderno/Map001.recipe.json",
+      "output": "pack/moderno/data/Map001.json",
+      "editorFolder": "data",
+      "contract": null,
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "format": "Reactor Map JSON",
+      "dimensions": {
+        "width": 24,
+        "height": 18,
+        "tileWidth": 32,
+        "tileHeight": 32,
+        "pixelWidth": 768,
+        "pixelHeight": 576,
+        "layers": 6
+      },
+      "dependencies": [
+        "moderno.tiles.terrain",
+        "moderno.tiles.architecture",
+        "moderno.tiles.props",
+        "moderno.background.area-1",
+        "moderno.walk.hero-1",
+        "moderno.walk.hero-2",
+        "moderno.battle.hero-1",
+        "moderno.battle.hero-2",
+        "moderno.battle.monster-1",
+        "moderno.battle.monster-2",
+        "moderno.battle.monster-3"
+      ],
+      "recipe": {
+        "version": 1,
+        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "fill": {
+          "layer": 0,
+          "tileId": 1536
+        },
+        "rectangles": [
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 0,
+            "x2": 23,
+            "y2": 0,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 17,
+            "x2": 23,
+            "y2": 17,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 1,
+            "x2": 0,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 23,
+            "y1": 1,
+            "x2": 23,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 1,
+            "y1": 8,
+            "x2": 22,
+            "y2": 9,
+            "tileId": 1537
+          },
+          {
+            "layer": 2,
+            "x1": 4,
+            "y1": 3,
+            "x2": 8,
+            "y2": 5,
+            "tileId": 1
+          }
+        ],
+        "placements": [
+          {
+            "layer": 2,
+            "x": 6,
+            "y": 5,
+            "tileId": 3
+          },
+          {
+            "layer": 2,
+            "x": 10,
+            "y": 7,
+            "tileId": 64
+          }
+        ],
+        "start": {
+          "x": 2,
+          "y": 8,
+          "direction": 6
+        },
+        "events": [
+          {
+            "id": 1,
+            "x": 22,
+            "y": 8,
+            "trigger": "player-touch",
+            "action": "transfer",
+            "targetMap": "Map002",
+            "targetX": 2,
+            "targetY": 8
+          },
+          {
+            "id": 2,
+            "x": 12,
+            "y": 8,
+            "trigger": "action-button",
+            "action": "dialogue",
+            "text": "A rota segue pela sa?da leste.",
+            "portrait": "moderno.portrait.hero-2",
+            "troop": null
+          }
+        ],
+        "emptyLayers": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "emptyTileId": 0,
+        "randomEncounters": [],
+        "parallax": null,
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+      }
+    },
+    {
+      "id": "moderno.map.area-2",
+      "module": "moderno",
+      "kind": "map",
+      "subject": "Rota com arena de batalha de bairro urbano de tijolo, concreto e jardim comunit?rio",
+      "status": "planejado",
+      "license": "MIT",
+      "promptId": "moderno.map.area-2",
+      "source": "sources/moderno/Map002.recipe.json",
+      "output": "pack/moderno/data/Map002.json",
+      "editorFolder": "data",
+      "contract": null,
+      "provenance": {
+        "creator": null,
+        "tool": null,
+        "model": null,
+        "modelVersion": null,
+        "seed": null,
+        "generatedAt": null,
+        "sourceSha256": null,
+        "outputSha256": null,
+        "rightsReview": "pendente",
+        "references": [],
+        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+      },
+      "format": "Reactor Map JSON",
+      "dimensions": {
+        "width": 24,
+        "height": 18,
+        "tileWidth": 32,
+        "tileHeight": 32,
+        "pixelWidth": 768,
+        "pixelHeight": 576,
+        "layers": 6
+      },
+      "dependencies": [
+        "moderno.tiles.terrain",
+        "moderno.tiles.architecture",
+        "moderno.tiles.props",
+        "moderno.background.area-2",
+        "moderno.walk.hero-1",
+        "moderno.walk.hero-2",
+        "moderno.battle.hero-1",
+        "moderno.battle.hero-2",
+        "moderno.battle.monster-1",
+        "moderno.battle.monster-2",
+        "moderno.battle.monster-3"
+      ],
+      "recipe": {
+        "version": 1,
+        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "fill": {
+          "layer": 0,
+          "tileId": 1536
+        },
+        "rectangles": [
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 0,
+            "x2": 23,
+            "y2": 0,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 17,
+            "x2": 23,
+            "y2": 17,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 0,
+            "y1": 1,
+            "x2": 0,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 23,
+            "y1": 1,
+            "x2": 23,
+            "y2": 16,
+            "tileId": 1538
+          },
+          {
+            "layer": 0,
+            "x1": 1,
+            "y1": 8,
+            "x2": 22,
+            "y2": 9,
+            "tileId": 1537
+          },
+          {
+            "layer": 2,
+            "x1": 4,
+            "y1": 3,
+            "x2": 8,
+            "y2": 5,
+            "tileId": 1
+          }
+        ],
+        "placements": [
+          {
+            "layer": 2,
+            "x": 6,
+            "y": 5,
+            "tileId": 3
+          },
+          {
+            "layer": 2,
+            "x": 10,
+            "y": 7,
+            "tileId": 64
+          }
+        ],
+        "start": null,
+        "events": [
+          {
+            "id": 1,
+            "x": 22,
+            "y": 8,
+            "trigger": "player-touch",
+            "action": "transfer",
+            "targetMap": "Map001",
+            "targetX": 2,
+            "targetY": 8
+          },
+          {
+            "id": 2,
+            "x": 12,
+            "y": 8,
+            "trigger": "action-button",
+            "action": "battle",
+            "text": null,
+            "portrait": null,
+            "troop": {
+              "members": [
+                "moderno.monster-1",
+                "moderno.monster-2",
+                "moderno.monster-3"
+              ],
+              "canEscape": true,
+              "canLose": false
+            }
+          }
+        ],
+        "emptyLayers": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "emptyTileId": 0,
+        "randomEncounters": [],
+        "parallax": null,
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+      }
+    }
+  ]
+}
