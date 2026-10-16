@@ -26,7 +26,7 @@ node scripts/smoke-package-windows.cjs
 
 `--prepared` seleciona outro staging preparado; `--sdk` seleciona outra pasta local do SDK. Use destinos novos: scripts recusam sobrescrita e sobreposição com origens. Execute `Diana.cmd` ou `Jogar.cmd` dentro do pacote; ambos usam caminhos relativos e perfil local. O smoke lança os mesmos executáveis e diretórios via WebDriver, sem testar o duplo clique dos arquivos CMD.
 
-O pacote editor contém `app/editor`, `app/runtime`, licenças Diana/RPGReactor, notices upstream e dependências de produção copiadas fisicamente. O link de desenvolvimento `node_modules` é resolvido apenas na origem; links internos são recusados. O pacote inclui 17 dependências, respectivos textos disponíveis e código; exclui lamejs, dependências exclusivas de desenvolvimento, testes, scripts de build, chromedriver e nwjc. O runtime mantém o `ffmpeg.dll` original da pasta SDK, identificado por SHA-256; não aplica overlay nem promete codecs proprietários. A integridade do arquivo ZIP registrada em `tools-lock.json` não certifica por si só toda a árvore extraída.
+O pacote editor contém `app/editor`, `app/runtime`, licenças Diana/RPGReactor, notices upstream e dependências de produção copiadas fisicamente. O link de desenvolvimento `node_modules` é resolvido apenas na origem; links internos são recusados. O pacote inclui 17 dependências, respectivos textos disponíveis e código; o patch de preparação remove `lamejs` e o transitivo exclusivo `use-strict` do manifest e lockfile, e o empacotador recusa manifests que ainda declarem `lamejs`. Dependências exclusivas de desenvolvimento, testes, scripts de build, chromedriver e nwjc também ficam fora. O runtime mantém o `ffmpeg.dll` original da pasta SDK, identificado por SHA-256; não aplica overlay nem promete codecs proprietários. A integridade do arquivo ZIP registrada em `tools-lock.json` não certifica por si só toda a árvore extraída.
 
 O export copia o projeto indicado, excluindo `Demo`, `.git`, `node_modules`, saves, perfil, debug e arquivo de projeto do editor. O export não identifica automaticamente recursos comerciais importados pelo autor: o usuário precisa ter direitos sobre seus recursos. Não exporta o Demo upstream. Os testes usam somente o starter original Diana.
 
@@ -48,7 +48,7 @@ Cada pacote contém `diana-package.json`: inventário por arquivo com tamanho/SH
 
 **Bloqueado:** `@pixi/colord` 2.9.6 declara MIT, mas não contém texto de licença no pacote instalado. `gif.js` 0.2.0 contém MIT completo no README, que é preservado e inventariado. WASM/decoders e terceiros embutidos ainda requerem revisão da cadeia exata. Todos os manifests marcam `distributionStatus: blocked-license-review`; resolver esses pontos antes de publicar. A rotina oferece pacote local para revisão, sem promover seu conteúdo a distribuição liberada.
 
-**Resolvido por exclusão:** MP3 opcional não é oferecido pelo AudioExport, carregar lamejs lança erro explícito, e o pacote/manifest de dependências não transporta lamejs. A discrepância GPL/LGPL histórica permanece documentada na auditoria e não é reinterpretada.
+**Resolvido no editor Diana preparado:** MP3 não é oferecido pelo AudioExport, `lamejs` é removido do manifest/lockfile através de patch versionado e o empacotador falha se a dependência reaparecer. A discrepância do tarball permanece apenas como evidência histórica upstream na auditoria. Reprepare antes de gerar um pacote atualizado.
 
 ## Prévia local da Clareira — 16/10/2026
 

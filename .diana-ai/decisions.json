@@ -87,7 +87,7 @@
       "id": "local-package-license-gate",
       "date": "2026-10-15",
       "status": "parcial",
-      "decision": "Pacote local físico sem junction e export real; MP3/lamejs excluído. Publicação bloqueada enquanto avisos do SDK e terceiros não estiverem completos.",
+      "decision": "Pacote local físico sem junction e export real; MP3 desativado e dependência lamejs LGPL-3.0 removida do manifest/lockfile Diana por patch. Publicação segue bloqueada por notices do SDK e revisão de terceiros.",
       "evidence": "docs/WINDOWS_PACKAGE.md"
     },
     {

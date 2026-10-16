@@ -19,7 +19,7 @@
       "id": "distribution-licenses",
       "status": "bloqueado",
       "severity": "alta",
-      "description": "MP3/lamejs excluído do pacote e desativado na UI. Faltam notices oficiais completos NW.js/Chromium/Node, MIT @pixi/colord e revisão WASM antes da distribuição pública.",
+      "description": "lamejs LGPL-3.0 foi removido do manifest/lockfile Diana preparado por patch versionado e o empacotador bloqueia regressão. Permanecem notices oficiais completos NW.js/Chromium/Node, texto MIT @pixi/colord e revisão WASM/terceiros antes da distribuição pública.",
       "evidence": "docs/LICENSE_AUDIT.md"
     },
     {

@@ -25,10 +25,10 @@ test('destino existente ou sobreposto e links nao sao aceitos', () => {
 test('pacote copia closure real sem lamejs, ferramentas dev ou junction e registra gate notices', () => {
     const { root, write } = fixture();
     write('prepared/editor/src/forge/SoundEffectGenerator/AudioExport.js', 'MP3 opcional desativado');
-    write('prepared/editor/package.json', JSON.stringify({ main: 'index.html', dependencies: { pngjs: '1', lamejs: '1' }, devDependencies: { forbidden: '1' } }));
+    write('prepared/editor/package.json', JSON.stringify({ main: 'index.html', dependencies: { pngjs: '1' }, devDependencies: { forbidden: '1' } }));
     write('prepared/editor/index.html', '<html>fixture</html>'); write('prepared/provenance.json', '{}');
     write('deps/pngjs/package.json', JSON.stringify({ name: 'pngjs', version: '1', license: 'MIT' }));
-    write('deps/pngjs/LICENSE', 'MIT fixture'); write('deps/lamejs/package.json', '{}');
+    write('deps/pngjs/LICENSE', 'MIT fixture');
     fs.symlinkSync(path.join(root, 'deps'), path.join(root, 'prepared/editor/node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
     const result = packageWindows({ prepared: path.join(root, 'prepared'), sdk: path.join(root, 'sdk'), destination: path.join(root, 'out') });
     assert.equal(result.report.distributionStatus, 'blocked-license-review');
@@ -39,6 +39,13 @@ test('pacote copia closure real sem lamejs, ferramentas dev ou junction e regist
     assert.equal(fs.readFileSync(path.join(root,'out/Diana.exe')).subarray(0,2).toString(),'MZ');
     assert.equal(result.report.dependencies[0].licenseFiles[0], 'LICENSE');
     assert.equal(fs.readFileSync(path.join(root, 'out/credits.html'), 'utf8'), 'This is sample credits page.');
+});
+test('empacotador bloqueia manifest preparado que ainda declare lamejs', () => {
+    const { root, write } = fixture();
+    write('prepared/editor/src/forge/SoundEffectGenerator/AudioExport.js', 'MP3 opcional desativado');
+    write('prepared/editor/package.json', JSON.stringify({ dependencies: { lamejs: '^1.2.1' } }));
+    assert.throws(() => packageWindows({ prepared: path.join(root, 'prepared'), sdk: path.join(root, 'sdk'), destination: path.join(root, 'out') }), /manifest preparado ainda declara lamejs/);
+    assert.equal(fs.existsSync(path.join(root, 'out')), false);
 });
 test('export exige runtime e notices e nao altera projeto', () => {
     const { root, write } = fixture();

@@ -33,7 +33,7 @@ function copySdk(sdk, out) {
 function dependencies(source, names, out) {
     const inventory = [], visited = new Set();
     function visit(name) {
-        if (name === 'lamejs' || visited.has(name)) return;
+        if (visited.has(name)) return;
         if (!/^(@[\w.-]+\/)?[\w.-]+$/.test(name)) throw new Error('Dependencia invalida: ' + name);
         visited.add(name);
         const folder = path.join(source, ...name.split('/'));
@@ -67,6 +67,8 @@ function packageWindows({ prepared = path.join(root, 'build', 'diana'), sdk = pa
     if (!destination) throw new Error('Informe --out com uma pasta nova.');
     const audio = fs.readFileSync(path.join(prepared, 'editor', 'src', 'forge', 'SoundEffectGenerator', 'AudioExport.js'), 'utf8');
     if (!audio.includes('MP3 opcional desativado')) throw new Error('Prepare centralmente com zzzz-windows-package.patch antes de empacotar.');
+    const preparedPackage = JSON.parse(fs.readFileSync(path.join(prepared, 'editor', 'package.json'), 'utf8'));
+    if (preparedPackage.dependencies?.lamejs) throw new Error('O manifest preparado ainda declara lamejs; aplique o patch de remoção LGPL antes de empacotar.');
     const out = freshDestination(destination, [prepared, sdk]);
     const sdkInfo = copySdk(sdk, out);
     const app = path.join(out, 'app');
@@ -74,14 +76,14 @@ function packageWindows({ prepared = path.join(root, 'build', 'diana'), sdk = pa
     copyTree(path.join(root, 'licenses'), path.join(app, 'licenses'));
     const pkgFile = path.join(app, 'editor', 'package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgFile, 'utf8'));
-    delete pkg.dependencies.lamejs; delete pkg.devDependencies; delete pkg.scripts;
+    delete pkg.devDependencies; delete pkg.scripts;
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
     const source = fs.realpathSync(path.join(prepared, 'editor', 'node_modules'));
     const inventory = dependencies(source, Object.keys(pkg.dependencies), path.join(app, 'editor', 'node_modules'));
     fs.writeFileSync(path.join(out, 'Diana.cmd'), '@echo off\r\nstart "" "%~dp0nw.exe" --user-data-dir="%~dp0profile" "%~dp0app\\editor"\r\n');
     require('./build-windows-launcher.cjs').buildLauncher(path.join(out,'Diana.exe'));
     fs.writeFileSync(path.join(out,'LEIA-ME.txt'),'Diana RPG Studio — versão local de desenvolvimento\r\n\r\nAbra Diana.exe. Não é necessário instalar Node, Git ou executar comandos.\r\nMantenha todos os arquivos desta pasta juntos.\r\n\r\nCriar projeto: Arquivo > Novo projeto. Use Testar jogo para executar.\r\nEsta versão é para teste local; distribuição pública aguarda revisão de licenças.\r\n');
-    return { out, report: manifest(out, { kind: 'editor', sdk: sdkInfo, dependencies: inventory, mp3Encoding: 'disabled; lamejs excluded', demoIncluded: false, provenance: JSON.parse(fs.readFileSync(path.join(prepared, 'provenance.json'), 'utf8')) }) };
+    return { out, report: manifest(out, { kind: 'editor', sdk: sdkInfo, dependencies: inventory, mp3Encoding: 'disabled; lamejs removed from prepared manifest and lockfile', demoIncluded: false, provenance: JSON.parse(fs.readFileSync(path.join(prepared, 'provenance.json'), 'utf8')) }) };
 }
 function options(args) {
     const result = {};

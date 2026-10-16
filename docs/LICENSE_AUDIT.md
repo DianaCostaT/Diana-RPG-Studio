@@ -30,15 +30,15 @@ Fontes centrais: [THIRD_PARTY_NOTICES](https://github.com/Psychronic-Games/RPGRe
 | meshopt_simplifier | [Licença adjacente](https://github.com/Psychronic-Games/RPGReactor/blob/dc918245cbf8f10ae6eef4ed8cb54b850fed9caa/runtime/libs/meshopt_simplifier.LICENSE.md): MIT, Arseny Kapoulkine | Preservar o ficheiro mesmo que não apareça como secção nos notices centrais. |
 | gif.js 0.2.0, gifuct-js 2.1.2, pngjs 7.0.0 | Lockfile: MIT | Auditar e conservar os textos dos pacotes exatos antes de publicar. A licença atual do repositório não substitui a do tarball usado. |
 | @jsquash/oxipng 2.3.0 | Lockfile: Apache-2.0 | Auditar também o conteúdo WASM e respetivos terceiros; o identificador npm não encerra essa verificação. |
-| lamejs 1.2.1 | Lockfile e tarball exato: `LGPL-3.0`; usado por [AudioExport.js](https://github.com/Psychronic-Games/RPGReactor/blob/dc918245cbf8f10ae6eef4ed8cb54b850fed9caa/editor/src/forge/SoundEffectGenerator/AudioExport.js) | **Pendência real:** cumprir LGPL na forma distribuída ou excluir/substituir a funcionalidade e o pacote. Desativar o overlay FFmpeg não remove lamejs do editor. |
+| lamejs 1.2.1 | Entrada histórica do tarball/lock upstream, identificada como LGPL-3.0; patch Diana remove a dependência do manifest e lockfile preparados, além do transitivo exclusivo `use-strict` | Não faz parte do editor Diana preparado; evidência histórica preservada, manifests gerados verificados antes de empacotar. |
 | nw-builder 4.17.13; png-to-ico 3.0.1 | Dev dependencies, lockfile MIT | Ferramentas de build não licenciam o NW.js obtido por download. Verificar se são transportadas para o pacote final. |
 | NW.js / Chromium / Node | Artefactos adquiridos pelo build, com inventário próprio de terceiros | Preservar os avisos do runtime e auditar o binário exato; MIT de nw-builder não basta. |
 | Overlay FFmpeg opcional NW.js 0.107.0 | Notices: LGPL-2.1-or-later; referências imutáveis de build e fonte | Distribuir licença, avisos e fonte correspondente conforme aplicável; validar substituição/relink e requisitos da forma binária. Rever separadamente patentes H.264/AAC. |
 | Runtime AppImage | `editor/build-scripts/appimage-runtime-LICENSE.txt` | Conservar a licença do componente se o empacotamento Linux o incluir; não foi gerado AppImage nesta tarefa. |
 
-### Caveat confirmado: lamejs
+### Histórico upstream: lamejs
 
-Foi descarregado, sem instalação nem execução, o [tarball npm 1.2.1](https://registry.npmjs.org/lamejs/-/lamejs-1.2.1.tgz), preservado em `artifacts/audit/package-evidence/`. O `package.json` declara LGPL-3.0; o `LICENSE` da raiz é um resumo informal de uso comercial, enquanto `src/main/java/COPYING` contém GNU Library GPL v2. Esta mistura exige clarificar a licença aplicável aos ficheiros concretos antes de redistribuir; não é correto resolver a discrepância escolhendo unilateralmente o texto mais permissivo. O resumo informal sobre enviar modificações ao projeto também não substitui as obrigações do texto jurídico aplicável.
+O commit fixado do RPGReactor declara `lamejs` 1.2.1 como dependência e o lock upstream regista LGPL-3.0, com metadados de licença divergentes dentro do tarball. A Diana agora aplica `patches/zzzzzzzz-remove-lamejs-dependency.patch`, que remove a dependência de `editor/package.json`, a entrada de `editor/package-lock.json` e o transitivo exclusivo `use-strict`. O patch de áudio existente mantém MP3 fora da interface e impede o carregamento do encoder. A evidência/tarball arquivada é histórica e não entra no pacote. `tests/remove-lamejs-patch.test.cjs` aplica o patch numa cópia temporária e confirma os manifests sem modificar o upstream.
 
 ### Caveat confirmado: codecs e downloads
 
@@ -62,7 +62,7 @@ A [ajuda oficial MZ](https://rpgmakerofficial.com/product/MZ_help-en/index.html)
 
 ## Limitações ainda abertas
 
-Antes de uma publicação: fechar a discrepância de lamejs, produzir inventário do pacote real (incluindo transitivos, WASM, NW.js e codecs), anexar todos os textos/avisos, comprovar fontes correspondentes quando exigidas e excluir recursos sem proveniência. Esta tarefa não executou build nem verificou o conteúdo de um instalador; portanto recomenda a base técnica com condições, sem dar o pacote por legalmente liberado.
+Antes de uma publicação: produzir inventário do pacote real (incluindo transitivos, WASM, NW.js e codecs), anexar todos os textos/avisos, comprovar fontes correspondentes quando exigidas e excluir recursos sem proveniência. Esta tarefa não executou build nem verificou o conteúdo de um instalador; portanto recomenda a base técnica com condições, sem dar o pacote por legalmente liberado.
 
 ## Atualização: pacote Windows local Diana (15/10/2026)
 
@@ -85,12 +85,17 @@ O pacote preserva `LICENSE` Diana, `licenses/RPGReactor-MIT.txt`, `THIRD_PARTY_N
 
 A closure de produção é copiada fisicamente da instalação existente, sem npm install. Fontes/licenças dos 17 pacotes e hashes individuais acompanham o pacote; declarações npm não substituem revisão de código embutido. O jogo usa as bibliotecas runtime da base preparada e não transporta essa árvore node_modules.
 
-### lamejs: exclusão concreta
+### Remoção da dependência LGPL no prepare Diana
 
-`patches/zzzz-windows-package.patch` remove MP3 dos formatos disponíveis de AudioExport, rejeita solicitação MP3 e faz `loadLame` falhar explicitamente com orientação WAV/OGG. A discrepância de licenças não foi resolvida escolhendo GPL/LGPL mais conveniente: o empacotador remove a dependência do manifest distribuído e não copia o pacote. Os arquivos locais do ambiente de desenvolvimento e evidências históricas ficam intactos. Reprodução de áudio e codecs disponíveis no SDK são assunto separado da geração opcional MP3.
+`patches/zzzz-windows-package.patch` remove MP3 dos formatos disponíveis de AudioExport, rejeita solicitação MP3 e faz `loadLame` falhar explicitamente com orientação WAV/OGG. `patches/zzzzzzzz-remove-lamejs-dependency.patch` também remove `lamejs` e `use-strict` dos manifests preparados; o empacotador recusa voltar a incluir a dependência. A revisão upstream fixada e os artefactos históricos de auditoria permanecem intactos. Reprodução de áudio e codecs disponíveis no SDK são assunto separado da geração opcional MP3.
 
 ### NW.js local: requisito de notices não satisfeito
 
 O SDK `tools/nwjs-sdk-v0.118.0-win-x64` contém `credits.html` de exemplo (401 bytes), com as instruções “This is sample credits page” e `generate_about_credits=true`; não foi encontrado texto completo de licenças NW.js/Chromium/Node nessa pasta. O arquivo é copiado sem alterações, junto aos binários locais e `ffmpeg.dll` local, cujos hashes são registrados; nenhum overlay é aplicado. A origem/hash do ZIP consta de `tools-lock.json`, mas isso não fornece os notices ausentes nem atesta a árvore extraída inteira.
 
 **Publicação bloqueada:** obter/gerar notices oficiais correspondentes ao SDK exato e completar a evidência de licenças de `@pixi/colord`, WASM/decoders e demais terceiros embutidos antes de redistribuir. A tarefa não fez downloads nem instalações, não declarou conformidade legal e não publicou pacote. Pacotes locais estão marcados `blocked-license-review`; são artefatos de validação isolada, não uma liberação de distribuição.
+
+
+## Atualização Diana: remoção da dependência LGPL de MP3
+
+Estado: **implementado e testado por patch e API**. O prepare isolado `build/diana-license-clean` confirma `lamejs` e o transitivo exclusivo ausentes dos manifests e lockfile preparados; a revisão upstream fixada permanece intacta. A dependência LGPL-3.0 já não integra a closure declarada do editor Diana, e o empacotador bloqueia regressão. Esta correção não libera a publicação: permanecem pendentes notices completos do NW.js/Chromium/Node, o texto MIT de `@pixi/colord` e a revisão de WASM/terceiros. O smoke Windows global e a geração do pacote ficaram para a integração central.
