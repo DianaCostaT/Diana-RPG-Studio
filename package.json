@@ -36,7 +36,8 @@
     "smoke:sprites:windows": "node scripts/smoke-sprite-repair-windows.cjs",
     "package:nw:windows": "node scripts/package-windows.cjs",
     "export:nw:windows": "node scripts/export-windows.cjs",
-    "audit:encoding": "node scripts/audit-encoding.cjs"
+    "audit:encoding": "node scripts/audit-encoding.cjs",
+    "smoke:tauri:windows": "node scripts/smoke-tauri-windows.cjs"
   },
   "engines": {
     "node": ">=22"
