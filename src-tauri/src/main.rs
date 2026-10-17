@@ -306,9 +306,17 @@ async fn choose_project_directory(
     require_editor(&mode)?;
     let (send, receive) = tokio::sync::oneshot::channel();
     app.dialog().file().pick_folder(move |path| {
-        let _ = send.send(path.map(|value| value.to_string()));
+        let _ = send.send(
+            path.map(|value| {
+                value
+                    .into_path()
+                    .map(|path| path.to_string_lossy().into_owned())
+                    .map_err(|e| e.to_string())
+            })
+            .transpose(),
+        );
     });
-    Ok(receive.await.ok().flatten())
+    receive.await.map_err(|e| e.to_string())?
 }
 
 #[tauri::command]
@@ -531,6 +539,10 @@ fn save_project_changes(
         }
         let target = root.join(relative);
         if target.exists() && target.is_file() {
+            let canonical = fs::canonicalize(&target).map_err(|e| e.to_string())?;
+            if !canonical.starts_with(&root) {
+                return Err("O caminho de remoção saiu da pasta do projeto.".into());
+            }
             fs::remove_file(target).map_err(|e| e.to_string())?;
         }
     }
@@ -556,11 +568,9 @@ fn save_project_changes(
         let temp = target.with_extension(format!("diana-{}.tmp", std::process::id()));
         fs::write(&temp, bytes)
             .map_err(|e| format!("Não foi possível gravar {}: {e}", target.display()))?;
+        // std::fs::rename replaces files on Windows. If replacement fails,
+        // preserve the old file and report the failure; never delete it first.
         fs::rename(&temp, &target)
-            .or_else(|_| {
-                fs::remove_file(&target).ok();
-                fs::rename(&temp, &target)
-            })
             .map_err(|e| format!("Não foi possível finalizar {}: {e}", target.display()))?;
     }
     Ok(())
