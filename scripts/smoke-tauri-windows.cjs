@@ -17,9 +17,9 @@ async function open(executable,profile){
  const evaluate=async(expression,gameFrame=false)=>{const context=gameFrame?contexts.find(c=>c.origin.includes('diana-project.localhost')&&c.auxData?.isDefault):null;
   if(gameFrame&&!context&&!frameSession){const targets=await call('Target.getTargets',{});const frame=targets.targetInfos.find(t=>t.type==='iframe'&&t.url.includes('diana-project.localhost'));if(!frame)return false;frameSession=(await call('Target.attachToTarget',{targetId:frame.targetId,flatten:true})).sessionId;}
   const result=await call('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true,userGesture:true,...(context?{contextId:context.id}:{})},gameFrame&&!context?frameSession:undefined);if(result.exceptionDetails)throw Error(JSON.stringify(result.exceptionDetails));return result.result.value;};
- return {evaluate,async close(){try{await evaluate('window.close()');}catch{}ws.close();if(child.exitCode===null){await delay(500);if(child.exitCode===null)child.kill();}}};
+ return {evaluate,async close(){try{await evaluate('setTimeout(()=>window.close(),50);true');}catch{}ws.close();if(child.exitCode===null){await delay(500);if(child.exitCode===null)child.kill();}}};
 }
-async function wait(app,expression){for(let i=0;i<120;i++){if(await app.evaluate(expression))return;await delay(250);}throw Error('Timeout: '+expression);}
+async function wait(app,expression){for(let i=0;i<240;i++){if(await app.evaluate(expression))return;await delay(250);}throw Error('Timeout: '+expression+'; '+JSON.stringify(await app.evaluate(`({scene:window.SceneManager?._scene?.constructor?.name,body:document.body.innerText.slice(-2000)})`)));}
 async function main(){
  if(process.platform!=='win32')throw Error('Smoke Tauri requer Windows/WebView2 e build debug local.');
  const args=process.argv.slice(2);if(args.length&&(args.length!==2||args[0]!=='--executable'))throw Error('Uso: smoke-tauri-windows.cjs [--executable caminho.exe]');
@@ -35,6 +35,11 @@ async function main(){
   const created=await app.evaluate(`(async()=>{const h=RPGReactorHost,c=reactor.projectController;RRDialog.alert=async message=>{window.__smokeAlert=message;};c.uiManager.showNewProjectDialog=async()=>({name:'Clareira teste',mode:'2d'});h.chooseProjectDirectory=async()=>${JSON.stringify(projects)};return await c.newProject();})()`);
   assert.equal(created,true,await app.evaluate('window.__smokeAlert'));report.steps.push('criar projeto por controller/Rust real');record();
   const project=path.join(projects,'Clareira teste');
+  // Release embeds compressed assets; file existence alone would miss copying
+  // Brotli bytes as a PNG. Decode the actual image written by the Rust host.
+  const icon=fs.readdirSync(path.join(project,'img/system')).find(n=>n.toLowerCase()==='iconset.png');
+  const decoded=require('./jrpg-raster.cjs').PNG.sync.read(fs.readFileSync(path.join(project,'img/system',icon)));
+  assert.ok(decoded.width>0&&decoded.height>0);
   assert.equal(await app.evaluate(`(async()=>{reactor.databaseManager.data.system.gameTitle='Luae persistência';const tiles=reactor.projectController.tilemapManager;tiles.setTileAt(2,3,1,0);const result=await reactor.projectController.saveAll();await RPGReactorHost.flush();return result;})()`),true);
   assert.equal(JSON.parse(fs.readFileSync(path.join(project,'data/System.json'),'utf8')).gameTitle,'Luae persistência');
   await app.close();app=null;
@@ -43,16 +48,18 @@ async function main(){
   await app.evaluate(`(async()=>{await RPGReactorHost.ensureRuntime();await RPGReactorHost.mountProject(${JSON.stringify(project)});await reactor.projectController.openProjectAtPath(RPGReactorHost.projectRoot);})()`);
   assert.equal(await app.evaluate('reactor.databaseManager.data.system.gameTitle'),'Luae persistência');assert.equal(await app.evaluate('reactor.projectController.tilemapManager.getTileAt(2,3,0)'),1);report.steps.push('editar mapa e dados, salvar, fechar, remover artifacts da sandbox, reabrir projeto');record();
   assert.equal(await app.evaluate('RPGReactorHost.openPlaytest()'),true);
-  for(let i=0;i<120;i++){if(await app.evaluate('!!window.SceneManager?._scene',true))break;if(i===119)throw Error('Playtest sem cena');await delay(250);}
-  report.steps.push('playtest executa SceneManager real');
+  for(let i=0;i<240;i++){if(await app.evaluate('!!window.Scene_Title && SceneManager._scene instanceof Scene_Title && SceneManager._scene.isActive()',true))break;if(i===239)throw Error('Playtest sem título ativo');await delay(250);}
+  await app.evaluate('SceneManager._scene.commandNewGame()',true);
+  for(let i=0;i<240;i++){if(await app.evaluate('SceneManager._scene instanceof Scene_Map && SceneManager._scene.isActive() && window.$gameMap?.mapId()>0',true))break;if(i===239)throw Error('Playtest sem mapa ativo');await delay(250);}
+  report.steps.push('playtest executa título e novo jogo até mapa ativo');
   await app.evaluate(`document.querySelector('#diana-tauri-playtest-modal button').click()`);
   assert.equal(await app.evaluate(`document.querySelector('#diana-tauri-playtest-modal').style.display`),'none');
   const out=await app.evaluate(`(async()=>{RRDialog.alert=async()=>{};RPGReactorHost.chooseProjectDirectory=async()=>${JSON.stringify(exports)};return await RPGReactorHost.exportProject();})()`);
   assert.ok(out);report.steps.push('fechar teste, retomar editor, exportar por Rust');await app.close();app=null;
   const relocated=path.join(sandbox,'relocated');fs.renameSync(out,relocated);
   app=await open(path.join(relocated,'LuaeGame.exe'),path.join(sandbox,'game-profile'));
-  await wait(app,'!!window.SceneManager?._scene');
-  await app.evaluate('DataManager.setupNewGame();SceneManager.goto(Scene_Map)');await wait(app,'SceneManager._scene instanceof Scene_Map && !!window.$gameMap');
+  await wait(app,'window.SceneManager?._scene instanceof Scene_Title && SceneManager._scene.isActive()');
+  await app.evaluate('SceneManager._scene.commandNewGame()');await wait(app,'SceneManager._scene instanceof Scene_Map && SceneManager._scene.isActive() && window.$gameMap?.mapId()>0');
   report.steps.push('standalone relocado iniciou runtime e mapa sem editor');report.status='passed';
  }catch(error){report.status='failed';report.error=error.stack;throw error;}
  finally{if(app)await app.close();record();console.log(JSON.stringify(report,null,2));}

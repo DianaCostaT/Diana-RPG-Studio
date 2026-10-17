@@ -457,12 +457,17 @@ fn read_starter_resources(
     require_editor(&mode)?;
     let resolver = app.asset_resolver();
     let mut files = Vec::new();
-    for (name, bytes) in resolver.iter() {
+    for (name, _) in resolver.iter() {
         let relative = name.trim_start_matches('/');
         if relative.starts_with("diana-assets/") {
+            // iter() exposes stored (Brotli-compressed in release) bytes.
+            // get() resolves and decompresses using Tauri's own asset pipeline.
+            let asset = resolver
+                .get(relative.to_string())
+                .ok_or_else(|| format!("Recurso embutido indisponível: {relative}"))?;
             files.push(ProjectFile {
                 path: format!("editor/{relative}"),
-                content: encode_base64(bytes.as_ref()),
+                content: encode_base64(&asset.bytes),
             });
         }
     }
@@ -553,6 +558,16 @@ fn save_project_changes(
         }
         let target = root.join(relative);
         let parent = target.parent().ok_or("Caminho do projeto inválido.")?;
+        let mut existing = parent;
+        while !existing.exists() {
+            existing = existing.parent().ok_or("Pasta de gravação inválida.")?;
+        }
+        if !fs::canonicalize(existing)
+            .map_err(|e| e.to_string())?
+            .starts_with(&root)
+        {
+            return Err("O caminho de gravação saiu da pasta do projeto.".into());
+        }
         fs::create_dir_all(parent).map_err(|e| format!("Não foi possível criar a pasta: {e}"))?;
         let canonical_parent = fs::canonicalize(parent).map_err(|e| e.to_string())?;
         if !canonical_parent.starts_with(&root) {
