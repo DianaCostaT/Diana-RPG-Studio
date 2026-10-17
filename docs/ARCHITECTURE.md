@@ -1,3 +1,5 @@
+> Inventário histórico da base. Host principal atual: Tauri. Estado consolidado e limites em [PROJECT_STATE.md](../PROJECT_STATE.md); migração em [TAURI_MIGRATION.md](TAURI_MIGRATION.md).
+
 # Arquitetura Luae RPG
 
 Inspeção de fontes em 15/10/2026. Diana é uma integração sobre RPGReactor, não uma engine independente já reescrita. O pin em `upstream-lock.json` aponta RPGReactor 0.99.0, commit `dc918245cbf8f10ae6eef4ed8cb54b850fed9caa`. O checkout compartilhado pode receber alterações em paralelo; resultados executáveis precisam indicar o build e os patches realmente usados.

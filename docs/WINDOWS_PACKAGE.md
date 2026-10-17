@@ -1,3 +1,5 @@
+> Fluxo legado NW.js. O pacote principal agora é Tauri; consulte [TAURI_MIGRATION.md](TAURI_MIGRATION.md) e [PROJECT_STATE.md](../PROJECT_STATE.md). Os resultados abaixo são históricos.
+
 # Pacote Windows local
 
 Estado em 15/10/2026: **implementado e testado para validação local; distribuição pública bloqueada por licenças**. O editor e o jogo usam o mesmo NW.js SDK local 0.118.0 win-x64, sem instalação, download, junction no resultado ou overlay de codecs. Não se trata de instalador nem de certificação em máquina Windows limpa.
