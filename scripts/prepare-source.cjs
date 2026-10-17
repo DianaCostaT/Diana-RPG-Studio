@@ -25,6 +25,7 @@ function brandHtml(html) {
         .replace('href="images/icon.png"','href="images/diana.png"')
         .replaceAll('src="images/logo.png"','src="images/diana.png"')
         .replaceAll('alt="RPG Reactor"','alt="Luae RPG"')
+        .replace('</head>', '    <script src="libs/pixi.js"></script>\n</head>')
         .replace('</head>', '    <link rel="stylesheet" href="src/DianaWorkspace.css">\n    <link rel="stylesheet" href="src/DianaAppearance.css">\n    <link rel="stylesheet" href="src/DianaStudio.css">\n    <script src="src/DianaStudio.js" defer></script>\n</head>')
         .replace(entry, '    <script src="src/DianaThemes.js"></script>\n    <script src="src/DianaStarterData.js"></script>\n    <script src="src/DianaProjectValidation.js"></script>\n    <script src="src/DianaEventSearch.js"></script>\n    <script src="src/DianaBootstrap.js"></script>\n    <script src="src/DianaWorkspace.js"></script>\n    <script src="src/DianaWindowsFolders.js"></script>\n    <script src="src/DianaProjectMode.js"></script>\n    <script src="src/DianaSpriteRepair.js"></script>\n    <script src="src/DianaBattle2D.js"></script>\n    <script src="src/DianaSpriteRepairUI.js"></script>\n    <script src="src/DianaIcons.js"></script>\n' + entry);
 }
@@ -67,6 +68,9 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
         fs.rmSync(template, { recursive: true });
     }
     const editor = path.join(staging, 'editor');
+    // FlatShadowLight2D extends PIXI at evaluation time, before the Tauri host
+    // can load its async resources. Use the same pinned library in every host.
+    fs.copyFileSync(path.join(staging, 'runtime', 'libs', 'pixi.js'), path.join(editor, 'libs', 'pixi.js'));
     for (const file of fs.readdirSync(path.join(editor, 'images'))) {
         if (/^splash-screen-\d+\.png$/i.test(file)) fs.unlinkSync(path.join(editor, 'images', file));
     }

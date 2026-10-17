@@ -5,6 +5,7 @@ mod standalone;
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
+    io::Write,
     path::{Component, Path, PathBuf},
     sync::Mutex,
 };
@@ -394,13 +395,8 @@ fn read_app_resources(app: tauri::AppHandle) -> Result<Vec<ProjectFile>, String>
         .as_ref()
         .map(|dir| dir.join("runtime"))
         .filter(|dir| dir.is_dir())
-        .unwrap_or_else(|| {
-            manifest
-                .join("..")
-                .join("build")
-                .join("diana")
-                .join("runtime")
-        });
+        .or_else(|| cfg!(debug_assertions).then(|| manifest.join("..").join("build").join("diana").join("runtime")))
+        .ok_or("Runtime ausente no pacote Tauri. Mantenha a pasta runtime ao lado do executável; use package:windows para gerar o pacote completo.")?;
     if !runtime.join("reactor_main.js").is_file() {
         return Err(
             "Runtime do jogo não encontrado. Prepare a aplicação antes de iniciar o Tauri.".into(),
@@ -409,8 +405,9 @@ fn read_app_resources(app: tauri::AppHandle) -> Result<Vec<ProjectFile>, String>
     let mut files = Vec::new();
     collect_resource_files(&runtime, &runtime, &mut files)?;
     let app_root = bundled
-        .filter(|dir| dir.join("LICENSE").is_file() || dir.join("THIRD_PARTY_NOTICES.md").is_file())
-        .unwrap_or_else(|| manifest.join(".."));
+        .filter(|dir| dir.join("LICENSE").is_file() && dir.join("THIRD_PARTY_NOTICES.md").is_file())
+        .or_else(|| cfg!(debug_assertions).then(|| manifest.join("..")))
+        .ok_or("Avisos de licença ausentes no pacote Tauri.")?;
     for name in ["LICENSE", "THIRD_PARTY_NOTICES.md"] {
         let path = app_root.join(name);
         if path.is_file() {
@@ -565,9 +562,21 @@ fn save_project_changes(
         if bytes.len() > 256 * 1024 * 1024 {
             return Err("Arquivo individual acima do limite de gravação do Tauri.".into());
         }
-        let temp = target.with_extension(format!("diana-{}.tmp", std::process::id()));
-        fs::write(&temp, bytes)
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|e| e.to_string())?
+            .as_nanos();
+        let temp = target.with_extension(format!("luae-{}-{nonce}.tmp", std::process::id()));
+        let mut pending = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temp)
+            .map_err(|e| e.to_string())?;
+        pending
+            .write_all(&bytes)
+            .and_then(|_| pending.sync_all())
             .map_err(|e| format!("Não foi possível gravar {}: {e}", target.display()))?;
+        drop(pending);
         // std::fs::rename replaces files on Windows. If replacement fails,
         // preserve the old file and report the failure; never delete it first.
         fs::rename(&temp, &target)

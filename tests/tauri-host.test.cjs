@@ -21,6 +21,12 @@ test('scaffold Tauri abre editor preparado e define identidade do Luae RPG', () 
     assert.ok(fs.existsSync(path.join(root, 'src-tauri/build.rs')));
 });
 
+test('preparation loads the pinned Pixi library before classes that extend it', () => {
+    const {brandHtml}=require('../scripts/prepare-source.cjs');
+    const html=brandHtml('<head></head><script src="src/utils/FlatShadowLight2D.js"></script>\n    <script src="src/main.js"></script>');
+    assert.ok(html.indexOf('src="libs/pixi.js"')<html.indexOf('src/utils/FlatShadowLight2D.js'));
+});
+
 test('launcher Tauri informa toolchain ausente sem tentar instalar dependencias', () => {
     const launcher = fs.readFileSync(path.join(root, 'scripts/launch-tauri.cjs'), 'utf8');
     assert.match(launcher, /spawnSync\(cargo, \['--version'\]/);

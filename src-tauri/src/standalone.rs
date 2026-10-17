@@ -56,16 +56,21 @@ fn copy_project(source: &Path, destination: &Path) -> Result<(), String> {
         let name = entry.file_name();
         let text = name.to_string_lossy();
         let kind = entry.file_type().map_err(|e| e.to_string())?;
-        if kind.is_symlink()
-            || [
-                ".git",
-                "node_modules",
-                "save",
-                "profile",
-                ".rpgreactor.lock",
-                "debug.log",
-            ]
-            .contains(&text.as_ref())
+        if kind.is_symlink() {
+            return Err(format!(
+                "A exportação não copia links: {}. Use arquivos reais no projeto.",
+                entry.path().display()
+            ));
+        }
+        if [
+            ".git",
+            "node_modules",
+            "save",
+            "profile",
+            ".rpgreactor.lock",
+            "debug.log",
+        ]
+        .contains(&text.as_ref())
         {
             continue;
         }
