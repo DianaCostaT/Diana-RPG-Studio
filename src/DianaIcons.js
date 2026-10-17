@@ -11,7 +11,7 @@
   const workspace={maps:'map',events:'events',database:'database',enemies:'enemy',animations:'sequence',assets:'assets',parallax:'layers',play:'play',poses:'poses','battle-screen':'battle'};
   for(const b of document.querySelectorAll('#diana-workspace button')){const label=b.textContent.replace(/^▶\s*/,'');b.replaceChildren();b.insertAdjacentHTML('afterbegin',svg(workspace[b.dataset.dianaAction]));const text=document.createElement('span');text.className='diana-button-label';text.textContent=label;b.append(text);if(!b.title)b.title=label;}
   const brand=document.querySelector('.diana-brand');if(brand)brand.insertAdjacentHTML('afterbegin','<img class="diana-mark" src="images/diana.svg" alt="">');
-  const welcome=document.querySelector('.welcome-content');if(welcome)welcome.insertAdjacentHTML('afterbegin','<img class="diana-welcome-mark" src="images/diana.svg" alt="Símbolo Diana">');
+  const welcome=document.querySelector('.welcome-content');if(welcome)welcome.insertAdjacentHTML('afterbegin','<img class="diana-welcome-mark" src="images/diana.svg" alt="Símbolo Luae RPG">');
   document.querySelectorAll('#compat-titlebar img').forEach(img=>img.src='images/diana.png');
   const appearance=document.getElementById('diana-appearance');appearance?.insertAdjacentHTML('afterbegin',svg('palette'));
   const about=document.getElementById('about-modal');

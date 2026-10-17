@@ -52,7 +52,7 @@
         const choice=document.getElementById?.('rr-new-project-template-blank')?.closest('label');
         const description=choice?.lastElementChild;
         if(description?.children.length>=2){
-            description.children[0].textContent='Projeto inicial Diana';
+            description.children[0].textContent='Projeto inicial Luae RPG';
             description.children[1].textContent='Vila da Clareira, RTP Medieval nativo e batalha prontos para editar. Este é o ponto de partida obrigatório; após criar, substitua qualquer asset livremente.';
             description.setAttribute('data-rr-i18n-skip','');
         }

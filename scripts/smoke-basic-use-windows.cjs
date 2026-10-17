@@ -13,7 +13,7 @@ async function main(){
  try{
   await open(path.join(root,'build/diana/editor'));await driver.waitForScript('return !!window.reactor?.projectManager && getComputedStyle(document.getElementById("splash-screen")).display==="none";',[],{timeout:90000});
   await click('.welcome-button[data-action="new-project"]');
-  await driver.waitForScript('return document.getElementById("rr-new-project-dialog")?.textContent.includes("Projeto inicial Diana");',[],{timeout:10000});
+  await driver.waitForScript('return document.getElementById("rr-new-project-dialog")?.textContent.includes("Projeto inicial Luae RPG");',[],{timeout:10000});
   assert.equal(await driver.execute('return document.getElementById("rr-new-project-template-demo")===null;'),true);
   await shot('novo-projeto');await click('#rr-new-project-cancel');
   assert.equal(await driver.executeAsync('const done=arguments[arguments.length-1];reactor.projectManager.createNewProject(arguments[0],"Meu primeiro mapa").then(done);',[project]),true);

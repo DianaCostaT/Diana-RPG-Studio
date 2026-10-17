@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
     const toolbar=document.getElementById('toolbar');
     if(!toolbar)return;
-    const bar=document.createElement('nav');bar.id='diana-workspace';bar.setAttribute('aria-label','Áreas de trabalho do Diana');
+    const bar=document.createElement('nav');bar.id='diana-workspace';bar.setAttribute('aria-label','Áreas de trabalho do Luae RPG');
     const brand=document.createElement('div');brand.className='diana-brand';brand.innerHTML='<strong>LUAE</strong><span>RPG</span>';bar.append(brand);
     const button=(id,label,title,action)=>{
         const node=document.createElement('button');node.type='button';node.dataset.dianaAction=id;node.textContent=label;node.title=title;
