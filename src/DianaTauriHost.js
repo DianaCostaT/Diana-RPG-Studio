@@ -6,14 +6,19 @@
     if (typeof invoke !== 'function') return;
     const slash = value => String(value || '').replaceAll('\\', '/');
     function normalize(value) {
-        const input = slash(value), prefix = /^[A-Za-z]:/.test(input) ? input.slice(0, 2) : input.startsWith('/') ? '/' : '';
+        let input = slash(value);
+        // Rust canonicalize returns verbatim Windows paths. Keep their meaning
+        // when exposing them to the upstream's ordinary path API.
+        if (input.startsWith('//?/UNC/')) input = '//' + input.slice(8);
+        else if (/^\/\/\?\/[A-Za-z]:\//.test(input)) input = input.slice(4);
+        const prefix = /^[A-Za-z]:/.test(input) ? input.slice(0, 2) : input.startsWith('//') ? '//' : input.startsWith('/') ? '/' : '';
         const parts = [];
         for (const part of input.slice(prefix.length).split('/')) {
             if (!part || part === '.') continue;
             if (part === '..') parts.pop(); else parts.push(part);
         }
         const joined = parts.join('\\');
-        return prefix ? (prefix === '/' ? '\\' + joined : prefix + '\\' + joined) : (joined || '.');
+        return prefix ? (prefix === '//' ? '\\\\' + joined : prefix === '/' ? '\\' + joined : prefix + '\\' + joined) : (joined || '.');
     }
     const path = {
         sep: '\\',

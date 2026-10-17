@@ -16,6 +16,13 @@ function loadHost(invoke) {
     return { ...context.module.exports, host: window.RPGReactorHost, controller: ProjectController.prototype, window, context };
 }
 
+test('Tauri bridge accepts canonical Windows drive and UNC project paths', () => {
+    const { normalize } = loadHost(async () => {});
+    assert.equal(normalize('\\\\?\\C:\\Projetos\\Clareira'), 'C:\\Projetos\\Clareira');
+    assert.equal(normalize('\\\\?\\UNC\\servidor\\jogos\\Clareira'), '\\\\servidor\\jogos\\Clareira');
+    assert.equal(normalize('\\\\servidor\\jogos\\Clareira'), '\\\\servidor\\jogos\\Clareira');
+});
+
 test('Tauri mirror opens a selected project and flushes only changed files', async () => {
     const calls = [];
     const app = loadHost(async (command, args) => {
