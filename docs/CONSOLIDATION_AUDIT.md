@@ -86,3 +86,14 @@ há segunda cópia física do pack nem dependência de artifacts ou do checkout.
 O carregamento inicial do runtime continua separado para não pagar o custo dos PNGs
 em toda abertura. Testes JS Tauri 17/17; cargo test --offline 3/3. Baseline geral
 antes das alterações: npm test 210/210. Logs locais regeneráveis em artifacts/consolidation-*.
+
+## Incremento 2 — perfil legado fora de artifacts
+
+Implementado e testado por API: o launcher NW.js agora usa diretórios do sistema
+identificados por br.luaerpg.studio, perfil profiles/nw-legacy e logs separados.
+Se encontrar o perfil antigo e ainda não houver destino, copia-o sem remover a
+origem. Uma cópia incompleta não é promovida a perfil final. O perfil não é
+compartilhado cegamente com WebView2, que tem formato e ciclo de vida distintos.
+Testes de perfil e ponte Tauri 16/16; a sandbox mantém o projeto fora de artifacts,
+remove apenas seus artefatos e reabre o perfil com o projeto ainda acessível.
+Esse teste de API não substitui o ciclo gráfico completo Tauri pedido pelo usuário.
