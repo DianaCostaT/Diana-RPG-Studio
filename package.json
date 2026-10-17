@@ -7,7 +7,7 @@
     "prepare:editor": "node scripts/prepare-editor.cjs",
     "start": "node scripts/launch-tauri.cjs",
     "start:nw": "node scripts/launch.cjs",
-    "tauri:build": "cargo build --release --manifest-path src-tauri/Cargo.toml",
+    "tauri:build": "cargo build --release --offline --manifest-path src-tauri/Cargo.toml",
     "test": "node --test tests/*.test.cjs tests/upstream/*.test.cjs",
     "test:prepared": "node scripts/test-prepared.cjs",
     "verify:prepared": "node scripts/verify-prepared.cjs",
@@ -23,7 +23,7 @@
     "smoke:authoring:windows": "node scripts/smoke-parallax-ui-windows.cjs",
     "smoke:sequences:windows": "node scripts/smoke-animation-sequences-windows.cjs",
     "smoke:package:windows": "node scripts/smoke-package-windows.cjs",
-    "package:windows": "node scripts/package-windows.cjs",
+    "package:windows": "node scripts/package-tauri-windows.cjs",
     "export:windows": "node scripts/export-windows.cjs",
     "report:upstream": "node scripts/report-upstream.cjs",
     "smoke:2d:windows": "node scripts/smoke-2d-windows.cjs",
@@ -33,7 +33,10 @@
     "smoke:assets:windows": "node scripts/smoke-jrpg-assets-windows.cjs",
     "smoke:classic:windows": "node scripts/smoke-classic-editor-windows.cjs",
     "assets:compile:defense": "node scripts/compile-defense-assets.cjs",
-    "smoke:sprites:windows": "node scripts/smoke-sprite-repair-windows.cjs"
+    "smoke:sprites:windows": "node scripts/smoke-sprite-repair-windows.cjs",
+    "package:nw:windows": "node scripts/package-windows.cjs",
+    "export:nw:windows": "node scripts/export-windows.cjs",
+    "audit:encoding": "node scripts/audit-encoding.cjs"
   },
   "engines": {
     "node": ">=22"
