@@ -17,7 +17,7 @@ Estado: **implementado e testado por API e importação determinística; inspeç
 
 ## Acesso ao projeto inicial e poses — 2026-10-17
 
-A tela sem projeto agora apresenta a Vila da Clareira como ponto de partida, com chamada de criação para mapa, moradores, itens, heróis e combate. O projeto s? ? gravado depois que a pessoa escolhe uma pasta no fluxo normal. A arte original da vila e o fundo da praça continuam preservados; a tela de batalha mantêm seleção de fundo/grupo e arraste de formação.
+A tela sem projeto agora apresenta a Vila da Clareira como ponto de partida, com chamada de criação para mapa, moradores, itens, heróis e combate. O projeto só é gravado depois que a pessoa escolhe uma pasta no fluxo normal. A arte original da vila e o fundo da praça continuam preservados; a tela de batalha mantém seleção de fundo/grupo e arraste de formação.
 
 Estado: **tela inicial e editor de poses implementados e testados por DOM; janela Tauri confirmou poses numeradas, pose selecionada, Áudio e prévia por Árvore acessível**. `npm test` passou 179/179 e `npm run test:prepared` passou 63/63. A execução do jogo gerado continua parcial: o smoke Windows esgotou 90 segundos aguardando `Scene_Title`.
 

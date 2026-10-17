@@ -66,7 +66,7 @@
   },
   center(imageData,columns,rows,padding=2,threshold=0){
    const cells=this.analyze(imageData,columns,rows,threshold),{width,height,data}=imageData,output=new Uint8ClampedArray(data.length),moves=[];
-   if(!Number.isInteger(padding)||padding<0)throw new Error('Margem inv?lida.');
+   if(!Number.isInteger(padding)||padding<0)throw new Error('Margem inválida.');
    const skipped=[];
    // One reduction for the complete sheet prevents size changes between poses.
    const sharedScale=Math.min(1,...cells.filter(cell=>!cell.empty&&!cell.solid&&!cell.ambiguous).map(cell=>{const margin=Math.min(padding,Math.floor((Math.min(cell.width,cell.height)-1)/2));return Math.min(Math.max(1,cell.width-margin*2)/cell.bounds.width,Math.max(1,cell.height-margin*2)/cell.bounds.height);}));

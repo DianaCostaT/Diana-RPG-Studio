@@ -28,7 +28,7 @@ function findings(text, file = 'text.md') {
         // Question marks inside a Portuguese word indicate irreversible loss;
         // do not confuse JS nullish operators or punctuation with damaged prose.
         const prose = /\.(?:md|json|ndjson|txt)$/i.test(file);
-        const damagedWord = /(?:anima\?\?es|dire\?\?o|cria\?\?o|execu\?\?o|n\?o|pr\?via|c\?lula)/iu;
+        const damagedWord = /(?:anima\?\?es|dire\?\?o|cria\?\?o|execu\?\?o|n\?o|pr\?via|c\?lula|inv\?lida|s\? \? gravado)/iu;
         if ((prose && /[\p{L}]{2}\?{2,}[\p{L}]{2}/u.test(line)) || damagedWord.test(line)) {
             issues.push({ line: index + 1, text: line.slice(0, 220), reason: 'possível palavra danificada' });
         }
