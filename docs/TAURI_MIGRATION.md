@@ -33,7 +33,7 @@ Distribuição pública segue bloqueada por revisão de licenças/notices.
 | Abrir/criar | seletor nativo, comandos Rust e espelho | aceite visual de todos os caminhos; progresso em projetos grandes |
 | Mapas/dados/salvar | editores existentes, flush serializado | lote não é transação global; ampliar recuperação de falhas |
 | Recursos do starter | assets embutidos sob demanda | validar todos os packs no pacote final |
-| Runtime | recursos somente leitura do pacote | retirar fallback absoluto do checkout no release |
+| Runtime | recursos somente leitura do pacote | fallback do checkout removido no release; validar instalador |
 | Playtest | iframe + protocolo diana-project com raiz validada | combate e entrada por teclado completos no Tauri |
 | Fechar teste | remove iframe e retoma editor | aceite de suspensão/retorno em todos os modos |
 | Export | mesmo host em modo jogo, projeto copiado | smoke standalone e relocação do pacote real |
@@ -42,7 +42,7 @@ Distribuição pública segue bloqueada por revisão de licenças/notices.
 | Projetos existentes | marcador e runtime renovado ao abrir | validar formatos e recursos MZ/MV individualmente |
 
 Smoke separado: `node scripts/smoke-tauri-windows.cjs`, com executável debug
-compilado, Node e WebView2 locais. Usa perfil isolado e porta de depuração efêmera
+compilado, Node e WebView2 locais; --executable permite testar o pacote release. Usa perfil isolado e porta de depuração efêmera
 no processo de teste. Cria fixtures fora de artifacts, remove somente artifacts
 da própria sandbox e mantém o relatório regenerável em artifacts/tauri-smoke.json.
 Passou pelo controller/Rust real e abriu o mapa no jogo exportado relocado;

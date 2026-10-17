@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "startedOn": "2026-10-17",
   "baselineCommit": "7db2919",
-  "status": "parcial: auditoria, salvamento, export local, encoding, perfil e atalhos Battle Studio implementados; validação completa Tauri pendente",
+  "status": "parcial: núcleo Tauri e pacote release com ciclo real aprovados; aceite manual completo, importadores e Battle Studio avançado pendentes",
   "audit": "docs/CONSOLIDATION_AUDIT.md",
   "priorities": [
     "Tauri e paridade funcional",
@@ -22,5 +22,12 @@
     "não instalar dependências sem aprovação",
     "testes por grupo"
   ],
-  "sourceOfTruth": "PROJECT_STATE.md"
+  "sourceOfTruth": "PROJECT_STATE.md",
+  "validation": {
+    "js": "229/229",
+    "prepared": "69/69",
+    "rust": "6/6",
+    "nwSmoke": "windows-smoke-Q7zbYH passou",
+    "tauriReleaseSmoke": "r2 passou: PNG válido, editar/salvar/reabrir após apagar artifacts, playtest e standalone até mapa ativo"
+  }
 }

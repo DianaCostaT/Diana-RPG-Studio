@@ -39,12 +39,14 @@ paridade comprovada. Não é uma segunda engine. [Auditoria](docs/CONSOLIDATION_
 ## Parcial ou implementado sem aceite completo
 
 - Tauri: abertura e renderização já têm evidências gráficas anteriores; o ciclo
-  novo completo criar/editar/salvar/fechar/reabrir/jogar ainda está em validação.
+  criar/editar/salvar/fechar/reabrir/jogar passou por APIs reais no pacote release.
+  O aceite manual completo de autoria e combate ainda está pendente.
   A inspeção desta consolidação revelou e corrigiu perda do prefixo canônico
   Windows na criação; regressão de drive e UNC adicionada.
-- Playtest tem API e tela inicial verificadas; partida completa Tauri pendente.
-- Export standalone e empacotador portátil implementados; execução relocada do
-  pacote Tauri por controles reais ainda não certificada. Cargo build não cria MSI.
+- Playtest chegou ao mapa ativo por Novo jogo no pacote release; combate completo
+  Tauri pendente.
+- Export standalone e empacotador portátil passaram no pacote release relocado;
+  aceite completo por controles reais e máquina limpa pendentes. Cargo build não cria MSI.
 - O lote de salvamento não é uma transação entre todos os arquivos. Falha pode
   deixar parte persistida; a remoção destrutiva no fallback de rename foi retirada.
 - Autoria visual de recursos, captura e geradores com Node ainda exigem migração.
@@ -53,8 +55,8 @@ paridade comprovada. Não é uma segunda engine. [Auditoria](docs/CONSOLIDATION_
   efeitos de jogo. Os 15 atalhos visuais nativos foram acrescentados, com testes
   de paridade de timeline/evaluate. Aceite gráfico pendente.
   [Contrato e lacunas](docs/BATTLE_STUDIO_AUDIT.md).
-- O teste de perfil comprova em sandbox que remover artifacts preserva perfil e
-  projeto; não equivale ao ciclo gráfico Tauri solicitado.
+- O smoke Tauri real confirma que remover artifacts da sandbox preserva perfil,
+  projeto, alterações de mapa/dados e playtest; não equivale ao aceite manual completo.
 
 ## Exportação, distribuição e bloqueios
 
@@ -83,13 +85,21 @@ compatibilidade: [classificação](docs/LEGACY_NAMES.md).
 | API Tauri após correção Windows | 17/17 | mocks + módulos reais de projeto |
 | cargo test --offline | 6/6 | protocolo, caminhos, export e relocação de fixture |
 | npm run test:prepared | 69/69 | contrato do build gerado |
-| npm run smoke:windows | passou, windows-smoke-UcO6vz | NW.js, não certifica Tauri |
-| npm test após integração disponível no workspace | 228/228 | incluiu biblioteca V2; falha temporária anterior resolvida |
-| node scripts/smoke-tauri-windows.cjs | passou | WebView2/Rust reais; APIs e mapa standalone, sem teclado/combate |
-| Tauri gráfico desta etapa | inicialização e diálogo de criação inspecionados | ciclo completo pendente |
+| npm run smoke:windows | passou, windows-smoke-Q7zbYH | NW.js, não certifica Tauri |
+| npm test após integração disponível no workspace | 229/229 | incluiu trabalho de biblioteca V2 preservado no workspace |
+| npm run smoke:tauri:windows -- --executable dist/...r2/Luae RPG.exe | passou | pacote release real; PNG decodificado, mapa/dados persistidos, playtest e standalone até mapa ativo |
+| Tauri gráfico desta etapa | inicialização, diálogo e mapa standalone inspecionados | teclado/combate e ciclo manual completo pendentes |
 
 Logs locais em artifacts/consolidation-* podem ser regenerados. Não depender
 de sua permanência para entender o estado: resultados e limites estão acima.
+
+Pacote portátil local validado:
+`dist/Luae-RPG-Tauri-0.2.6-20261017-r2/Luae RPG.exe`. Manter runtime e avisos ao lado.
+O primeiro pacote de diagnóstico “consolidacao” falhou por copiar bytes Brotli
+como PNG; não usar. O resolver agora descomprime os assets antes de copiá-los.
+O smoke de release decodifica IconSet.png e espera título/mapa ativos, em vez de
+aceitar somente a existência de arquivos ou de Scene_Boot. Essa diferença foi
+encontrada em execução real, não pela suíte de mocks.
 
 ## Roadmap imediato
 
