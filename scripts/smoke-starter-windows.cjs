@@ -72,7 +72,7 @@ async function main({outcome='victory'}={}) {
                     previous.set(id,key(p)); via.set(id,button); queue.push(next);
                 }
             }
-            if(!previous.has(key(goal))) throw new Error('NÃ£o hÃ¡ caminho transitÃ¡vel atÃ© o guardiÃ£o.');
+            if(!previous.has(key(goal))) throw new Error('Não há caminho transitável até o guardião.');
             const result=[]; let current=key(goal);
             while(current!==key(start)){result.unshift(via.get(current));current=previous.get(current);}
             return result;

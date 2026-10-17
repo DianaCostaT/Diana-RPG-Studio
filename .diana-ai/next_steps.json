@@ -9,7 +9,7 @@
     {
       "priority": 2,
       "task": "Auditar alinhamento dos atlas legados e ampliar estruturas de personagens, armas e itens",
-      "acceptance": "Padronizar grade, ?ncora e pr?via por pose; revisar estruturas e recursos de personagens/armas/itens no editor e runtime com regress?es de dados e quadros. A auditoria atual passa em 32 linhas; manter o teste em novos assets."
+      "acceptance": "Padronizar grade, Âncora e prévia por pose; revisar estruturas e recursos de personagens/armas/itens no editor e runtime com regressões de dados e quadros. A auditoria atual passa em 32 linhas; manter o teste em novos assets."
     },
     {
       "priority": 1,

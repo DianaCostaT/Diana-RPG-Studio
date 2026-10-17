@@ -101,11 +101,11 @@ A regra permanente do usuário está em `AGENTS.md`, `.github/copilot-instructio
 
 `npm test`: 152/152. `npm run test:prepared -- build/diana-clareira-preview`: 63/63. Smoke WebDriver Windows capturou telas reais sem erros em `artifacts/clareira-restaurada-5z8mlD/`. Executável local `dist/Diana-RPG-Studio-Clareira-preview-2026-10-16/Diana.exe`; `scripts/smoke-ready-windows.cjs` passou. A placa central é ilustrada e não pintável tile a tile; o entorno e interiores são editáveis. Interação manual com cada NPC/interior ainda pendente; distribuição pública segue bloqueada pelos notices/auditoria documentados em `docs/WINDOWS_PACKAGE.md`.
 
-## Navega??o da vila e auditoria de quadros ? 16/10/2026
+## Navegação da vila e auditoria de quadros — 16/10/2026
 
-Corrigida a prioridade das quatro portas novas para permitir a??o adjacente; regress?o em `tests/village-expansion.test.cjs`. Su?te completa 153/153; testes do build isolado `build/diana-village-final` 63/63. Smoke Windows percorreu seis passos e acionou a jardineira; confirmou transfer?ncia para Map006. No destino, o viewport ficou preto/fade sem avan?ar de forma confi?vel, sem erros JS; di?logo e sa?das internas seguem pendentes.
+Corrigida a prioridade das quatro portas novas para permitir ação adjacente; regressão em `tests/village-expansion.test.cjs`. Suíte completa 153/153; testes do build isolado `build/diana-village-final` 63/63. Smoke Windows percorreu seis passos e acionou a jardineira; confirmou transferência para Map006. No destino, o viewport ficou preto/fade sem avançar de forma confiável, sem erros JS; diálogo e saídas internas seguem pendentes.
 
-`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit-sprite-alignment-windows.ps1`: 32 linhas examinadas; moradores e `ClareiraCombate.png` passam centro ?0,5 px e base constante. `$Guardiao.png` foi realinhado pelo compilador sem alterar o original; 12/12 c?lulas agora passam centro ?0,5 px e base constante. Pr?ximo trabalho, ap?s homologar interiores: avan?ar estruturas editor/runtime para personagens, armas e itens com contratos e pr?vias alinhados.
+`powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit-sprite-alignment-windows.ps1`: 32 linhas examinadas; moradores e `ClareiraCombate.png` passam centro ±0,5 px e base constante. `$Guardiao.png` foi realinhado pelo compilador sem alterar o original; 12/12 células agora passam centro ±0,5 px e base constante. Próximo trabalho, após homologar interiores: avançar estruturas editor/runtime para personagens, armas e itens com contratos e prévias alinhados.
 
 ## Continuação do projeto — validação de combate no cenário (16/10/2026)
 
@@ -159,12 +159,12 @@ Após a instalação do usuário, `cargo check` e build release passaram. `npm t
 Pixi now loads before project map initialization. The local fixture `build/tauri-test-project-02ae3f39b9074a3589977a7b2b1c0286` opened in Tauri with its tileset and 17x13 map drawn. `npm test` passed 177/177; `cargo test --manifest-path src-tauri/Cargo.toml` passed 2/2; `npm run tauri:build` produced the release executable. Playtest, import, export and packaging still need porting; see `docs/TAURI_MIGRATION.md`.
 
 
-## Clareira and pose editor update ? 2026-10-16
+## Clareira and pose editor update — 2026-10-16
 
 The battle database UI now has ally/enemy records and separate pose and animation tabs, with sound-on-entry controls. The running Tauri window exposed those controls in its accessibility tree. The battle preview displays the chosen background/troop and supports drag-to-place ally formation. An original plaza battle backdrop is compiled into the sample pack and selected for Map001; existing village art remains preserved. Validation: npm test 178/178 and npm run test:prepared 63/63. The NW smoke reached game launch but timed out after 90 seconds waiting for Scene_Title; Tauri editor inspection is separate and does not certify gameplay, export or package migration. See docs/CLAREIRA_VISUAL_DIRECTION.md and docs/JRPG_GENERATION_REVIEW.md.
 
 
-## Clareira e poses ? 2026-10-17
+## Clareira e poses — 2026-10-17
 
 Pose database: numbered pose rows, selected-pose preview, and contextual crop/frame and sound controls. Startup welcome calls out Vila da Clareira; the normal new-project flow still asks the user where to create it. Tauri accessibility tree confirmed both views. `npm test` 179/179; `prepare:editor` succeeded; prepared tests 63/63. Legacy Windows smoke reached export but generated game timed out waiting for `Scene_Title` (90s). See `docs/DIANA_STUDIO_UI.md`, `docs/CLAREIRA_VISUAL_DIRECTION.md`.
 
@@ -185,9 +185,9 @@ Em 17/10/2026, corrigido o bloqueio do salvamento Tauri: o adaptador não anunci
 
 Validação atual: npm test 187/187; npm run test:prepared 63/63; tests/tauri-project-host.test.cjs 9/9; cargo test --manifest-path src-tauri/Cargo.toml 3/3. O arquivo original permaneceu intacto; o teste de salvamento usou artifacts/tauri-save-test-00ce8fbb/Projeto. Ainda falta validar interação no mapa e combate dentro do iframe, e portar exportação/empacotamento. Os smokes Windows existentes usam NW.js e não foram executados nesta integração Tauri parcial. Consulte docs/TAURI_MIGRATION.md.
 
-## Dire??o e escala dos sprites ? 2026-10-17
+## Direção e escala dos sprites — 2026-10-17
 
-Ajustada a caminhada da Liora, Brann e moradores para mapear explicitamente os quadros das quatro dire??es. O retrato pixel art original de Brann ocupa `ClareiraRostos`, ?ndice 6, e seu ataque agora usa investida com retorno ao ponto de origem. As folhas de mapa usam o espa?o completo de 48?48 px com centro e linha dos p?s comuns; as folhas de batalha alinham todas as poses do Brann por uma escala e base compartilhadas. Regress?es direcionadas passaram 14/14; build preparada 63/63; `smoke:windows` passou; partida inicial venceu com teclado real em `artifacts/starter-smoke-uRfPIs/`. `npm test` integral teve 4 falhas existentes fora desta altera??o (cat?logo de recursos: 28/27; tr?s falhas nos mocks de `sprite-sheet-tools.test.cjs`). Estado: implementado e testado por API, contrato preparado e partida Windows; a revis?o est?tica final ? visual.
+Ajustada a caminhada da Liora, Brann e moradores para mapear explicitamente os quadros das quatro direções. O retrato pixel art original de Brann ocupa `ClareiraRostos`, Índice 6, e seu ataque agora usa investida com retorno ao ponto de origem. As folhas de mapa usam o espaço completo de 48×48 px com centro e linha dos pés comuns; as folhas de batalha alinham todas as poses do Brann por uma escala e base compartilhadas. Regressões direcionadas passaram 14/14; build preparada 63/63; `smoke:windows` passou; partida inicial venceu com teclado real em `artifacts/starter-smoke-uRfPIs/`. `npm test` integral teve 4 falhas existentes fora desta alteração (catálogo de recursos: 28/27; três falhas nos mocks de `sprite-sheet-tools.test.cjs`). Estado: implementado e testado por API, contrato preparado e partida Windows; a revisão estética final é visual.
 
 ## Correção de sprites direcionais e runtime salvo — 17/10/2026
 
@@ -195,13 +195,13 @@ A troca visual durante caminhada foi validada no runtime em jogo: `smoke-starter
 
 Projetos Tauri existentes também renovam agora sua cópia antiga do runtime ao abrir. O host fornece o caminho dos recursos empacotados e o patch versionado compara os arquivos de sprite/direção antes de pular a atualização. API Tauri 11/11, runtime preparado 63/63, smoke Windows do editor e smoke jogável de vitória passaram. `npm test` total ficou em 189/194; cinco falhas de alinhamento/catalogação/mocks permanecem fora desta correção. Estado: implementado e testado por API, jogo real e inspeção de captura.
 
-## Corretor de vazamentos ? 17/10/2026
+## Corretor de vazamentos — 17/10/2026
 
-Estado: **implementado e testado por API/DOM; revis?o visual da nova limpeza e execu??o com uma folha corrigida ainda pendentes**. No compositor de mapa ou de Anima??es 2, use **Centralizar e proteger quadros** e **Salvar folha corrigida no projeto**. O diagn?stico agora l? pixels pelo canvas; antes recebia uma imagem sem dados RGBA e impedia abrir a ferramenta com imagem real.
+Estado: **implementado e testado por API/DOM; revisão visual da nova limpeza e execução com uma folha corrigida ainda pendentes**. No compositor de mapa ou de Animações 2, use **Centralizar e proteger quadros** e **Salvar folha corrigida no projeto**. O diagnóstico agora lê pixels pelo canvas; antes recebia uma imagem sem dados RGBA e impedia abrir a ferramenta com imagem real.
 
-A op??o **Remover fragmentos pequenos e soltos nas bordas** remove apenas componentes desconectados que tocam a borda e t?m menos de 25% dos pixels do maior componente do quadro (conectividade de oito vizinhos). ? opcional porque armas e efeitos tamb?m podem ser separados. Partes conectadas cruzando divis?es continuam preservadas e sinalizadas: o algoritmo n?o reconstr?i desenhos j? cortados. Revise a pr?via; **Restaurar folha original** desfaz o processamento antes de salvar. O original n?o ? sobrescrito. Margens s?o limitadas ao tamanho real da c?lula para impedir escrita fora do frame em grades pequenas.
+A opção **Remover fragmentos pequenos e soltos nas bordas** remove apenas componentes desconectados que tocam a borda e têm menos de 25% dos pixels do maior componente do quadro (conectividade de oito vizinhos). É opcional porque armas e efeitos também podem ser separados. Partes conectadas cruzando divisões continuam preservadas e sinalizadas: o algoritmo não reconstrói desenhos j? cortados. Revise a prévia; **Restaurar folha original** desfaz o processamento antes de salvar. O original não ? sobrescrito. Margens são limitadas ao tamanho real da célula para impedir escrita fora do frame em grades pequenas.
 
-Evid?ncias: testes da ferramenta 9/9; runtime preparado 63/63; npm test 194/196 (falhas existentes em jrpg-polish: base 47 versus 46, e rtp-expansion: 28 versus 27 itens). Smoke Windows NW.js passou em artifacts/windows-smoke-b3d8tB; n?o certifica a limpeza visual nem o host Tauri. Logs: artifacts/sprite-tools-tests.log e artifacts/sprite-tools-smoke.log.
+Evidências: testes da ferramenta 9/9; runtime preparado 63/63; npm test 194/196 (falhas existentes em jrpg-polish: base 47 versus 46, e rtp-expansion: 28 versus 27 itens). Smoke Windows NW.js passou em artifacts/windows-smoke-b3d8tB; não certifica a limpeza visual nem o host Tauri. Logs: artifacts/sprite-tools-tests.log e artifacts/sprite-tools-smoke.log.
 
 ## Atlas de possibilidades RPG Maker — 17/10/2026
 

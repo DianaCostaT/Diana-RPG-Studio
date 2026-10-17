@@ -15,11 +15,11 @@ Antes de integrar mudanças visuais, compare os assets e a cena executada com a 
 Estado: **implementado e testado por API e importação determinística; inspeção interativa da tela Tauri/NW após esta alteração ainda pendente**. Os testes verificam a nova entrada do catálogo, o fundo escolhido no mapa e a persistência das coordenadas arrastadas na prévia. Veja `docs/JRPG_GENERATION_REVIEW.md` para a procedência da imagem.
 
 
-## Acesso ao projeto inicial e poses ? 2026-10-17
+## Acesso ao projeto inicial e poses — 2026-10-17
 
-A tela sem projeto agora apresenta a Vila da Clareira como ponto de partida, com chamada de cria??o para mapa, moradores, itens, her?is e combate. O projeto s? ? gravado depois que a pessoa escolhe uma pasta no fluxo normal. A arte original da vila e o fundo da pra?a continuam preservados; a tela de batalha mant?m sele??o de fundo/grupo e arraste de forma??o.
+A tela sem projeto agora apresenta a Vila da Clareira como ponto de partida, com chamada de criação para mapa, moradores, itens, heróis e combate. O projeto s? ? gravado depois que a pessoa escolhe uma pasta no fluxo normal. A arte original da vila e o fundo da praça continuam preservados; a tela de batalha mantêm seleção de fundo/grupo e arraste de formação.
 
-Estado: **tela inicial e editor de poses implementados e testados por DOM; janela Tauri confirmou poses numeradas, pose selecionada, ?udio e pr?via por ?rvore acess?vel**. `npm test` passou 179/179 e `npm run test:prepared` passou 63/63. A execu??o do jogo gerado continua parcial: o smoke Windows esgotou 90 segundos aguardando `Scene_Title`.
+Estado: **tela inicial e editor de poses implementados e testados por DOM; janela Tauri confirmou poses numeradas, pose selecionada, Áudio e prévia por Árvore acessível**. `npm test` passou 179/179 e `npm run test:prepared` passou 63/63. A execução do jogo gerado continua parcial: o smoke Windows esgotou 90 segundos aguardando `Scene_Title`.
 
 ## Validação jogável — 17/10/2026
 

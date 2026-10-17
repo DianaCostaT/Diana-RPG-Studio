@@ -117,7 +117,7 @@
       "id": "village-interior-visual",
       "status": "parcial",
       "severity": "media",
-      "description": "A tecla de a??o transfere para Map006 e o mapa carrega sem erros JS; smoke WebDriver observa viewport preta/fade parado e n?o confirma di?logos ou sa?das dos interiores.",
+      "description": "A tecla de ação transfere para Map006 e o mapa carrega sem erros JS; smoke WebDriver observa viewport preta/fade parado e não confirma diálogos ou saídas dos interiores.",
       "evidence": "docs/VILLAGE_EXPANSION.md; artifacts/village-navigation-windows-YfIEKj/report.json"
     }
   ]

@@ -133,7 +133,7 @@ test('salvar folha centralizada cria uma cópia no diretório de assets e evita 
     }
 });
 
-test('margem grande n?o escreve pixels em outro frame de c?lulas pequenas', () => {
+test('margem grande não escreve pixels em outro frame de células pequenas', () => {
  const { DianaBattle2D: { SpriteSheetTools } }=loadComposer();
  const data=new Uint8ClampedArray(8*4*4);data.set([20,40,60,255],0);
  const result=SpriteSheetTools.center({width:8,height:4,data},2,1,20);

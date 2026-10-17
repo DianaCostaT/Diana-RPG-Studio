@@ -23,10 +23,10 @@ Recursos abre uma janela própria com a biblioteca de exemplos e o botão para i
 Evidências: `npm test` passou (157/157). `node scripts/smoke-project-ui-windows.cjs build/diana-ui-clean/editor` passou; verificou a criação real de projeto, seis áreas principais, biblioteca separada com 26 exemplos, preparação tática recolhida, alternância persistida 2D/2D+3D e execução do jogo. A captura da biblioteca está em `artifacts/project-ui-Sqrzfj/resource-library.png`. O smoke geral de pintura foi tentado, mas parou antes da pintura porque seu assertion não reconheceu o canvas como alvo do ponteiro (`scripts/smoke-windows.cjs:100`); isso não invalida o smoke de interface acima.
 
 
-## Tela inicial e poses de batalha ? 2026-10-17
+## Tela inicial e poses de batalha — 2026-10-17
 
-A tela inicial agora convida a come?ar pela Vila da Clareira e descreve o conte?do do projeto obrigat?rio. ?Come?ar pela Vila da Clareira? abre o fluxo normal de cria??o e deixa o usu?rio escolher a pasta; o editor n?o cria arquivos sem essa escolha.
+A tela inicial agora convida a começar pela Vila da Clareira e descreve o conteúdo do projeto obrigatório. ?Come?ar pela Vila da Clareira? abre o fluxo normal de criação e deixa o usuário escolher a pasta; o editor não cria arquivos sem essa escolha.
 
-A ficha de poses foi simplificada para uma lista numerada ? esquerda e detalhes da pose selecionada ? direita, com pr?via ampliada, edi??o de quadros/recortes e som contextual de entrada. Aliados e inimigos mant?m o mesmo cadastro, e a aba de anima??es segue separada para grade, armas e sequ?ncias. A tela de batalha conserva a pr?via de fundo, grupo e forma??o.
+A ficha de poses foi simplificada para uma lista numerada ? esquerda e detalhes da pose selecionada ? direita, com prévia ampliada, edição de quadros/recortes e som contextual de entrada. Aliados e inimigos mantêm o mesmo cadastro, e a aba de animações segue separada para grade, armas e sequências. A tela de batalha conserva a prévia de fundo, grupo e formação.
 
-Estado: **implementado e testado por API/DOM; editor Tauri aberto e ?rvore acess?vel confirmou a lista e os controles**. `npm test` passou 179/179, `npm run prepare:editor` concluiu e `npm run test:prepared` passou 63/63. O smoke NW.js passou pelos passos do editor/export e falhou depois ao aguardar a cena de t?tulo do jogo gerado por 90 segundos; o jogo e a migra??o Tauri de playtest seguem parciais.
+Estado: **implementado e testado por API/DOM; editor Tauri aberto e Árvore acessível confirmou a lista e os controles**. `npm test` passou 179/179, `npm run prepare:editor` concluiu e `npm run test:prepared` passou 63/63. O smoke NW.js passou pelos passos do editor/export e falhou depois ao aguardar a cena de título do jogo gerado por 90 segundos; o jogo e a migração Tauri de playtest seguem parciais.

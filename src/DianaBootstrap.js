@@ -73,7 +73,7 @@
                         const maps=[];
                         for(const entry of project?.maps||[]){if(!entry)continue;const id=Number(entry.id);if(current?.id===id){maps.push(current);continue;}
                             try{const file=manager.path.join(project.path,'data',`Map${String(id).padStart(3,'0')}.json`);maps.push(JSON.parse(manager.fs.readFileSync(file,'utf8')));}
-                            catch{errors.push('NÃ£o foi possÃ­vel verificar o mapa #'+id+'; abra e salve o mapa ou confira o arquivo de dados.');}
+                            catch{errors.push('Não foi possível verificar o mapa #'+id+'; abra e salve o mapa ou confira o arquivo de dados.');}
                         }
                         if(!maps.length&&current)maps.push(current);
                         errors.push(...DianaProjectValidation.validateAssets(this.databaseManager.data,maps,

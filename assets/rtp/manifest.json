@@ -6,7 +6,7 @@
   "status": "bloqueado: geracao experimental validada localmente; promocao de assets depende de revisao de licenca",
   "license": {
     "spdx": "MIT",
-    "scope": "Especifica??o e futuros recursos originais aprovados; n?o licencia engine, depend?ncias ou recursos externos.",
+    "scope": "Especificação e futuros recursos originais aprovados; não licencia engine, dependências ou recursos externos.",
     "copyright": "Copyright (c) 2026 Diana RPG Studio contributors",
     "text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
   },
@@ -20,8 +20,8 @@
       "RTP comercial",
       "Demo upstream",
       "logos e marcas",
-      "imita??o de franquias ou artistas identific?veis",
-      "extra??o de jogos comerciais"
+      "imitação de franquias ou artistas identificáveis",
+      "extração de jogos comerciais"
     ],
     "provenanceRequiredBeforeRelease": [
       "creator",
@@ -37,20 +37,20 @@
     "regenerationDeterministic": false
   },
   "compilation": {
-    "status": "planejado; compilador n?o implementado por esta especifica??o",
+    "status": "planejado; compilador não implementado por esta especificação",
     "inputPolicy": "Somente fontes aprovadas com SHA-256 registrado; nunca regenerar durante build.",
-    "order": "Ordenar assets por id em ordem ASCII; ordenar chaves JSON; UTF-8 LF; sem timestamps vari?veis.",
-    "imagePolicy": "PNG RGBA8 sRGB, sem metadados vari?veis; sem redimensionar, interpolar ou recortar automaticamente; origem superior esquerda; grade row-major base zero; padding 0.",
-    "mapPolicy": "JSON nativo Reactor gerado de recipe; serializa??o est?vel; IDs de mapas locais ao m?dulo; nenhuma imagem de mapa achatado.",
+    "order": "Ordenar assets por id em ordem ASCII; ordenar chaves JSON; UTF-8 LF; sem timestamps variáveis.",
+    "imagePolicy": "PNG RGBA8 sRGB, sem metadados variáveis; sem redimensionar, interpolar ou recortar automaticamente; origem superior esquerda; grade row-major base zero; padding 0.",
+    "mapPolicy": "JSON nativo Reactor gerado de recipe; serialização estável; IDs de mapas locais ao módulo; nenhuma imagem de mapa achatado.",
     "compilerVersion": null,
     "dependencyLock": null
   },
   "boundaries": {
     "modulesIndependent": true,
-    "allowedDependencies": "Somente entradas do pr?prio m?dulo; sem depend?ncia de assets/jrpg-test, Demo ou m?dulos irm?os.",
-    "installation": "Cada m?dulo ? um modelo de projeto separado; Map001/Map002 e IDs locais nunca se fundem implicitamente.",
-    "naming": "IDs <module>.<kind>.<slug>; arquivos ASCII Diana_<Module>_<Subject>_<Kind>.png; nomes n?o mudam entre gera??o e compila??o.",
-    "editor": "Pastas img/* e data/* relativas ao projeto exportado; fontes em sources/<module>/; sa?das em pack/<module>/."
+    "allowedDependencies": "Somente entradas do próprio módulo; sem dependência de assets/jrpg-test, Demo ou módulos irmãos.",
+    "installation": "Cada módulo ? um modelo de projeto separado; Map001/Map002 e IDs locais nunca se fundem implicitamente.",
+    "naming": "IDs <module>.<kind>.<slug>; arquivos ASCII Diana_<Module>_<Subject>_<Kind>.png; nomes não mudam entre geração e compilação.",
+    "editor": "Pastas img/* e data/* relativas ao projeto exportado; fontes em sources/<module>/; saídas em pack/<module>/."
   },
   "contracts": {
     "walk": {
@@ -77,7 +77,7 @@
       ],
       "speed": 12,
       "loop": true,
-      "adapter": "System.json dianaSpriteAnimations version 1; selecionar linha pela dire??o, sem percorrer dire??es no mesmo ciclo."
+      "adapter": "System.json dianaSpriteAnimations version 1; selecionar linha pela direção, sem percorrer direções no mesmo ciclo."
     },
     "battle": {
       "width": 1152,
@@ -129,7 +129,7 @@
           "loop": "once"
         }
       ],
-      "frameRule": "Pose usa os seis ?ndices row*6+[0..5]. Mesmo contrato para atores e inimigos; estados entry/input/ready/wait usam idle, evade usa guard, dying/abnormal/sleep usam damage; adapter deve declarar esses aliases.",
+      "frameRule": "Pose usa os seis Índices row*6+[0..5]. Mesmo contrato para atores e inimigos; estados entry/input/ready/wait usam idle, evade usa guard, dying/abnormal/sleep usam damage; adapter deve declarar esses aliases.",
       "adapter": "BattlePresentation.json graphic.spriteAnimation; confirmar aliases e comportamento no editor/runtime antes de distribuir."
     },
     "portrait": {
@@ -189,7 +189,7 @@
       "blocked": [
         2
       ],
-      "adapter": "Tiles nativos simples A5; bordas expl?citas, sem inferir autotiles."
+      "adapter": "Tiles nativos simples A5; bordas explícitas, sem inferir autotiles."
     },
     "objects": {
       "width": 512,
@@ -203,7 +203,7 @@
       "empty": [
         0
       ],
-      "adapter": "Arquitetura e props s?o fontes separadas; compor B final sem sobreposi??o: arquitetura c?lulas 1..63, props c?lulas 64..127; restante transparente.",
+      "adapter": "Arquitetura e props são fontes separadas; compor B final sem sobreposição: arquitetura células 1..63, props células 64..127; restante transparente.",
       "collision": "Arquitetura bloqueia 1..63 exceto 3 (porta); props bloqueiam 64..127 exceto 67 (piso decorativo)."
     },
     "background": {
@@ -232,7 +232,7 @@
         7
       ],
       "empty": "8..31",
-      "adapter": "Fontes separadas; compor IconSet 512x512: armas ?ndices 0..7, itens 16..23; demais transparentes; banco referencia ?ndices finais."
+      "adapter": "Fontes separadas; compor IconSet 512x512: armas Índices 0..7, itens 16..23; demais transparentes; banco referencia Índices finais."
     },
     "effects": {
       "width": 960,
@@ -248,7 +248,7 @@
       "frames": "0..14",
       "speed": 4,
       "loop": false,
-      "adapter": "img/animations; registrar anima??o de sprites em Animations.json com 15 frames, c?lula de origem i e destino central, sem Effekseer."
+      "adapter": "img/animations; registrar animação de sprites em Animations.json com 15 frames, célula de origem i e destino central, sem Effekseer."
     }
   },
   "modules": [
@@ -275,7 +275,7 @@
         "Map001",
         "Map002"
       ],
-      "theme": "bairro urbano de tijolo, concreto e jardim comunit?rio",
+      "theme": "bairro urbano de tijolo, concreto e jardim comunitário",
       "dependencies": []
     }
   ],
@@ -284,7 +284,7 @@
       "id": "medieval.walk.hero-1",
       "module": "medieval",
       "kind": "walk",
-      "subject": "Alva, cart?grafa de capa ocre e tran?a curta",
+      "subject": "Alva, cartógrafa de capa ocre e trança curta",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.walk.hero-1",
@@ -303,7 +303,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.hero-1",
       "role": "hero"
@@ -312,7 +312,7 @@
       "id": "medieval.battle.hero-1",
       "module": "medieval",
       "kind": "battle",
-      "subject": "Alva, cart?grafa de capa ocre e tran?a curta",
+      "subject": "Alva, cartógrafa de capa ocre e trança curta",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.battle.hero-1",
@@ -331,7 +331,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.hero-1",
       "role": "hero"
@@ -340,7 +340,7 @@
       "id": "medieval.portrait.hero-1",
       "module": "medieval",
       "kind": "portrait",
-      "subject": "Alva, cart?grafa de capa ocre e tran?a curta",
+      "subject": "Alva, cartógrafa de capa ocre e trança curta",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.portrait.hero-1",
@@ -359,7 +359,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.hero-1",
       "role": "hero"
@@ -368,7 +368,7 @@
       "id": "medieval.walk.hero-2",
       "module": "medieval",
       "kind": "walk",
-      "subject": "Breno, herbalista de t?nica verde e bolsa de couro",
+      "subject": "Breno, herbalista de túnica verde e bolsa de couro",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.walk.hero-2",
@@ -387,7 +387,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.hero-2",
       "role": "hero"
@@ -396,7 +396,7 @@
       "id": "medieval.battle.hero-2",
       "module": "medieval",
       "kind": "battle",
-      "subject": "Breno, herbalista de t?nica verde e bolsa de couro",
+      "subject": "Breno, herbalista de túnica verde e bolsa de couro",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.battle.hero-2",
@@ -415,7 +415,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.hero-2",
       "role": "hero"
@@ -424,7 +424,7 @@
       "id": "medieval.portrait.hero-2",
       "module": "medieval",
       "kind": "portrait",
-      "subject": "Breno, herbalista de t?nica verde e bolsa de couro",
+      "subject": "Breno, herbalista de túnica verde e bolsa de couro",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.portrait.hero-2",
@@ -443,7 +443,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.hero-2",
       "role": "hero"
@@ -471,7 +471,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-1",
       "role": "monster"
@@ -499,7 +499,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-1",
       "role": "monster"
@@ -527,7 +527,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-1",
       "role": "monster"
@@ -536,7 +536,7 @@
       "id": "medieval.walk.monster-2",
       "module": "medieval",
       "kind": "walk",
-      "subject": "Mariposa ?mbar de seis patas e asas arredondadas",
+      "subject": "Mariposa Âmbar de seis patas e asas arredondadas",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.walk.monster-2",
@@ -555,7 +555,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-2",
       "role": "monster"
@@ -564,7 +564,7 @@
       "id": "medieval.battle.monster-2",
       "module": "medieval",
       "kind": "battle",
-      "subject": "Mariposa ?mbar de seis patas e asas arredondadas",
+      "subject": "Mariposa Âmbar de seis patas e asas arredondadas",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.battle.monster-2",
@@ -583,7 +583,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-2",
       "role": "monster"
@@ -592,7 +592,7 @@
       "id": "medieval.portrait.monster-2",
       "module": "medieval",
       "kind": "portrait",
-      "subject": "Mariposa ?mbar de seis patas e asas arredondadas",
+      "subject": "Mariposa Âmbar de seis patas e asas arredondadas",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.portrait.monster-2",
@@ -611,7 +611,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-2",
       "role": "monster"
@@ -639,7 +639,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-3",
       "role": "monster"
@@ -667,7 +667,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-3",
       "role": "monster"
@@ -695,7 +695,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "medieval.monster-3",
       "role": "monster"
@@ -704,7 +704,7 @@
       "id": "medieval.tiles.terrain",
       "module": "medieval",
       "kind": "tiles",
-      "subject": "Terrenos de vila de pedra clara, madeira e pradaria: solo, caminho, ?gua, piso, ponte, borda, acento e terreno ?spero",
+      "subject": "Terrenos de vila de pedra clara, madeira e pradaria: solo, caminho, Água, piso, ponte, borda, acento e terreno Áspero",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.tiles.terrain",
@@ -723,14 +723,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "medieval.tiles.architecture",
       "module": "medieval",
       "kind": "tiles",
-      "subject": "Kit de arquitetura de vila de pedra clara, madeira e pradaria: parede, telhado, porta, janela, escada, canto e soleira; m?dulos de 32 px",
+      "subject": "Kit de arquitetura de vila de pedra clara, madeira e pradaria: parede, telhado, porta, janela, escada, canto e soleira; módulos de 32 px",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.tiles.architecture",
@@ -749,7 +749,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "Diana_Medieval_Objects_B.png",
@@ -764,7 +764,7 @@
       "id": "medieval.tiles.props",
       "module": "medieval",
       "kind": "tiles",
-      "subject": "?rvore modular, cerca, barril, banco, canteiro e placa sem texto",
+      "subject": "Árvore modular, cerca, barril, banco, canteiro e placa sem texto",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.tiles.props",
@@ -783,7 +783,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "Diana_Medieval_Objects_B.png",
@@ -798,7 +798,7 @@
       "id": "medieval.background.area-1",
       "module": "medieval",
       "kind": "background",
-      "subject": "vila de pedra clara, madeira e pradaria; pra?a externa ao amanhecer, ch?o livre na metade inferior, sem personagens",
+      "subject": "vila de pedra clara, madeira e pradaria; praça externa ao amanhecer, chão livre na metade inferior, sem personagens",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.background.area-1",
@@ -817,14 +817,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "medieval.background.area-2",
       "module": "medieval",
       "kind": "background",
-      "subject": "vila de pedra clara, madeira e pradaria; ?rea de confronto ao entardecer, ch?o livre na metade inferior, sem personagens",
+      "subject": "vila de pedra clara, madeira e pradaria; Área de confronto ao entardecer, chão livre na metade inferior, sem personagens",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.background.area-2",
@@ -843,14 +843,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "medieval.weapons.set",
       "module": "medieval",
       "kind": "weapons",
-      "subject": "Oito armas originais: espada curta, bast?o, arco, lan?a, ma?a, adaga, escudo e varinha",
+      "subject": "Oito armas originais: espada curta, bastão, arco, lança, maça, adaga, escudo e varinha",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.weapons.set",
@@ -869,7 +869,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "IconSet.png",
@@ -883,7 +883,7 @@
       "id": "medieval.items.set",
       "module": "medieval",
       "kind": "items",
-      "subject": "Oito itens originais: frasco de cura, frasco de energia, ant?doto, chave, lanterna, corda, alimento e cristal de recurso; coerentes com o m?dulo",
+      "subject": "Oito itens originais: frasco de cura, frasco de energia, antídoto, chave, lanterna, corda, alimento e cristal de recurso; coerentes com o módulo",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.items.set",
@@ -902,7 +902,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "IconSet.png",
@@ -916,7 +916,7 @@
       "id": "medieval.effects.impact",
       "module": "medieval",
       "kind": "effects",
-      "subject": "Impacto de fa?scas douradas e folhas luminosas, expans?o e dissipa??o",
+      "subject": "Impacto de faíscas douradas e folhas luminosas, expansão e dissipação",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.effects.impact",
@@ -935,14 +935,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "medieval.map.area-1",
       "module": "medieval",
       "kind": "map",
-      "subject": "?rea inicial explor?vel de vila de pedra clara, madeira e pradaria",
+      "subject": "Área inicial explorável de vila de pedra clara, madeira e pradaria",
       "status": "planejado",
       "license": "MIT",
       "promptId": "medieval.map.area-1",
@@ -961,7 +961,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "format": "Reactor Map JSON",
       "dimensions": {
@@ -988,7 +988,7 @@
       ],
       "recipe": {
         "version": 1,
-        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "coordinates": "x/y inteiros base zero; retângulos incluem extremos; operações em ordem, posteriores sobrescrevem anteriores",
         "fill": {
           "layer": 0,
           "tileId": 1536
@@ -1079,7 +1079,7 @@
             "y": 8,
             "trigger": "action-button",
             "action": "dialogue",
-            "text": "A rota segue pela sa?da leste.",
+            "text": "A rota segue pela saída leste.",
             "portrait": "medieval.portrait.hero-2",
             "troop": null
           }
@@ -1093,7 +1093,7 @@
         "emptyTileId": 0,
         "randomEncounters": [],
         "parallax": null,
-        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; não executar JSON de receita como código."
       }
     },
     {
@@ -1119,7 +1119,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "format": "Reactor Map JSON",
       "dimensions": {
@@ -1146,7 +1146,7 @@
       ],
       "recipe": {
         "version": 1,
-        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "coordinates": "x/y inteiros base zero; retângulos incluem extremos; operações em ordem, posteriores sobrescrevem anteriores",
         "fill": {
           "layer": 0,
           "tileId": 1536
@@ -1255,14 +1255,14 @@
         "emptyTileId": 0,
         "randomEncounters": [],
         "parallax": null,
-        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; não executar JSON de receita como código."
       }
     },
     {
       "id": "moderno.walk.hero-1",
       "module": "moderno",
       "kind": "walk",
-      "subject": "Cora, t?cnica de manuten??o com macac?o azul e cabelo crespo",
+      "subject": "Cora, técnica de manutenção com macacão azul e cabelo crespo",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.walk.hero-1",
@@ -1281,7 +1281,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.hero-1",
       "role": "hero"
@@ -1290,7 +1290,7 @@
       "id": "moderno.battle.hero-1",
       "module": "moderno",
       "kind": "battle",
-      "subject": "Cora, t?cnica de manuten??o com macac?o azul e cabelo crespo",
+      "subject": "Cora, técnica de manutenção com macacão azul e cabelo crespo",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.battle.hero-1",
@@ -1309,7 +1309,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.hero-1",
       "role": "hero"
@@ -1318,7 +1318,7 @@
       "id": "moderno.portrait.hero-1",
       "module": "moderno",
       "kind": "portrait",
-      "subject": "Cora, t?cnica de manuten??o com macac?o azul e cabelo crespo",
+      "subject": "Cora, técnica de manutenção com macacão azul e cabelo crespo",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.portrait.hero-1",
@@ -1337,7 +1337,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.hero-1",
       "role": "hero"
@@ -1365,7 +1365,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.hero-2",
       "role": "hero"
@@ -1393,7 +1393,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.hero-2",
       "role": "hero"
@@ -1421,7 +1421,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.hero-2",
       "role": "hero"
@@ -1430,7 +1430,7 @@
       "id": "moderno.walk.monster-1",
       "module": "moderno",
       "kind": "walk",
-      "subject": "Drone hexagonal de manuten??o desgovernado sem marca",
+      "subject": "Drone hexagonal de manutenção desgovernado sem marca",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.walk.monster-1",
@@ -1449,7 +1449,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-1",
       "role": "monster"
@@ -1458,7 +1458,7 @@
       "id": "moderno.battle.monster-1",
       "module": "moderno",
       "kind": "battle",
-      "subject": "Drone hexagonal de manuten??o desgovernado sem marca",
+      "subject": "Drone hexagonal de manutenção desgovernado sem marca",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.battle.monster-1",
@@ -1477,7 +1477,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-1",
       "role": "monster"
@@ -1486,7 +1486,7 @@
       "id": "moderno.portrait.monster-1",
       "module": "moderno",
       "kind": "portrait",
-      "subject": "Drone hexagonal de manuten??o desgovernado sem marca",
+      "subject": "Drone hexagonal de manutenção desgovernado sem marca",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.portrait.monster-1",
@@ -1505,7 +1505,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-1",
       "role": "monster"
@@ -1514,7 +1514,7 @@
       "id": "moderno.walk.monster-2",
       "module": "moderno",
       "kind": "walk",
-      "subject": "Criatura de espuma azul com olhos geom?tricos",
+      "subject": "Criatura de espuma azul com olhos geométricos",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.walk.monster-2",
@@ -1533,7 +1533,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-2",
       "role": "monster"
@@ -1542,7 +1542,7 @@
       "id": "moderno.battle.monster-2",
       "module": "moderno",
       "kind": "battle",
-      "subject": "Criatura de espuma azul com olhos geom?tricos",
+      "subject": "Criatura de espuma azul com olhos geométricos",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.battle.monster-2",
@@ -1561,7 +1561,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-2",
       "role": "monster"
@@ -1570,7 +1570,7 @@
       "id": "moderno.portrait.monster-2",
       "module": "moderno",
       "kind": "portrait",
-      "subject": "Criatura de espuma azul com olhos geom?tricos",
+      "subject": "Criatura de espuma azul com olhos geométricos",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.portrait.monster-2",
@@ -1589,7 +1589,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-2",
       "role": "monster"
@@ -1598,7 +1598,7 @@
       "id": "moderno.walk.monster-3",
       "module": "moderno",
       "kind": "walk",
-      "subject": "Rob? coletor sobre tr?s rodas e carca?a amarela",
+      "subject": "Rob? coletor sobre três rodas e carcaça amarela",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.walk.monster-3",
@@ -1617,7 +1617,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-3",
       "role": "monster"
@@ -1626,7 +1626,7 @@
       "id": "moderno.battle.monster-3",
       "module": "moderno",
       "kind": "battle",
-      "subject": "Rob? coletor sobre tr?s rodas e carca?a amarela",
+      "subject": "Rob? coletor sobre três rodas e carcaça amarela",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.battle.monster-3",
@@ -1645,7 +1645,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-3",
       "role": "monster"
@@ -1654,7 +1654,7 @@
       "id": "moderno.portrait.monster-3",
       "module": "moderno",
       "kind": "portrait",
-      "subject": "Rob? coletor sobre tr?s rodas e carca?a amarela",
+      "subject": "Rob? coletor sobre três rodas e carcaça amarela",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.portrait.monster-3",
@@ -1673,7 +1673,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "entityId": "moderno.monster-3",
       "role": "monster"
@@ -1682,7 +1682,7 @@
       "id": "moderno.tiles.terrain",
       "module": "moderno",
       "kind": "tiles",
-      "subject": "Terrenos de bairro urbano de tijolo, concreto e jardim comunit?rio: solo, caminho, ?gua, piso, ponte, borda, acento e terreno ?spero",
+      "subject": "Terrenos de bairro urbano de tijolo, concreto e jardim comunitário: solo, caminho, Água, piso, ponte, borda, acento e terreno Áspero",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.tiles.terrain",
@@ -1701,14 +1701,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "moderno.tiles.architecture",
       "module": "moderno",
       "kind": "tiles",
-      "subject": "Kit de arquitetura de bairro urbano de tijolo, concreto e jardim comunit?rio: parede, telhado, porta, janela, escada, canto e soleira; m?dulos de 32 px",
+      "subject": "Kit de arquitetura de bairro urbano de tijolo, concreto e jardim comunitário: parede, telhado, porta, janela, escada, canto e soleira; módulos de 32 px",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.tiles.architecture",
@@ -1727,7 +1727,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "Diana_Moderno_Objects_B.png",
@@ -1742,7 +1742,7 @@
       "id": "moderno.tiles.props",
       "module": "moderno",
       "kind": "tiles",
-      "subject": "Poste, lixeira, banco, bicicleta gen?rica, canteiro e caixa de servi?o sem marcas",
+      "subject": "Poste, lixeira, banco, bicicleta genérica, canteiro e caixa de serviço sem marcas",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.tiles.props",
@@ -1761,7 +1761,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "Diana_Moderno_Objects_B.png",
@@ -1776,7 +1776,7 @@
       "id": "moderno.background.area-1",
       "module": "moderno",
       "kind": "background",
-      "subject": "bairro urbano de tijolo, concreto e jardim comunit?rio; pra?a externa ao amanhecer, ch?o livre na metade inferior, sem personagens",
+      "subject": "bairro urbano de tijolo, concreto e jardim comunitário; praça externa ao amanhecer, chão livre na metade inferior, sem personagens",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.background.area-1",
@@ -1795,14 +1795,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "moderno.background.area-2",
       "module": "moderno",
       "kind": "background",
-      "subject": "bairro urbano de tijolo, concreto e jardim comunit?rio; ?rea de confronto ao entardecer, ch?o livre na metade inferior, sem personagens",
+      "subject": "bairro urbano de tijolo, concreto e jardim comunitário; Área de confronto ao entardecer, chão livre na metade inferior, sem personagens",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.background.area-2",
@@ -1821,14 +1821,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "moderno.weapons.set",
       "module": "moderno",
       "kind": "weapons",
-      "subject": "Oito equipamentos originais: chave de manuten??o, bast?o el?trico, lan?ador de pulsos abstrato, escudo, pin?a, martelo, emissor e luvas",
+      "subject": "Oito equipamentos originais: chave de manutenção, bastão elétrico, lançador de pulsos abstrato, escudo, pinça, martelo, emissor e luvas",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.weapons.set",
@@ -1847,7 +1847,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "IconSet.png",
@@ -1861,7 +1861,7 @@
       "id": "moderno.items.set",
       "module": "moderno",
       "kind": "items",
-      "subject": "Oito itens originais: frasco de cura, frasco de energia, ant?doto, chave, lanterna, corda, alimento e cristal de recurso; coerentes com o m?dulo",
+      "subject": "Oito itens originais: frasco de cura, frasco de energia, antídoto, chave, lanterna, corda, alimento e cristal de recurso; coerentes com o módulo",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.items.set",
@@ -1880,7 +1880,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "composition": {
         "target": "IconSet.png",
@@ -1894,7 +1894,7 @@
       "id": "moderno.effects.impact",
       "module": "moderno",
       "kind": "effects",
-      "subject": "Impacto de an?is ciano e part?culas quadradas, expans?o e dissipa??o",
+      "subject": "Impacto de anéis ciano e partículas quadradas, expansão e dissipação",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.effects.impact",
@@ -1913,14 +1913,14 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       }
     },
     {
       "id": "moderno.map.area-1",
       "module": "moderno",
       "kind": "map",
-      "subject": "?rea inicial explor?vel de bairro urbano de tijolo, concreto e jardim comunit?rio",
+      "subject": "Área inicial explorável de bairro urbano de tijolo, concreto e jardim comunitário",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.map.area-1",
@@ -1939,7 +1939,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "format": "Reactor Map JSON",
       "dimensions": {
@@ -1966,7 +1966,7 @@
       ],
       "recipe": {
         "version": 1,
-        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "coordinates": "x/y inteiros base zero; retângulos incluem extremos; operações em ordem, posteriores sobrescrevem anteriores",
         "fill": {
           "layer": 0,
           "tileId": 1536
@@ -2057,7 +2057,7 @@
             "y": 8,
             "trigger": "action-button",
             "action": "dialogue",
-            "text": "A rota segue pela sa?da leste.",
+            "text": "A rota segue pela saída leste.",
             "portrait": "moderno.portrait.hero-2",
             "troop": null
           }
@@ -2071,14 +2071,14 @@
         "emptyTileId": 0,
         "randomEncounters": [],
         "parallax": null,
-        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; não executar JSON de receita como código."
       }
     },
     {
       "id": "moderno.map.area-2",
       "module": "moderno",
       "kind": "map",
-      "subject": "Rota com arena de batalha de bairro urbano de tijolo, concreto e jardim comunit?rio",
+      "subject": "Rota com arena de batalha de bairro urbano de tijolo, concreto e jardim comunitário",
       "status": "planejado",
       "license": "MIT",
       "promptId": "moderno.map.area-2",
@@ -2097,7 +2097,7 @@
         "outputSha256": null,
         "rightsReview": "pendente",
         "references": [],
-        "origin": "gera??o original planejada; nenhum arquivo de arte criado"
+        "origin": "geração original planejada; nenhum arquivo de arte criado"
       },
       "format": "Reactor Map JSON",
       "dimensions": {
@@ -2124,7 +2124,7 @@
       ],
       "recipe": {
         "version": 1,
-        "coordinates": "x/y inteiros base zero; ret?ngulos incluem extremos; opera??es em ordem, posteriores sobrescrevem anteriores",
+        "coordinates": "x/y inteiros base zero; retângulos incluem extremos; operações em ordem, posteriores sobrescrevem anteriores",
         "fill": {
           "layer": 0,
           "tileId": 1536
@@ -2233,7 +2233,7 @@
         "emptyTileId": 0,
         "randomEncounters": [],
         "parallax": null,
-        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; n?o executar JSON de receita como c?digo."
+        "notes": "Compiler deve resolver recursos/IDs locais, flags, events e comandos nativos j? suportados; não executar JSON de receita como código."
       }
     }
   ]
