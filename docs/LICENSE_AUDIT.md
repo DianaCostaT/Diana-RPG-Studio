@@ -1,5 +1,10 @@
 # Auditoria de licenças
 
+## Biblioteca de arte V2 — 17/10/2026
+
+`assets/art-library-v2/` contém arte original criada com a ferramenta integrada `image_gen`, usando somente as referências próprias da Clareira e as imagens novas desta tarefa. Prompts, fontes rejeitadas/revisadas e limites estão em `GENERATION.md`; o manifesto do pack registra hashes das fontes e dos 69 PNGs compilados. A ferramenta não informou modelo, versão ou seed, que não foram inventados. O pack acompanha a licença MIT do projeto e seus avisos, copiados também para novos projetos. Não houve importação de RTP comercial, Demo upstream, dependência nova ou publicação. Esta procedência de arte não resolve a auditoria de redistribuição da engine/hosts descrita nas demais seções.
+
+
 Atualização de sprites (17/10/2026): `assets/rtp/medieval/BrannCaminhada-v2.png` é uma edição original feita pela ferramenta integrada imagegen a partir do Brann do próprio projeto, sem referência a assets comerciais. O original anterior foi preservado. Prompts, origem e evidências estão em [SPRITE_REPAIR_VALIDATION.md](SPRITE_REPAIR_VALIDATION.md). O editor inclui os três originais do projeto usados para recuperar recortes; licenças e avisos existentes permanecem no pacote.
 
 Data da inspeção: 15-10-2026. Resultado: o código próprio do RPGReactor é uma base MIT utilizável, mas **o pacote completo não pode ser descrito como exclusivamente MIT**. A distribuição depende dos componentes efetivamente incluídos, das respetivas licenças e da proveniência dos recursos. Esta é uma auditoria técnica documental; não constitui uma autorização global de redistribuição.

@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-17",
+  "status": "implementado e testado no NW.js; renovação total de toda arte histórica parcial",
+  "documentation": "docs/ART_LIBRARY_V2.md",
+  "prompts": "assets/art-library-v2/GENERATION.md",
+  "pack": "assets/art-library-v2/pack/manifest.json",
+  "pngCount": 69,
+  "maps": {
+    "scenic": [
+      10,
+      11
+    ],
+    "nativePaintable": [
+      12,
+      13
+    ]
+  },
+  "playableActorsAdded": [
+    3,
+    4
+  ],
+  "battleSheets": {
+    "actors": [
+      2,
+      3,
+      4
+    ],
+    "enemies": [
+      6,
+      10
+    ],
+    "grid": [
+      6,
+      6
+    ],
+    "cell": [
+      256,
+      256
+    ]
+  },
+  "walkingAdded": {
+    "actors": [
+      3,
+      4
+    ],
+    "grid": [
+      6,
+      4
+    ],
+    "cell": [
+      64,
+      64
+    ]
+  },
+  "originalSourcesPreserved": true,
+  "newProjectIntegrationOnly": true,
+  "tests": {
+    "api": "228/228",
+    "prepared": "69/69",
+    "windowsSmoke": "passou NW.js",
+    "librarySmoke": "passou NW.js",
+    "starterKeyboard": "exploração, diálogo e vitória passaram NW.js",
+    "tauriVisual": "não testado nesta tarefa"
+  },
+  "limits": [
+    "cenários ilustrados são parallax; mapas modulares são pintáveis",
+    "seis novos monstros permanecem estáticos",
+    "seis personagens ilustrados não têm caminhada própria",
+    "vitória da Mensageira tem quatro desenhos e dois tempos sustentados",
+    "interação de todas as passadas e efeitos ainda pendente",
+    "moradores/interiores históricos não foram todos refeitos",
+    "projetos antigos não recebem migração automática"
+  ],
+  "evidence": "images/biblioteca-v2/",
+  "installations": [],
+  "commitCreated": true,
+  "commitAuthorization": "Usuário solicitou commit e push em 17/10/2026."
+}

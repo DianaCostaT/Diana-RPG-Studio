@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 1,
+  "id": "diana-art-library-v2",
+  "origin": "Arte original gerada com image_gen; prompts e limitações em ../GENERATION.md",
+  "license": "MIT",
+  "sampling": "nearest-neighbor",
+  "sources": [
+    {
+      "path": "originals/ArqueiraCaminhadaV2.png",
+      "sha256": "ba3ae9c3a1275d63311810c87a2285c4e5fd2c828dd31592458107cd63e5216a"
+    },
+    {
+      "path": "originals/ArqueiraCombateV2.png",
+      "sha256": "9a560285c54c7a2eace6aa95d17c3ab0ccd02bcef7308819363e65a7da4ad232"
+    },
+    {
+      "path": "originals/ArqueiraCombateV3.png",
+      "sha256": "15f0b111911b536fe41cd0a11c22b14af496f83c9c7c7bcc2e2c6125327b6c3f"
+    },
+    {
+      "path": "originals/BrannCombateV2.png",
+      "sha256": "1ce318cdbc7445f6b6c3214323e0ed881746af848f8b4933c2f519cdea99a1d3"
+    },
+    {
+      "path": "originals/CyberObjetosV2.png",
+      "sha256": "a7295b36e01becfcc034f51243976a718e7f03c5dfad2b26f6fac18f16088462"
+    },
+    {
+      "path": "originals/DistritoNeonBatalhaV2.png",
+      "sha256": "f34edc82f107531396ef383db4061981201bd62e5e14ab80b4a0aa110d0852ed"
+    },
+    {
+      "path": "originals/DistritoNeonV2.png",
+      "sha256": "404233671c3c61a3c9d4cd57f766b68730127818ad726c16eba0da886edc46ec"
+    },
+    {
+      "path": "originals/EfeitosV2.png",
+      "sha256": "88ad74fd0a0932e4da2c0b52cdf7d2225f8938a2bb1cffe5cef27ded056e36e0"
+    },
+    {
+      "path": "originals/EntregadoraCaminhadaV2.png",
+      "sha256": "7ee1c68a9e9e929c1ad14a9d821955d67633e6cbb8e01a603c03c32b455a56eb"
+    },
+    {
+      "path": "originals/EntregadoraCombateV2.png",
+      "sha256": "0edf3315b76d0f35519ff84da2d3f207bb4978a663fb39225bcb23cd7c62a05a"
+    },
+    {
+      "path": "originals/EntregadoraCombateV3.png",
+      "sha256": "4c11e00320a1983b8f9cb3a19e31eeee8d3fc8e3afc90afc873bbac91a20aa8c"
+    },
+    {
+      "path": "originals/EquipamentosV2.png",
+      "sha256": "87b2555ba3750c6deb1b464792be4ca882ca403b4b7e02841c0f8eb0d39653ab"
+    },
+    {
+      "path": "originals/GolemCombateV2.png",
+      "sha256": "51bc5bb68480c955ef8c9eb18f90a242f80e1763e7488f126a95d99f5e9b5a74"
+    },
+    {
+      "path": "originals/GolemCombateV3.png",
+      "sha256": "f140cd6851fb2816574bc7d5d6a83d67858c46048a49261d6b740f4b12aecb0d"
+    },
+    {
+      "path": "originals/MedievalObjetosV2.png",
+      "sha256": "d8c9aab8187deefa99bde9942c29463136d7d861280001df2666f23823a62155"
+    },
+    {
+      "path": "originals/MercadoClareiraV2.png",
+      "sha256": "19c9ae1b07ab4eb5d3a961117edbe4eba4e987a761ec2032cc24a88696702106"
+    },
+    {
+      "path": "originals/MonstrosV2.png",
+      "sha256": "fc7be9a5a0d45185e462dc2d7a6e6b4ed7e69f5cd6ee6d8a897d96e82e8cc666"
+    },
+    {
+      "path": "originals/PersonagensV2.png",
+      "sha256": "5f6930ecec4fefbef0906b8797477cc63e9e23fb4dc96b24e76d2e23eae48f09"
+    },
+    {
+      "path": "originals/RoboCombateV2.png",
+      "sha256": "512bf2e8eedc256ae292022d739d37d812e8011bdec6cf332b53b752e81f7bad"
+    },
+    {
+      "path": "originals/TerrenosV2.png",
+      "sha256": "0fd6169aff015b468351d0534c9b0bab75c61b3264728e491453a18c500f688b"
+    }
+  ],
+  "files": [
+    {
+      "path": "img/animations/CorteV2.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "682e5241d73b0eb5ceb6f673f094978d343d787559294eb543b78bce4cfc7715"
+    },
+    {
+      "path": "img/animations/EscudoCyberV2.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "b355e1440a0efffd9f50328ffb8ecb87cc219a7689c47e7a543bda7ee22e0b5b"
+    },
+    {
+      "path": "img/animations/FogoV2.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "184e56a296ecb6ed1edd99126078bd9f455ccbfe2e1d70eb534c14bd9259e1ba"
+    },
+    {
+      "path": "img/animations/PlasmaV2.png",
+      "width": 960,
+      "height": 192,
+      "sha256": "86214261390b224f37ec3e630be6714f7cabc3d5a5ad60d391764490a05508b5"
+    },
+    {
+      "path": "img/battlebacks1/DistritoNeonBatalhaV2.png",
+      "width": 1000,
+      "height": 740,
+      "sha256": "50de2fab788fbd7d75dd50886a1b5b3790f618548b3c1d1b6dd313483ca13d67"
+    },
+    {
+      "path": "img/characters/$ArqueiraV2.png",
+      "width": 384,
+      "height": 256,
+      "sha256": "e22f2d105655bba932e9b0236589b377e1d046ebd57558f68cf055770c75fc43"
+    },
+    {
+      "path": "img/characters/$EntregadoraV2.png",
+      "width": 384,
+      "height": 256,
+      "sha256": "acb437cdcecd73c9a695d0aad3f0617eb2d2d6a11a215d32428a8c9bb0476065"
+    },
+    {
+      "path": "img/enemies/BruxaCogumeloV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "d0326f535b1ee54e886f293b051e1dab8131e02a9a9a96f2aa9f5b27a4a55b47"
+    },
+    {
+      "path": "img/enemies/DragaoBosqueV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "48729ab85ce728451ecd20db5a1483c6462890200c8281d0d245fe1c3fc1d798"
+    },
+    {
+      "path": "img/enemies/DroneNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "58246ba1551256c1be16a2b92c459f66f21490c01816d365f4eee1bcd636afbd"
+    },
+    {
+      "path": "img/enemies/GolemMusgoAnimV2.png",
+      "width": 1536,
+      "height": 1536,
+      "sha256": "c622e2e2eab614906ce20b47b6de9dbb49a7c66b2551413c7cc74d171454748a"
+    },
+    {
+      "path": "img/enemies/GolemMusgoV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "5fde13e05fd219c6fe9521441b348cea40bee91aba94ec128640b2fce774572b"
+    },
+    {
+      "path": "img/enemies/LoboPrataV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "60d3c747eae30789ef9ba9392d7afaa05bd6ea82fa1525f939c05b6e34282b26"
+    },
+    {
+      "path": "img/enemies/MercenarioNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "d7a0f37beaef8eddad37696bd5a3111b710ed0609cdd02aa3e464a1ad39f6595"
+    },
+    {
+      "path": "img/enemies/RoboSegurancaAnimV2.png",
+      "width": 1536,
+      "height": 1536,
+      "sha256": "9d2eb90d0ba4a3d054db1cf407304943ac8790fd71044590e072bdae91e944ea"
+    },
+    {
+      "path": "img/enemies/RoboSegurancaV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "5dcaf5962f7b427aa339c59c6e52aa0d5dafe4c787738def12eda4a514f8e0f1"
+    },
+    {
+      "path": "img/enemies/SerpenteNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "c4a014ec695cd54307c93fafeffa2a640e6a13e10f4b0bc7d674b36c36cd4cc9"
+    },
+    {
+      "path": "img/faces/ClareiraRostos.png",
+      "width": 576,
+      "height": 288,
+      "sha256": "5e048bced92373d5d5fe0509e42787b7c2a872d0174b374d1271967768a979a1"
+    },
+    {
+      "path": "img/parallaxes/!DistritoNeonV2.png",
+      "width": 1280,
+      "height": 1280,
+      "sha256": "345d0162c8bdc34a11855abae59a07a0f9f56a7e2dc56db2328aee65361e3613"
+    },
+    {
+      "path": "img/parallaxes/!MercadoClareiraV2.png",
+      "width": 1280,
+      "height": 1280,
+      "sha256": "92adf95fc9a758bab35cf3c2d383a2cdecc83751729e8bb5cf4ee342616df891"
+    },
+    {
+      "path": "img/pictures/AndroideNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "99142c9f57ec0aa779384f08b1a3fc3b44efbd71494ed0879303180bafe89af0"
+    },
+    {
+      "path": "img/pictures/ArqueiraV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "9431aa54157594579ab844282a2b85a6c65842bd705dbb39b6e43013dfd34121"
+    },
+    {
+      "path": "img/pictures/BrannRetratoV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "2caedabfd9a2d6797ac70537babf6c9ff22f4aed4546801671e71ad998cfce2d"
+    },
+    {
+      "path": "img/pictures/DianaV2Anel.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "0f3251af441c65bd3aba12288c0ac96c664899c8b997feeb35b7133ae1dc6485"
+    },
+    {
+      "path": "img/pictures/DianaV2Arco.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "01b998098810e1c96855d5a3e3d9d8b97853190f7e84d18d945b31085d6f7b83"
+    },
+    {
+      "path": "img/pictures/DianaV2Armadura.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "644cc44945210c719895140fa0e55647289a370e4047ab5b4882a3b8946b14d5"
+    },
+    {
+      "path": "img/pictures/DianaV2Bastao.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "05ed88b88764b83fcf238fb3a39faf505df9e3fbf86868d14d9927df10899485"
+    },
+    {
+      "path": "img/pictures/DianaV2Bateria.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "5df9b5194145964ca250313400c822bced3b487d8b2071bdf1df85eb303ddc29"
+    },
+    {
+      "path": "img/pictures/DianaV2Botas.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "fbbbb79c7293f45a91b4e7bc4b04c45ade4652bd44d2e9cca26ccdacd4319024"
+    },
+    {
+      "path": "img/pictures/DianaV2Cajado.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "4e20b9e1d56a1abdc64078a313654fd0566d03c892d7c368a7eb4434cd4f4ba1"
+    },
+    {
+      "path": "img/pictures/DianaV2Capa.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "1692f7c3bb4c9fa995c64e076ab7ad9abc8350d021a1bc753248bea9a2be85de"
+    },
+    {
+      "path": "img/pictures/DianaV2Chave.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "e779688e15d4159edd8a668c23c82fc6262e1ad568ed930ab2a172bcdd9d3c02"
+    },
+    {
+      "path": "img/pictures/DianaV2ChaveCircuito.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "9e048df87b82bb0648155bb98afef2b85b492b7eef844eb6c2aa08090f58aff2"
+    },
+    {
+      "path": "img/pictures/DianaV2Chip.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "8ca645cb7a5cc18f26ee5f9b5d51574df64f6ebace4ceefe3eea374c2b3fe0ea"
+    },
+    {
+      "path": "img/pictures/DianaV2ControleDrone.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "a8f2f642edb38f27add00c6bfcc180180a6ac03906747fe396446d22ebd726a3"
+    },
+    {
+      "path": "img/pictures/DianaV2Creditos.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "ad9e02357b9d3766fc4973e789d8e36a2db16931ab47457fd0b98d0ac8c7b7d2"
+    },
+    {
+      "path": "img/pictures/DianaV2Cyberdeck.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "e37bda595ee065b097dd877b717984cb7ee7c5d75220e1175b6fca6d0c23a3b5"
+    },
+    {
+      "path": "img/pictures/DianaV2Erva.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "41566bbfb48b65071afdf94e2736970c83b9e9f5d5a383279f1a28ce6e6289ea"
+    },
+    {
+      "path": "img/pictures/DianaV2Escudo.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "54103cfee591ebac82271a15564f9bcc3a79dacd504bac7cbbdb0e3929318684"
+    },
+    {
+      "path": "img/pictures/DianaV2EscudoHolo.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "9f54039158a5d2c68445b205a5e2b953060f8dceea43def2edc604e7b7a7437c"
+    },
+    {
+      "path": "img/pictures/DianaV2Espada.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "4c34a555f7e1dbe55a2f4701efc93849bf091ddeeaf2235ac937e0df9416f0f0"
+    },
+    {
+      "path": "img/pictures/DianaV2Grimorio.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "4c4b87c2bfa331cace6021af19cdd7a12457004509a96169d4dd8eae897bd977"
+    },
+    {
+      "path": "img/pictures/DianaV2Jaqueta.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "54f3a0bb2550500d2fcbaeeaf75db7b68ae61f5be5664e6c9abeae9c693dc151"
+    },
+    {
+      "path": "img/pictures/DianaV2Katana.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "4bdf3217225520c6f57ce10dc4b3529c95d260441ce5d14872bf1de3e0a1e021"
+    },
+    {
+      "path": "img/pictures/DianaV2LuvaCyber.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "50891b81df5e72b88c5b33206624b3eb89604a821b7b2de0a01ffd14b744b0bd"
+    },
+    {
+      "path": "img/pictures/DianaV2Martelo.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "f64d3dd5429bcaa83249505952ed01df5e71b2e658e8bfa053b1b19b903465ea"
+    },
+    {
+      "path": "img/pictures/DianaV2Medkit.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "192c4d3d79dcf3b18c5f8c33bea7aab87ce117b8a574248119b46f679ab129dc"
+    },
+    {
+      "path": "img/pictures/DianaV2Moedas.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "360004ea0190d4f09fcb64985cdebae373d3805c9d3ce908330bf2ea915fe052"
+    },
+    {
+      "path": "img/pictures/DianaV2Nanitos.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "86445d089aaea301d52a34f501b79748c1752333e0d8f41ac06100d418b15b17"
+    },
+    {
+      "path": "img/pictures/DianaV2Pao.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "c9d743b6795ed0bbf144271e9f52c3b29703740eba7fd6d3c8639e731c948dc9"
+    },
+    {
+      "path": "img/pictures/DianaV2PistolaPlasma.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "00ec1b0b9b7225e41c71ba62f4d49aec93bca2c1a374af259ad4c63c868b29e1"
+    },
+    {
+      "path": "img/pictures/DianaV2PocaoPM.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "c0355c88ef37f1c008f6d266aa8fca279f2f06c5c105f45beb1ab7a0dcc57faf"
+    },
+    {
+      "path": "img/pictures/DianaV2PocaoPV.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "ae70b044c2c75d7975e1c7d5993867a81302574c26cbdde1b73fc7301bc13f07"
+    },
+    {
+      "path": "img/pictures/DianaV2Rifle.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "14b52abb356ddda6351b362008108f8e5bc00884ae43f49ce39e232352b7c3a5"
+    },
+    {
+      "path": "img/pictures/DianaV2Visor.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "2a96cedd76c193d6d5d99756d6cd0aaafe781a80d5079ffbe46e44308b8ce197"
+    },
+    {
+      "path": "img/pictures/EntregadoraNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "2e9d487e0410f9c3f4ecb37ab8b61cdd7fb69cc673ce21edd1108dc5d7717a61"
+    },
+    {
+      "path": "img/pictures/FerreiraV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "b10e0332e4f2bfe1994a3cad95092b4ff484e82b6df5f502d471084b444d6a21"
+    },
+    {
+      "path": "img/pictures/HackerNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "9a20dcf5299a717a2c9d6506a06da7ada3a48e5a6525f6c327d32d229195c672"
+    },
+    {
+      "path": "img/pictures/SabiaV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "7bd1de3ccca13852058190c8402b79e534610dd7ea4e7a84b727604f73d895d2"
+    },
+    {
+      "path": "img/pictures/SamuraiNeonV2.png",
+      "width": 256,
+      "height": 256,
+      "sha256": "3f1226c14d4ded5d541737f58c2ca6ecf689424c0ed2fd3785b749da0fc47eff"
+    },
+    {
+      "path": "img/sv_actors/ArqueiraCombateV2.png",
+      "width": 1536,
+      "height": 1536,
+      "sha256": "d353bb71fd16e0269ca5c5f3b6108d2a7b48d22ef28602e51df464351a711f9f"
+    },
+    {
+      "path": "img/sv_actors/BrannClareiraV2.png",
+      "width": 1536,
+      "height": 1536,
+      "sha256": "b1dd4fe87c4039119b6fb7f479bea789ed116d9268511995251f7beb13a0690e"
+    },
+    {
+      "path": "img/sv_actors/EntregadoraCombateV2.png",
+      "width": 1536,
+      "height": 1536,
+      "sha256": "29c66bff0bb6af69d8200cca4658c8acb3e5e1bebe80e28425f7c357edd0eb74"
+    },
+    {
+      "path": "img/system/IconSet.png",
+      "width": 512,
+      "height": 576,
+      "sha256": "73dc5b308d8668ec10da8baebef4d45f9d3da1873d267764c587c801b5d82e06"
+    },
+    {
+      "path": "img/tilesets/DianaV2Collision.png",
+      "width": 256,
+      "height": 224,
+      "sha256": "c01c0e41289ec650f328b3c2529df3efa1787876452b569cd216f6db4cb9dbd2"
+    },
+    {
+      "path": "img/tilesets/DianaV2CyberObjetos.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "23db6f3303a7f28d494efd4e37bbcaa921feb5eb03916c26837a48c69b8af9b8"
+    },
+    {
+      "path": "img/tilesets/DianaV2CyberTerrenos.png",
+      "width": 256,
+      "height": 512,
+      "sha256": "c7316bea8474709caa8fd738a0333cf361c94487653b0b0d90a79163f02565b2"
+    },
+    {
+      "path": "img/tilesets/DianaV2MedievalObjetos.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "8ad0ecec7481e458853fa7807b2e62d0c0732fbc90e5333eef060459dc904333"
+    },
+    {
+      "path": "img/tilesets/DianaV2MedievalTerrenos.png",
+      "width": 256,
+      "height": 512,
+      "sha256": "259ce942c91f55a77fbc9ac52293190a5ce18d2870b68dbfd2ff4be5731c4a5b"
+    }
+  ]
+}
