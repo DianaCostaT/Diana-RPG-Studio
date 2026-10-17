@@ -72,3 +72,17 @@ abrir/reabrir, edição e persistência, playtest/fechar/retomar e export standa
 Nenhuma instalação, publicação ou alteração de configuração de segurança está
 autorizada implicitamente. Commits pequenos e temáticos foram solicitados nesta
 tarefa; não incorporar alterações alheias sem revisão.
+
+## Incremento 1 — gravação concorrente e recursos da criação
+
+Implementado e testado por API: o espelho serializa gravações, mantém como pendentes
+as edições feitas durante o envio e não atualiza a base de outro projeto após uma
+troca de raiz. Falhas preservam o conteúdo para nova tentativa. O teste de playtest
+agora inclui uma alteração real no saveAll, em vez de exigir um lote vazio.
+
+Implementado e compilado, validação visual ainda pendente: os recursos da Clareira
+são lidos dos assets já embutidos no frontend Tauri, sob demanda na criação. Não
+há segunda cópia física do pack nem dependência de artifacts ou do checkout.
+O carregamento inicial do runtime continua separado para não pagar o custo dos PNGs
+em toda abertura. Testes JS Tauri 17/17; cargo test --offline 3/3. Baseline geral
+antes das alterações: npm test 210/210. Logs locais regeneráveis em artifacts/consolidation-*.

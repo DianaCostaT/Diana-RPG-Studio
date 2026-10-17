@@ -45,8 +45,8 @@
     const toBase64 = value => { const bytes = toBytes(value); let text = ''; for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(text); };
     const key = value => normalize(value).toLowerCase();
     function createFileSystem() {
-        let rootPath = null;
-        const files = new Map(), directories = new Set(), original = new Map(), deleted = new Set(), paths = new Map();
+        let rootPath = null, generation = 0, revision = 0, flushTail = Promise.resolve();
+        const files = new Map(), directories = new Set(), original = new Map(), deleted = new Map(), paths = new Map();
         const appRoot = 'C:\\Luae RPG', appFiles = new Map(), appDirectories = new Set([key(appRoot)]), appPaths = new Map([[key(appRoot), appRoot]]);
         function inApp(file) { const full = normalize(file), prefix = key(appRoot); return key(full) === prefix || key(full).startsWith(prefix + '\\'); }
         function resolveProject(file) {
@@ -84,7 +84,7 @@
             },
             statSync(file) { return stat(file); }, lstatSync(file) { return stat(file); }, realpathSync(file) { return inApp(file) ? normalize(file) : resolveProject(file); },
             copyFileSync(from, to) { this.writeFileSync(to, this.readFileSync(from)); },
-            unlinkSync(file) { const full = resolveProject(file); if (!files.has(key(full))) { const error = new Error('Arquivo não encontrado.'); error.code = 'ENOENT'; throw error; } files.delete(key(full)); paths.delete(key(full)); deleted.add(relative(full)); },
+            unlinkSync(file) { const full = resolveProject(file); if (!files.has(key(full))) { const error = new Error('Arquivo não encontrado.'); error.code = 'ENOENT'; throw error; } files.delete(key(full)); paths.delete(key(full)); deleted.set(relative(full), ++revision); },
             rmSync(file, options = {}) { const full = resolveProject(file), prefix = key(full); for (const mapKey of [...files.keys()]) if (mapKey === prefix || (options.recursive && mapKey.startsWith(prefix + '\\'))) this.unlinkSync(paths.get(mapKey)); directories.delete(prefix); },
             rmdirSync(dir) { const full = resolveProject(dir); if (this.readdirSync(full).length) { const error = new Error('Pasta não vazia.'); error.code = 'ENOTEMPTY'; throw error; } directories.delete(key(full)); paths.delete(key(full)); },
             // Do not expose renameSync here. Upstream's atomic writer uses the
@@ -92,23 +92,40 @@
             // also requires openSync/fsyncSync. This in-memory filesystem has
             // neither; leaving renameSync absent makes it use writeFileSync,
             // and host.flush() commits the overlay atomically in Rust.
-            async flush() {
-                if (!rootPath) return;
-                const writes = [];
-                for (const [mapKey, data] of files) if (!original.has(mapKey) || !same(original.get(mapKey), data)) writes.push({ path: relative(paths.get(mapKey)), content: toBase64(data) });
-                await invoke('save_project_changes', { path: rootPath, files: writes, deleted: [...deleted] });
-                for (const [mapKey, data] of files) original.set(mapKey, data.slice());
-                deleted.clear();
+            flush() {
+                const requestedGeneration = generation;
+                const save = async () => {
+                    if (!rootPath || generation !== requestedGeneration) return;
+                    const targetRoot = rootPath, snapshot = new Map(), removals = new Map(deleted), writes = [];
+                    for (const [mapKey, data] of files) if (!original.has(mapKey) || !same(original.get(mapKey), data)) {
+                        const captured = data.slice(); snapshot.set(mapKey, captured);
+                        writes.push({ path: relative(paths.get(mapKey)), content: toBase64(captured) });
+                    }
+                    if (!writes.length && !removals.size) return;
+                    await invoke('save_project_changes', { path: targetRoot, files: writes, deleted: [...removals.keys()] });
+                    // Only the bytes actually sent are persisted. New edits and
+                    // deletions remain dirty, including while another save waits.
+                    if (generation !== requestedGeneration) return;
+                    for (const [mapKey, data] of snapshot) original.set(mapKey, data);
+                    for (const [file, token] of removals) {
+                        original.delete(key(path.join(targetRoot, file)));
+                        if (deleted.get(file) === token) deleted.delete(file);
+                    }
+                };
+                const pending = flushTail.then(save, save);
+                flushTail = pending.catch(() => {});
+                return pending;
             },
             _mount(directory, records) {
-                rootPath = normalize(directory); files.clear(); directories.clear(); original.clear(); deleted.clear(); paths.clear();
+                generation++; rootPath = normalize(directory); files.clear(); directories.clear(); original.clear(); deleted.clear(); paths.clear();
                 directories.add(key(rootPath)); paths.set(key(rootPath), rootPath);
                 for (const record of records) { const full = normalize(path.join(rootPath, record.path)), data = fromBase64(record.content); parents(full); files.set(key(full), data); original.set(key(full), data.slice()); paths.set(key(full), full); }
                 return rootPath;
             },
-            _create(directory) { rootPath = normalize(directory); files.clear(); directories.clear(); original.clear(); deleted.clear(); paths.clear(); directories.add(key(rootPath)); paths.set(key(rootPath), rootPath); return rootPath; },
-            _mountResources(records) {
-                appFiles.clear(); appDirectories.clear(); appPaths.clear(); appDirectories.add(key(appRoot)); appPaths.set(key(appRoot), appRoot);
+            _create(directory) { generation++; rootPath = normalize(directory); files.clear(); directories.clear(); original.clear(); deleted.clear(); paths.clear(); directories.add(key(rootPath)); paths.set(key(rootPath), rootPath); return rootPath; },
+            _mountResources(records, merge = false) {
+                if (!merge) { appFiles.clear(); appDirectories.clear(); appPaths.clear(); }
+                appDirectories.add(key(appRoot)); appPaths.set(key(appRoot), appRoot);
                 for (const record of records) { const full = normalize(path.join(appRoot, record.path)), data = fromBase64(record.content); let parent = path.dirname(full); while (parent && parent !== appRoot && !appDirectories.has(key(parent))) { appDirectories.add(key(parent)); appPaths.set(key(parent), parent); parent = path.dirname(parent); } appFiles.set(key(full), data); appPaths.set(key(full), full); }
             },
             _snapshot() { return { rootPath, files: files.size, dirty: deleted.size + [...files].filter(([k, v]) => !original.has(k) || !same(original.get(k), v)).length }; }
@@ -175,6 +192,13 @@
             await this.runtimePromise;
         },
         async chooseProjectDirectory() { return await invoke('choose_project_directory') || null; },
+        async ensureStarterResources() {
+            if (this.starterReady) return;
+            if (!this.starterPromise) this.starterPromise = invoke('read_starter_resources').then(records => {
+                fs._mountResources(records, true); this.starterReady = true;
+            }).catch(error => { this.starterPromise = null; throw error; });
+            await this.starterPromise;
+        },
         async mountProject(directory) {
             const names = await invoke('read_project_files', { path: directory }), records = [];
             for (let offset = 0; offset < names.length; offset += 8) {
@@ -239,6 +263,7 @@
             const choice = await this.uiManager.showNewProjectDialog({ defaultName: 'Meu jogo', hasTemplate: false, validate: name => this.projectManager.isSafeProjectName(name) ? '' : 'Use um nome válido para o projeto.' });
             if (!choice) return false;
             const parent = await host.chooseProjectDirectory(); if (!parent) return false;
+            await host.ensureStarterResources();
             const target = await invoke('create_project_directory', { parent, name: choice.name });
             fs._create(target);
             this.uiManager.updateStatus('Criando projeto…');

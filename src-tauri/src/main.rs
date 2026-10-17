@@ -413,6 +413,28 @@ fn read_project_files(path: String) -> Result<Vec<String>, String> {
     Ok(files)
 }
 
+// The starter packs already belong to frontendDist. Read the embedded assets
+// only when creating a project, without bundling a second physical copy or
+// requiring the development checkout on an installed application.
+#[tauri::command]
+fn read_starter_resources(app: tauri::AppHandle) -> Result<Vec<ProjectFile>, String> {
+    let resolver = app.asset_resolver();
+    let mut files = Vec::new();
+    for (name, bytes) in resolver.iter() {
+        let relative = name.trim_start_matches('/');
+        if relative.starts_with("diana-assets/") {
+            files.push(ProjectFile {
+                path: format!("editor/{relative}"),
+                content: encode_base64(bytes.as_ref()),
+            });
+        }
+    }
+    if !files.iter().any(|file| file.path == "editor/diana-assets/jrpg-test/manifest.json") {
+        return Err("Os recursos da Clareira não foram incluídos na aplicação. Prepare e compile o editor novamente.".into());
+    }
+    Ok(files)
+}
+
 #[tauri::command]
 fn read_project_file(path: String, relative: String) -> Result<String, String> {
     let root = canonical_directory(&path)?;
@@ -521,6 +543,7 @@ fn main() {
             choose_project_directory,
             create_project_directory,
             read_app_resources,
+            read_starter_resources,
             read_project_files,
             read_project_file,
             save_project_changes,

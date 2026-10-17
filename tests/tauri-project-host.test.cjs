@@ -116,7 +116,7 @@ test('Tauri playtest saves first, serves the selected project URL and resumes th
     app.host.projectRoot = root;
     let stopped = false, resumed = false, saved = false;
     app.window.reactor = { projectController: {
-        saveAll: async () => { saved = true; return true; },
+        saveAll: async () => { saved = true; app.host.fs.writeFileSync(root + '\\project.rpgreactor', '{"saved":true}'); return true; },
         app: { stop() { stopped = true; }, start() { resumed = true; } }
     } };
 
@@ -226,6 +226,7 @@ test('Tauri creates the Diana starter project in the chosen folder and opens it'
         if (command === 'save_project_changes') return null;
         if (command === 'read_project_files') return ['project.rpgreactor'];
         if (command === 'read_project_file') return Buffer.from('{"name":"Novo RPG"}').toString('base64');
+        if (command === 'read_starter_resources') return [];
         return null;
     });
     app.host.runtimeReady = true;
@@ -240,4 +241,53 @@ test('Tauri creates the Diana starter project in the chosen folder and opens it'
     assert.equal(instance.currentProject.path, 'C:\\Games\\Novo RPG');
     assert.ok(calls.includes('create_project_directory'));
     assert.ok(calls.includes('save_project_changes'));
+});
+
+test('Tauri serializes saves and keeps edits made during a pending write dirty', async () => {
+    let release, entered;
+    const reached = new Promise(resolve => { entered = resolve; }), calls = [];
+    const app = loadHost(async (command, args) => {
+        assert.equal(command, 'save_project_changes'); calls.push(args);
+        if (calls.length === 1) { entered(); await new Promise(resolve => { release = resolve; }); }
+    });
+    const root = 'C:\\Games\\Save', file = root + '\\data\\System.json';
+    app.host.fs._create(root); app.host.fs.writeFileSync(file, 'primeira');
+    const first = app.host.flush(); await reached;
+    app.host.fs.writeFileSync(file, 'segunda'); const second = app.host.flush();
+    assert.equal(calls.length, 1, 'the second save waits for the first'); release(); await first;
+    await second;
+    assert.deepEqual(calls.map(call => Buffer.from(call.files[0].content, 'base64').toString()), ['primeira', 'segunda']);
+    assert.equal(app.host.fs._snapshot().dirty, 0);
+});
+
+test('failed Tauri save retains dirty bytes and can be retried', async () => {
+    let fail = true;
+    const app = loadHost(async () => { if (fail) throw Error('disco indisponível'); });
+    app.host.fs._create('C:\\Games\\Retry'); app.host.fs.writeFileSync('C:\\Games\\Retry\\project.rpgreactor', '{}');
+    await assert.rejects(app.host.flush(), /disco/); assert.equal(app.host.fs._snapshot().dirty, 1);
+    fail = false; await app.host.flush(); assert.equal(app.host.fs._snapshot().dirty, 0);
+});
+
+test('a completed write for an old project does not mark a newly mounted project clean', async () => {
+    let release, entered;
+    const reached = new Promise(resolve => { entered = resolve; });
+    const app = loadHost(async () => { entered(); await new Promise(resolve => { release = resolve; }); });
+    app.host.fs._create('C:\\Games\\Old'); app.host.fs.writeFileSync('C:\\Games\\Old\\file.json', 'old');
+    const save = app.host.flush(); await reached;
+    app.host.fs._create('C:\\Games\\New'); app.host.fs.writeFileSync('C:\\Games\\New\\file.json', 'new'); release(); await save;
+    assert.equal(app.host.fs._snapshot().dirty, 1);
+    assert.equal(app.host.fs.readFileSync('C:\\Games\\New\\file.json', 'utf8'), 'new');
+});
+
+test('starter resources merge with runtime and are requested only once', async () => {
+    let calls = 0;
+    const app = loadHost(async command => {
+        assert.equal(command, 'read_starter_resources'); calls++;
+        return [{ path: 'editor/diana-assets/jrpg-test/manifest.json', content: Buffer.from('{"version":1}').toString('base64') }];
+    });
+    app.host.fs._mountResources([{ path: 'runtime/reactor_main.js', content: Buffer.from('runtime').toString('base64') }]);
+    await app.host.ensureStarterResources(); await app.host.ensureStarterResources();
+    assert.equal(calls, 1);
+    assert.equal(app.host.fs.readFileSync('C:\\Luae RPG\\runtime\\reactor_main.js', 'utf8'), 'runtime');
+    assert.equal(app.host.fs.readFileSync('C:\\Luae RPG\\editor\\diana-assets\\jrpg-test\\manifest.json', 'utf8'), '{"version":1}');
 });
