@@ -78,10 +78,21 @@
   const intro=make('p','Exemplos editáveis de personagens, mapas, fundos, efeitos e veículos instalados neste projeto.');intro.className='diana-help';host.append(intro);
   const library=make('section');library.className='diana-rtp-library-section';
   const grid=make('div');grid.className='diana-rtp-library';
-  for(const entry of catalog){const card=make('button');card.type='button';card.title=entry.label;card.className='rr-btn-secondary';
-   if(projectPath){const fs=require('fs'),path=require('path'),file=path.join(projectPath,entry.asset);if(fs.existsSync(file)){const img=make('img');img.src=RRAssetFiles.toUrl(file);img.alt='';img.width=96;img.height=64;img.style.objectFit='contain';img.style.imageRendering='pixelated';card.append(img);}}
-   card.append(make('span',entry.label));const table={hero:'actors',npc:'actors',enemy:'enemies',background:'troops',effect:'animations',vehicle:'system'}[entry.kind];card.onclick=()=>entry.kind==='map'?openMap?.(entry.database.id):openDatabase?.(table);grid.append(card);
-  }library.append(grid);host.append(library);return {catalog,grid};
+  const entries=[...catalog,...(root.DianaArtLibrary?.catalog||[])],theme=make('select'),search=make('input');theme.setAttribute('aria-label','Tema dos recursos');search.setAttribute('aria-label','Buscar recurso');search.placeholder='Buscar recurso';
+  for(const [value,label] of [['','Todos os temas'],['medieval','Medieval'],['cyberpunk','Futurista / cyberpunk']]){const option=make('option',label);option.value=value;theme.append(option);}library.append(theme,search);
+  const cards=[];
+  for(const entry of entries){const card=make('button');card.type='button';card.title=entry.label;card.className='rr-btn-secondary';
+   if(projectPath){const fs=require('fs'),path=require('path'),file=path.join(projectPath,entry.asset);if(fs.existsSync(file)){const img=make('img');img.alt='';img.width=96;img.height=80;img.style.objectFit='contain';img.style.imageRendering='pixelated';
+    const grid=entry.kind==='effect'?[5,1]:entry.kind==='hero'||entry.kind==='npc'?[entry.asset.includes('$Guardiao')?3:6,entry.asset.includes('sv_actors')?6:4]:entry.kind==='enemy'&&!entry.id.startsWith('v2-')?(entry.asset.includes('GuardiaoRaiz')?[4,4]:[6,6]):null;
+    if(grid)img.onload=()=>{const canvas=make('canvas');canvas.width=96;canvas.height=80;canvas.setAttribute('aria-hidden','true');const context=canvas.getContext('2d');if(!context)return;const w=img.naturalWidth/grid[0],h=img.naturalHeight/grid[1],scale=Math.min(96/w,80/h),frame=entry.kind==='effect'?2:0;context.imageSmoothingEnabled=false;context.drawImage(img,frame*w,0,w,h,(96-w*scale)/2,80-h*scale,w*scale,h*scale);img.style.display='none';card.prepend(canvas);};
+    img.src=RRAssetFiles.toUrl(file);card.append(img);}}
+   card.append(make('span',entry.label));const table={hero:'actors',npc:'actors',enemy:'enemies',background:'troops',effect:'animations',vehicle:'system'}[entry.kind];card.onclick=()=>{
+    if(entry.kind==='illustration'||entry.kind==='equipment'){const img=card.querySelector('img');if(!img)return;const dialog=make('dialog'),preview=make('img'),close=make('button','Fechar');preview.src=img.src;preview.alt=entry.label;preview.style.maxWidth='80vw';preview.style.maxHeight='75vh';preview.style.imageRendering='pixelated';close.onclick=()=>dialog.close();dialog.append(make('p',entry.label),preview,close);if(entry.kind==='equipment'){const edit=make('button','Editar no banco de dados');edit.onclick=()=>{dialog.close();openDatabase?.(entry.database.table.toLowerCase());};dialog.append(edit);}dialog.addEventListener('close',()=>dialog.remove());host.append(dialog);dialog.showModal();}
+    else if(entry.kind==='map')openMap?.(entry.database.id);else openDatabase?.(table);
+   };grid.append(card);cards.push({card,entry});
+  }
+  const filter=()=>{for(const {card,entry} of cards){card.hidden=!!((theme.value&&(entry.theme||'medieval')!==theme.value)||!entry.label.toLocaleLowerCase('pt-BR').includes(search.value.toLocaleLowerCase('pt-BR')));card.style.display=card.hidden?'none':'';}};theme.onchange=filter;search.oninput=filter;
+  library.append(grid);host.append(library);return {catalog:entries,grid};
  }
  function mountEditor(host,options={}){return mountFollowers(host,options);}
  root.DianaRTPExpansion={catalog,followerControls,populate,completeStarter,mountEditor,mountFollowers,mountLibrary};

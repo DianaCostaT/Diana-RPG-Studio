@@ -153,6 +153,7 @@
   populate(data,root.ReactorBattleData);addNativeMedievalRtp(data);completeStarter(data,root.ReactorBattleData);
   root.DianaVillageExpansion?.completeStarter(data,root.ReactorBattleData);
   root.DianaRTPExpansion?.completeStarter(data,root.ReactorBattleData);
+  root.DianaArtLibrary?.populate(data);
   if(root.DianaCombatModes)data['System.json'].dianaCombat||=root.DianaCombatModes.defaults();
   // Reuse the visual author's line/page contract so starter dialogue never clips.
   const author=root.DianaClassicEditor||(typeof require==='function'?require('./DianaClassicEditor.js'):null);
@@ -170,6 +171,8 @@
   for(const folder of fs.readdirSync(path.join(nativePack,'img'))){const dest=path.join(target,'img',folder);fs.mkdirSync(dest,{recursive:true});for(const name of fs.readdirSync(path.join(nativePack,'img',folder)))fs.copyFileSync(path.join(nativePack,'img',folder,name),path.join(dest,name));}
   fs.copyFileSync(path.join(nativePack,'manifest.json'),path.join(target,'diana-rtp-manifest.json'));
   fs.copyFileSync(path.join(nativePack,'LICENSE'),path.join(target,'RTP_LICENSE.txt'));
+  const artPack=path.join(manager.getRuntimePath(),'..','editor','diana-assets','art-library-v2');
+  if(fs.existsSync(artPack)){for(const folder of fs.readdirSync(path.join(artPack,'img'))){const dest=path.join(target,'img',folder);fs.mkdirSync(dest,{recursive:true});for(const name of fs.readdirSync(path.join(artPack,'img',folder)))fs.copyFileSync(path.join(artPack,'img',folder,name),path.join(dest,name));}fs.copyFileSync(path.join(artPack,'manifest.json'),path.join(target,'diana-art-library-v2-manifest.json'));fs.copyFileSync(path.join(artPack,'LICENSE'),path.join(target,'ART_LIBRARY_V2_LICENSE.txt'));fs.copyFileSync(path.join(artPack,'GENERATION.md'),path.join(target,'ART_LIBRARY_V2_GENERATION.md'));}
   const defensePack=path.join(manager.getRuntimePath(),'..','editor','diana-assets','defense');
   for(const folder of fs.readdirSync(path.join(defensePack,'img'))){const dest=path.join(target,'img',folder);fs.mkdirSync(dest,{recursive:true});for(const name of fs.readdirSync(path.join(defensePack,'img',folder)))fs.copyFileSync(path.join(defensePack,'img',folder,name),path.join(dest,name));}
   fs.copyFileSync(path.join(defensePack,'manifest.json'),path.join(target,'diana-defense-manifest.json'));

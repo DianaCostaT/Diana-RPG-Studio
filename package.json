@@ -34,6 +34,8 @@
     "smoke:classic:windows": "node scripts/smoke-classic-editor-windows.cjs",
     "assets:compile:defense": "node scripts/compile-defense-assets.cjs",
     "smoke:sprites:windows": "node scripts/smoke-sprite-repair-windows.cjs",
+    "assets:compile:library": "node scripts/compile-art-library.cjs",
+    "smoke:library:windows": "node scripts/smoke-art-library-windows.cjs",
     "package:nw:windows": "node scripts/package-windows.cjs",
     "export:nw:windows": "node scripts/export-windows.cjs",
     "audit:encoding": "node scripts/audit-encoding.cjs",

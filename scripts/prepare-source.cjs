@@ -85,7 +85,7 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
     const htmlFile = path.join(editor, 'index.html');
     const branded=brandHtml(fs.readFileSync(htmlFile, 'utf8')).replace('    <script src="src/main.js"></script>','    <script src="src/DianaTileKit.js"></script>\n    <script src="src/DianaJRPGSample.js"></script>\n    <script src="src/DianaClassicEditor.js"></script>\n    <script src="src/main.js"></script>');
-    const featureScripts=['DianaRTPExpansion.js','DianaVillageExpansion.js','DianaCombatModes.js','DianaStudio.js','DianaEventSearch.js','DianaTauriHost.js','DianaEventRecipes.js','DianaReferenceLibrary.js'];
+    const featureScripts=['DianaRTPExpansion.js','DianaArtLibrary.js','DianaVillageExpansion.js','DianaCombatModes.js','DianaStudio.js','DianaEventSearch.js','DianaTauriHost.js','DianaEventRecipes.js','DianaReferenceLibrary.js'];
     const expanded=branded.replace('    <script src="src/main.js"></script>',featureScripts.filter(name=>!branded.includes('src="src/'+name+'"')).map(name=>'    <script src="src/'+name+'"></script>').join('\n')+'\n    <script src="src/main.js"></script>');
     fs.writeFileSync(htmlFile, expanded.includes('href="src/DianaStudio.css"')?expanded:expanded.replace('</head>','    <link rel="stylesheet" href="src/DianaStudio.css">\n</head>'));
     for(const name of featureScripts)fs.copyFileSync(path.join(root,'src',name),path.join(editor,'src',name));
@@ -113,6 +113,7 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
     fs.cpSync(path.join(root,'assets','defense','pack'),path.join(editor,'diana-assets','defense'),{recursive:true});
     fs.cpSync(path.join(root,'assets','vehicles','pack'),path.join(editor,'diana-assets','vehicles'),{recursive:true});
     fs.cpSync(path.join(root,'assets','village','pack'),path.join(editor,'diana-assets','village'),{recursive:true});
+    fs.cpSync(path.join(root,'assets','art-library-v2','pack'),path.join(editor,'diana-assets','art-library-v2'),{recursive:true});
     if (fs.existsSync(path.join(root, 'LICENSE'))) fs.copyFileSync(path.join(root, 'LICENSE'), path.join(staging, 'LICENSE'));
     // Development link reuses installed dependencies; it is not a release package.
     fs.symlinkSync(dependencies, path.join(editor, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
@@ -149,6 +150,7 @@ function prepareEditor(root = path.resolve(__dirname, '..'), destination) {
         combatModesSha256: sha256(path.join(root,'src','DianaCombatModes.js')),
         jrpgAssetManifestSha256: sha256(path.join(root,'assets','jrpg-test','pack','manifest.json')),
         nativeRtpManifestSha256: sha256(path.join(root,'assets','rtp','medieval','pack','manifest.json')),
+        artLibraryManifestSha256: sha256(path.join(root,'assets','art-library-v2','pack','manifest.json')),
         defenseAssetManifestSha256: sha256(path.join(root,'assets','defense','pack','manifest.json')),
         dependencyLockSha256: sha256(path.join(upstream, 'editor', 'package-lock.json')),
         dependencies: 'Local development link to upstream/editor/node_modules; not a distributable package'
