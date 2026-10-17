@@ -10,6 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
+        "create": false,
         "title": "Luae RPG",
         "width": 1440,
         "height": 900,

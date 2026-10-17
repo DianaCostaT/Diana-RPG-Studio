@@ -1730,6 +1730,7 @@ name = "luae-rpg"
 version = "0.2.6"
 dependencies = [
  "serde",
+ "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-dialog",

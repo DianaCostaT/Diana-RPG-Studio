@@ -1,0 +1,14 @@
+diff --git a/editor/src/main.js b/editor/src/main.js
+--- a/editor/src/main.js
++++ b/editor/src/main.js
+@@ -515,7 +515,9 @@
+         // Initialize Build Manager
+         const web = window.RPGReactorHost?.mode === 'web';
+         this.buildManager = web
+-            ? { open: () => window.RPGReactorHost.unsupported(window.I18n ? window.I18n.tText('Game deployment') : 'Game deployment') }
++            ? { open: () => window.RPGReactorHost.isTauri
++                ? window.RPGReactorHost.exportProject()
++                : window.RPGReactorHost.unsupported(window.I18n ? window.I18n.tText('Game deployment') : 'Game deployment') }
+             : new BuildManager();
+ 
+         // Initialize Editor Distribution Manager

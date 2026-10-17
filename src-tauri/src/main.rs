@@ -1,5 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod standalone;
+
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
@@ -20,6 +22,17 @@ struct ProjectFile {
 
 #[derive(Default)]
 struct PlaytestProject(Mutex<Option<PathBuf>>);
+
+struct DesktopMode {
+    game: bool,
+}
+fn require_editor(mode: &DesktopMode) -> Result<(), String> {
+    if mode.game {
+        Err("Este comando pertence ao editor, não ao jogo exportado.".into())
+    } else {
+        Ok(())
+    }
+}
 
 fn encode_base64(bytes: &[u8]) -> String {
     const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -82,7 +95,9 @@ fn canonical_directory(path: &str) -> Result<PathBuf, String> {
 fn set_playtest_project(
     path: String,
     project: tauri::State<'_, PlaytestProject>,
+    mode: tauri::State<'_, DesktopMode>,
 ) -> Result<(), String> {
+    require_editor(&mode)?;
     let root = canonical_directory(&path)?;
     if ![
         "project.rpgreactor",
@@ -284,16 +299,25 @@ fn collect_files(
 }
 
 #[tauri::command]
-async fn choose_project_directory(app: tauri::AppHandle) -> Option<String> {
+async fn choose_project_directory(
+    app: tauri::AppHandle,
+    mode: tauri::State<'_, DesktopMode>,
+) -> Result<Option<String>, String> {
+    require_editor(&mode)?;
     let (send, receive) = tokio::sync::oneshot::channel();
     app.dialog().file().pick_folder(move |path| {
         let _ = send.send(path.map(|value| value.to_string()));
     });
-    receive.await.ok().flatten()
+    Ok(receive.await.ok().flatten())
 }
 
 #[tauri::command]
-fn create_project_directory(parent: String, name: String) -> Result<String, String> {
+fn create_project_directory(
+    parent: String,
+    name: String,
+    mode: tauri::State<'_, DesktopMode>,
+) -> Result<String, String> {
+    require_editor(&mode)?;
     let parent = canonical_directory(&parent)?;
     let name = name.trim();
     let reserved = [
@@ -397,7 +421,11 @@ fn read_app_resources(app: tauri::AppHandle) -> Result<Vec<ProjectFile>, String>
 }
 
 #[tauri::command]
-fn read_project_files(path: String) -> Result<Vec<String>, String> {
+fn read_project_files(
+    path: String,
+    mode: tauri::State<'_, DesktopMode>,
+) -> Result<Vec<String>, String> {
+    require_editor(&mode)?;
     let root = canonical_directory(&path)?;
     if !root.join("project.rpgreactor").is_file()
         && !root.join("game.rmmzproject").is_file()
@@ -417,7 +445,11 @@ fn read_project_files(path: String) -> Result<Vec<String>, String> {
 // only when creating a project, without bundling a second physical copy or
 // requiring the development checkout on an installed application.
 #[tauri::command]
-fn read_starter_resources(app: tauri::AppHandle) -> Result<Vec<ProjectFile>, String> {
+fn read_starter_resources(
+    app: tauri::AppHandle,
+    mode: tauri::State<'_, DesktopMode>,
+) -> Result<Vec<ProjectFile>, String> {
+    require_editor(&mode)?;
     let resolver = app.asset_resolver();
     let mut files = Vec::new();
     for (name, bytes) in resolver.iter() {
@@ -429,14 +461,22 @@ fn read_starter_resources(app: tauri::AppHandle) -> Result<Vec<ProjectFile>, Str
             });
         }
     }
-    if !files.iter().any(|file| file.path == "editor/diana-assets/jrpg-test/manifest.json") {
+    if !files
+        .iter()
+        .any(|file| file.path == "editor/diana-assets/jrpg-test/manifest.json")
+    {
         return Err("Os recursos da Clareira não foram incluídos na aplicação. Prepare e compile o editor novamente.".into());
     }
     Ok(files)
 }
 
 #[tauri::command]
-fn read_project_file(path: String, relative: String) -> Result<String, String> {
+fn read_project_file(
+    path: String,
+    relative: String,
+    mode: tauri::State<'_, DesktopMode>,
+) -> Result<String, String> {
+    require_editor(&mode)?;
     let root = canonical_directory(&path)?;
     let relative = safe_relative(&relative)?;
     let target = root.join(relative);
@@ -472,7 +512,9 @@ fn save_project_changes(
     path: String,
     files: Vec<ProjectFile>,
     deleted: Vec<String>,
+    mode: tauri::State<'_, DesktopMode>,
 ) -> Result<(), String> {
+    require_editor(&mode)?;
     let root = canonical_directory(&path)?;
     if !root.join("project.rpgreactor").is_file()
         && !files.iter().any(|file| file.path == "project.rpgreactor")
@@ -524,10 +566,54 @@ fn save_project_changes(
     Ok(())
 }
 
+#[tauri::command]
+async fn export_game(
+    project_path: String,
+    parent_path: String,
+    mode: tauri::State<'_, DesktopMode>,
+) -> Result<String, String> {
+    require_editor(&mode)?;
+    let executable = std::env::current_exe().map_err(|e| e.to_string())?;
+    tauri::async_runtime::spawn_blocking(move || {
+        standalone::export(
+            Path::new(&project_path),
+            Path::new(&parent_path),
+            &executable,
+        )
+        .map(|path| path.to_string_lossy().into_owned())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
 fn main() {
+    let executable = std::env::current_exe().expect("caminho do executável");
+    let exported = standalone::detect(&executable).expect("exportação Luae RPG válida");
+    let game_root = exported.as_ref().map(|(_, root)| root.clone());
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .manage(PlaytestProject::default())
+        .manage(PlaytestProject(Mutex::new(game_root)))
+        .manage(DesktopMode {
+            game: exported.is_some(),
+        })
+        .setup(move |app| {
+            let mut config = app.config().app.windows[0].clone();
+            let local = app.path().app_local_data_dir()?;
+            let profile = if let Some((manifest, _)) = &exported {
+                config.title = manifest.title.clone();
+                config.url = tauri::WebviewUrl::External(
+                    "http://diana-project.localhost/index.html".parse()?,
+                );
+                local.join("games").join(&manifest.game_id)
+            } else {
+                local
+            };
+            fs::create_dir_all(&profile)?;
+            tauri::WebviewWindowBuilder::from_config(app, &config)?
+                .data_directory(profile)
+                .build()?;
+            Ok(())
+        })
         .register_asynchronous_uri_scheme_protocol(
             "diana-project",
             |context, request, responder| {
@@ -547,7 +633,8 @@ fn main() {
             read_project_files,
             read_project_file,
             save_project_changes,
-            set_playtest_project
+            set_playtest_project,
+            export_game
         ])
         .run(tauri::generate_context!())
         .expect("falha ao iniciar Luae RPG Studio");

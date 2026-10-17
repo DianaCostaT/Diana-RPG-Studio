@@ -291,3 +291,26 @@ test('starter resources merge with runtime and are requested only once', async (
     assert.equal(app.host.fs.readFileSync('C:\\Luae RPG\\runtime\\reactor_main.js', 'utf8'), 'runtime');
     assert.equal(app.host.fs.readFileSync('C:\\Luae RPG\\editor\\diana-assets\\jrpg-test\\manifest.json', 'utf8'), '{"version":1}');
 });
+
+test('Tauri export persists pending changes before selecting and exporting', async () => {
+    const calls = [];
+    const app = loadHost(async (command, args) => {
+        calls.push(command);
+        if (command === 'choose_project_directory') return 'C:\\Exports';
+        if (command === 'export_game') { assert.equal(args.projectPath, 'C:\\Games\\Export'); return 'C:\\Exports\\Clareira'; }
+    });
+    app.host.projectRoot = app.host.fs._create('C:\\Games\\Export');
+    app.window.reactor = { projectController: { async saveAll() { calls.push('saveAll'); app.host.fs.writeFileSync('C:\\Games\\Export\\data.json', '{}'); return true; } } };
+    assert.equal(await app.host.exportProject(), 'C:\\Exports\\Clareira');
+    assert.deepEqual(calls, ['saveAll', 'save_project_changes', 'choose_project_directory', 'export_game']);
+});
+
+test('Tauri export cancellation and failed saving never invoke the exporter', async () => {
+    const calls = [];
+    const app = loadHost(async command => { calls.push(command); return null; });
+    app.host.projectRoot = 'C:\\Games\\Export';
+    app.window.reactor = { projectController: { saveAll: async () => false } };
+    assert.equal(await app.host.exportProject(), false); assert.deepEqual(calls, []);
+    app.window.reactor.projectController.saveAll = async () => true;
+    assert.equal(await app.host.exportProject(), false); assert.deepEqual(calls, ['choose_project_directory']);
+});

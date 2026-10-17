@@ -188,7 +188,7 @@
                 }
                 if (!root.PIXI) throw new Error('A biblioteca PixiJS do runtime não carregou.');
                 this.runtimeReady = true;
-            });
+            }).catch(error => { this.runtimePromise = null; throw error; });
             await this.runtimePromise;
         },
         async chooseProjectDirectory() { return await invoke('choose_project_directory') || null; },
@@ -208,6 +208,25 @@
             this.projectRoot = fs._mount(directory, records); return this.projectRoot;
         },
         async flush() { await fs.flush(); }, applyBrowserUi() {},
+        async unsupported(label) { await root.RRDialog.alert(`${label}: esta função ainda não foi migrada para o Tauri.`, {title:'Luae RPG',kind:'warning'}); return false; },
+        async exportProject() {
+            const app = root.reactor, controller = app?.projectController;
+            if (!this.projectRoot || !controller) return false;
+            try {
+                if (controller.saveAll && await controller.saveAll() !== true) return false;
+                await this.flush();
+                const parent = await this.chooseProjectDirectory(); if (!parent) return false;
+                app.uiManager?.updateStatus?.('Exportando jogo standalone Tauri…');
+                const destination = await invoke('export_game', {projectPath:this.projectRoot,parentPath:parent});
+                app.uiManager?.updateStatus?.('Exportação local criada: '+destination);
+                await root.RRDialog.alert(`Jogo exportado para:\n${destination}\n\nExecute LuaeGame.exe mantendo a pasta game ao lado. Requer Windows com WebView2.\n\nA revisão de licenças e avisos continua necessária antes da distribuição pública.`, {title:'Exportar jogo'});
+                return destination;
+            } catch (error) {
+                app?.uiManager?.updateStatus?.('A exportação não foi concluída.');
+                await root.RRDialog.alert(error.message || String(error), {title:'Exportar jogo',kind:'error'});
+                return false;
+            }
+        },
         async openPlaytest(mode = 'test') {
             if (!this.projectRoot) throw new Error('Abra um projeto antes de iniciar o playtest.');
             const controller = root.reactor?.projectController;

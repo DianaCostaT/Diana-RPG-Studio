@@ -13,7 +13,7 @@ const probe = spawnSync(cargo, ['--version'], { stdio: 'ignore', windowsHide: tr
 if (probe.error || probe.status !== 0) {
     throw new Error('Rust/Cargo nao encontrado. Instale a toolchain MSVC do Tauri para compilar o host.');
 }
-const result = spawnSync(cargo, ['run', '--manifest-path', path.join(root, 'src-tauri', 'Cargo.toml')], {
+const result = spawnSync(cargo, ['run', '--offline', '--manifest-path', path.join(root, 'src-tauri', 'Cargo.toml')], {
     cwd: root, stdio: 'inherit', windowsHide: false
 });
 if (result.error) throw result.error;
