@@ -1,3 +1,22 @@
+# Handoff atual — Luae RPG, 17/10/2026
+
+Fonte de verdade: [PROJECT_STATE.md](../PROJECT_STATE.md). Trabalho atual em
+[TASKS.md](../TASKS.md); não retomar listas antigas como se fossem pendências.
+Tauri é principal; NW é fallback documentado. Commits de consolidação temáticos
+autorizados pelo pedido atual. Não instalar dependências nem sobrescrever trabalho
+concorrente da biblioteca V2. Não declarar migração concluída.
+
+Implementado nesta consolidação: gravação serializada, normalização Windows/UNC,
+starter embutido, export local com o mesmo host, perfil fora de artifacts,
+auditoria UTF-8, pacote portátil Tauri e atalhos Battle Studio nativos.
+API e runtime preparado não equivalem a aceite gráfico. Exportação pública
+permanece bloqueada por licenças. A solicitação recebida termina em easing/m.
+
+## Histórico datado abaixo
+
+Resultados abaixo descrevem revisões anteriores; caminhos artifacts podem não
+existir mais. Não são instruções operacionais nem prova da revisão atual.
+
 # Handoff — 15/10/2026
 
 Base RPGReactor fixada; sete patches aplicados por prepare. Código Diana em src, patches em patches; upstream/build/tools/artifacts ignorados. Preserve todos os arquivos sem commit. Branch diana/phase-0-1. Não instalar, publicar ou fazer commit sem autorização.

@@ -2,10 +2,25 @@
   "schemaVersion": 1,
   "startedOn": "2026-10-17",
   "baselineCommit": "7db2919",
-  "status": "em andamento: auditoria inicial concluída, implementação pendente",
+  "status": "parcial: auditoria, salvamento, export local, encoding, perfil e atalhos Battle Studio implementados; validação completa Tauri pendente",
   "audit": "docs/CONSOLIDATION_AUDIT.md",
-  "priorities": ["Tauri e paridade funcional", "encoding UTF-8", "PROJECT_STATE.md e documentação", "nomes visíveis Luae RPG", "independência de artifacts", "Battle Studio compartilhado"],
+  "priorities": [
+    "Tauri e paridade funcional",
+    "encoding UTF-8",
+    "PROJECT_STATE.md e documentação",
+    "nomes visíveis Luae RPG",
+    "independência de artifacts",
+    "Battle Studio compartilhado"
+  ],
   "pendingClarification": "mensagem do Battle Studio termina em suportar easing/m; continuação solicitada",
   "commitsAuthorized": true,
-  "constraints": ["preservar RPGReactor", "Tauri principal", "NW.js como fallback justificado", "preservar projetos e arte Clareira", "não instalar dependências sem aprovação", "testes por grupo"]
+  "constraints": [
+    "preservar RPGReactor",
+    "Tauri principal",
+    "NW.js como fallback justificado",
+    "preservar projetos e arte Clareira",
+    "não instalar dependências sem aprovação",
+    "testes por grupo"
+  ],
+  "sourceOfTruth": "PROJECT_STATE.md"
 }

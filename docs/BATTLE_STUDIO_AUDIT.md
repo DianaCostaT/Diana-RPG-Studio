@@ -33,8 +33,11 @@ script, som e estado só porque o canvas do preview desenhou a pose.
 | VICTORY | motion victory / binding de estado | animação própria, não encerra batalha sozinha |
 | DEATH | motion dead / binding de estado | animação própria, não define HP sozinha |
 
-Primeiro incremento seguro: expor presets/nomes amigáveis no editor existente,
-compilando para esses mesmos passos, sem mudar arquivos ActionSequences antigos.
+Primeiro incremento implementado e testado por API: os 15 atalhos aparecem no
+grupo Battle Studio do seletor existente e criam esses mesmos passos, sem mudar
+arquivos ActionSequences antigos. Teste compara timeline/evaluate de editor e
+runtime preparados para os dois papéis, duração e simultaneidade. Inspeção
+gráfica dos atalhos e efeitos reais no jogo ainda pendentes.
 Não transformar ATTACK/DAMAGE em aliases independentes que dupliquem impact.
 Edição deve conservar preview, validação de referências e undo/redo existentes.
 
