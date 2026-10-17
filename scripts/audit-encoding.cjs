@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const { execFileSync } = require('node:child_process');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const extensions = /\.(?:json|ndjson|js|cjs|mjs|ts|tsx|jsx|rs|md|toml|html|css|yml|yaml|txt|patch|cmd|ps1|svg|xml|lock)$/i;
+const extensions = /\.(?:json|ndjson|js|cjs|mjs|ts|tsx|jsx|rs|md|toml|html|css|yml|yaml|txt|patch|cmd|bat|ps1|sh|svg|xml|lock|ini|cfg|conf|properties|csv)$/i;
 const decoder = new TextDecoder('utf-8', { fatal: true });
 const cp = new TextDecoder('windows-1252');
 const bytes = new Map(Array.from({ length: 256 }, (_, n) => [cp.decode(Uint8Array.of(n)), n]));
@@ -36,7 +36,7 @@ function findings(text, file = 'text.md') {
     return issues;
 }
 function audit({ fix = false } = {}) {
-    const files = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(file => file && (extensions.test(file) || /(?:^|\/)(?:\.gitignore|\.gitattributes)$/.test(file)));
+    const files = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(file => file && (extensions.test(file) || /(?:^|\/)(?:\.gitignore|\.gitattributes|\.editorconfig|LICENSE|NOTICE|COPYING|Makefile|Dockerfile)$/.test(file)));
     const issues = [];
     for (const file of files) {
         const target = path.join(root, file);

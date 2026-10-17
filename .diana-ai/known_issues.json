@@ -120,5 +120,8 @@
       "description": "A tecla de ação transfere para Map006 e o mapa carrega sem erros JS; smoke WebDriver observa viewport preta/fade parado e não confirma diálogos ou saídas dos interiores.",
       "evidence": "docs/VILLAGE_EXPANSION.md; artifacts/village-navigation-windows-YfIEKj/report.json"
     }
-  ]
+  ],
+  "sourceOfTruth": "PROJECT_STATE.md",
+  "updatedOn": "2026-10-17",
+  "note": "Registros históricos abaixo; confirmar estado atual na fonte central e nos testes desta revisão."
 }

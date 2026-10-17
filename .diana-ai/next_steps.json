@@ -1,55 +1,8 @@
 {
   "schemaVersion": 1,
-  "steps": [
-    {
-      "priority": 1,
-      "task": "Inspecionar visualmente a Vila da Clareira expandida no Windows",
-      "acceptance": "Criar projeto pelo editor, percorrer praça, ponte e moradores, entrar/sair da hospedaria e casa do jardineiro e confirmar por controles reais que tiles, colisões e transferências são legíveis."
-    },
-    {
-      "priority": 2,
-      "task": "Auditar alinhamento dos atlas legados e ampliar estruturas de personagens, armas e itens",
-      "acceptance": "Padronizar grade, Âncora e prévia por pose; revisar estruturas e recursos de personagens/armas/itens no editor e runtime com regressões de dados e quadros. A auditoria atual passa em 32 linhas; manter o teste em novos assets."
-    },
-    {
-      "priority": 1,
-      "task": "Aprovar cadeia de licenca para geracao do RTP MIT",
-      "acceptance": "Modelo e ferramenta de producao com licenca verificavel compativel com o RTP MIT; documentar origem, hash, termos, prompts, seeds, revisao de semelhanca e criterio de promocao antes de adicionar PNGs."
-    },
-    {
-      "priority": 1,
-      "task": "Validar Preparar combate por fluxo Windows",
-      "acceptance": "Abrir Teste de batalha, trocar grupo, fundos e heróis por controles reais; salvar/reabrir e confirmar o resumo, bloqueio de recurso ausente e Test_System.json."
-    },
-    {
-      "priority": 1,
-      "task": "Validar compositor de grade e loops BGM por fluxo Windows/auditivo",
-      "acceptance": "Criar/editar contrato de mapa e batalha por controles reais, salvar/reabrir e confirmar o loop BGM audível no intervalo configurado."
-    },
-    {
-      "priority": 1,
-      "task": "Consolidar autoria clássica após 0.2.3",
-      "acceptance": "Completar condições e seletores visuais de eventos/database, revisar HUD de batalha e filtros avançados sem regressão do fluxo Novo NPC e criação de projetos."
-    },
-    {
-      "priority": 2,
-      "task": "Comparar prévia e runtime de trajetórias, salto, efeitos, som e impactos sobrepostos",
-      "acceptance": "Aliados e inimigos com o mesmo resultado de tempo/posição; som audível e ausência de impacto duplicado."
-    },
-    {
-      "priority": 3,
-      "task": "Completar avisos de distribuição e revisão exata de dependências/recursos",
-      "acceptance": "Notices oficiais SDK completos, texto MIT @pixi/colord e revisão WASM; testar pacote em Windows limpo."
-    },
-    {
-      "priority": 4,
-      "task": "Resolver falhas upstream e dimensionamento/colisão customizados do mapa",
-      "acceptance": "Causas isoladas e contratos editor/runtime testados sem outra engine."
-    },
-    {
-      "priority": 5,
-      "task": "Formalizar Plugin SDK e comandos futuros de IA após estabilizar MVP",
-      "acceptance": "Contratos versionados, validação, aprovação e undo/redo; sem infraestrutura paga."
-    }
-  ]
+  "updatedOn": "2026-10-17",
+  "sourceOfTruth": "PROJECT_STATE.md",
+  "tasks": "TASKS.md",
+  "roadmap": "ROADMAP.md",
+  "note": "Tarefas atuais centralizadas; histórico no Git."
 }
