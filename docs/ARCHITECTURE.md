@@ -1,4 +1,4 @@
-﻿# Arquitetura Diana RPG Studio
+# Arquitetura Luae RPG
 
 Inspeção de fontes em 15/10/2026. Diana é uma integração sobre RPGReactor, não uma engine independente já reescrita. O pin em `upstream-lock.json` aponta RPGReactor 0.99.0, commit `dc918245cbf8f10ae6eef4ed8cb54b850fed9caa`. O checkout compartilhado pode receber alterações em paralelo; resultados executáveis precisam indicar o build e os patches realmente usados.
 
@@ -8,13 +8,16 @@ Inspeção de fontes em 15/10/2026. Diana é uma integração sobre RPGReactor, 
 
 ## Editor, dados e runtime
 
+> Decisão mais recente: migrar o host desktop de NW.js para Tauri. `npm start` agora aponta ao scaffold Tauri; `npm run start:nw` preserva o host antigo temporariamente. O editor ainda não foi portado das APIs Node/NW.js e os artefatos/smokes de integração ainda usam NW.js. Ver o [plano e auditoria Tauri](TAURI_MIGRATION.md).
+
 ```mermaid
 flowchart LR
-    A[Editor NW.js] --> B[Dados do projeto]
+    A[Editor WebView Tauri] --> B[Dados do projeto]
     B --> C[Runtime do jogo]
     A --> D[Prévia e playtest]
     E[Bootstrap Diana] --> A
-    F[IA planejada] --> G[Proposta e aprovação]
+    F[NW.js temporário] -. contingência .-> A
+    I[IA planejada] --> G[Proposta e aprovação]
     G --> H[Comandos validados e histórico]
     H --> A
 ```

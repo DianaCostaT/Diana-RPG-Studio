@@ -50,12 +50,134 @@ html[data-diana-mode=hybrid] #diana-advanced-tools{display:none;}
 html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=build-tool],html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=lighting-tool],html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=media-surfaces],html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar [data-action=forge-launcher]{display:none!important;}
 html[data-diana-mode="2d"]:not(.diana-advanced-tools) #toolbar .toolbar-label[data-i18n="toolbar.forge"]{display:none;}
 .diana-npc-panel textarea{font-family:'Segoe UI',sans-serif!important;line-height:1.6;}
-@media(max-width:1360px){#diana-workspace [data-diana-action=animations] .diana-button-label{display:none;}}
-@media(max-width:1360px){#diana-workspace [data-diana-action=assets] .diana-button-label,#diana-workspace [data-diana-action=parallax] .diana-button-label,#diana-workspace [data-diana-action=enemies] .diana-button-label{display:none;}}
+#diana-mode-options{position:relative;margin-left:auto;flex-shrink:0;font-size:11px;}
+#diana-mode-options>summary,.diana-project-mode-choice>summary{cursor:pointer;color:var(--color-text-muted);padding:6px 8px;border:1px solid var(--color-border-input);border-radius:4px;white-space:nowrap;}
+#diana-mode-options[open]{position:relative;}
+#diana-mode-options select{position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:190px;padding:7px;background:var(--color-bg-surface);border:1px solid var(--color-border-input);box-shadow:var(--shadow-modal);}
+.diana-project-mode-choice{margin-top:10px;padding:8px;border:1px solid var(--color-border);border-radius:5px;}
+.diana-project-mode-choice:not([open])>*:not(summary){display:none;}
+.diana-project-mode-choice label{display:block;margin:10px 0 4px;}
+.diana-project-mode-choice select{width:100%;padding:7px;}
+.diana-tactical-planned{margin:12px 0;padding:8px;border:1px solid var(--color-border);border-radius:5px;}
+.diana-tactical-planned>summary{cursor:pointer;font-weight:600;color:var(--color-text-muted);}
+.diana-resource-library-modal{width:min(920px,96vw);max-height:92vh;display:flex;flex-direction:column;}
+.diana-resource-library-modal .rr-modal-body{overflow:auto;min-height:0;}
+.diana-resource-library-modal .rr-modal-footer{display:flex;justify-content:flex-end;gap:8px;}
+.diana-rtp-library-section{margin-top:12px;}
+.diana-rtp-library{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px;}
+.diana-rtp-library>button{display:flex;min-height:112px;flex-direction:column;align-items:center;justify-content:center;gap:7px;white-space:normal;}
+.diana-rtp-library img{max-width:96px;max-height:64px;}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;}}
 .diana-grid-modal .rr-modal{width:min(760px,94vw);max-height:92vh;display:flex;flex-direction:column;}.diana-grid-modal .rr-modal-body{overflow:auto;}
 .diana-grid-controls{display:flex;gap:8px;align-items:end;flex-wrap:wrap;}.diana-grid-controls .diana-classic-field{min-width:118px;}
+.diana-grid-actions,.diana-grid-selection{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0;padding:8px 10px;border:1px solid var(--color-border);border-radius:5px;background:var(--color-bg-panel);}.diana-grid-actions>small,.diana-grid-selection>span{color:var(--color-text-muted);font-size:12px;}.diana-grid-actions button:first-child{background:var(--color-accent);color:var(--color-accent-on);font-weight:650;}
 .diana-grid-sheet{display:grid;gap:3px;margin:14px 0;overflow:auto;max-height:300px;padding:5px;background:var(--color-bg-panel);}
-.diana-grid-cell{width:42px;height:42px;padding:0;background-size:calc(var(--diana-sheet-width, 100%) * 1);background-color:var(--color-bg-button);font-size:11px;}
-.diana-grid-frames{display:flex;gap:7px;overflow:auto;list-style:none;padding:0;margin:12px 0;}.diana-grid-frames li{display:grid;grid-template-columns:36px auto auto auto;gap:3px;align-items:center;padding:5px;border:1px solid var(--color-border);background:var(--color-bg-panel);font-size:11px;}.diana-grid-frames button{padding:2px 5px;font-size:11px;}.diana-grid-thumb{image-rendering:pixelated;background:#26384a;}
+.diana-grid-cell{position:relative;width:48px;height:48px;padding:1px;background-color:var(--color-bg-button);font-size:11px;overflow:hidden;}.diana-grid-cell-thumb{display:block;width:44px;height:44px;image-rendering:pixelated;}.diana-grid-cell[data-selected=true]{outline:2px solid var(--color-accent);outline-offset:-2px;background:var(--color-bg-selected);}.diana-grid-order{position:absolute;top:2px;left:2px;display:grid;place-items:center;width:17px;height:17px;border:1px solid #f8e2b2;border-radius:50%;background:#172330eF;color:#fff;font-size:10px;font-weight:700;line-height:1;}
 .diana-grid-preview{display:block;max-width:100%;border:1px solid var(--color-border);image-rendering:pixelated;}.diana-map-grid-composer{margin-top:8px;}
+.diana-pose-single{display:grid;grid-template-columns:minmax(180px,260px) minmax(240px,1fr);align-items:center;gap:12px;max-width:760px;padding:16px;}.diana-pose-single>legend{grid-column:1/-1;}.diana-pose-single>.diana-classic-field{grid-column:1/-1;max-width:360px;}.diana-pose-focus-preview{grid-row:3/span 3;width:min(100%,320px);height:auto;aspect-ratio:16/11;background:#26384a;image-rendering:pixelated;border:1px solid var(--color-border);}.diana-pose-single>button,.diana-pose-single>small{grid-column:2;}.diana-pose-add{margin-top:14px;max-width:600px;}
+@media(max-width:600px){.diana-pose-single{grid-template-columns:1fr;}.diana-pose-focus-preview{grid-row:auto;}.diana-pose-single>button,.diana-pose-single>small{grid-column:1;}}
+.diana-pose-database{display:grid;grid-template-columns:minmax(205px,245px) minmax(0,1fr);min-height:calc(100vh - 225px);gap:12px;color:var(--color-text);}
+.diana-pose-record-rail,.diana-pose-library,.diana-pose-detail,.diana-pose-animation-panel{min-width:0;border:1px solid var(--color-border);border-radius:6px;background:var(--color-bg-panel);}
+.diana-pose-record-rail{display:flex;flex-direction:column;overflow:hidden;}
+.diana-pose-rail-head{padding:10px;border-bottom:1px solid var(--color-border);background:var(--color-bg-toolbar);}
+.diana-pose-rail-head>strong{display:block;margin-top:10px;font-size:12px;color:var(--color-text-strong);}
+.diana-pose-kind-tabs,.diana-pose-editor-tabs{display:flex;gap:4px;padding:4px;border-bottom:1px solid var(--color-border);}
+.diana-pose-kind-tabs button,.diana-pose-editor-tabs button{flex:1;min-height:32px;}
+.diana-pose-kind-tabs [aria-selected=true],.diana-pose-editor-tabs [aria-selected=true]{background:var(--color-accent)!important;color:var(--color-accent-on)!important;border-color:var(--color-accent)!important;}
+.diana-pose-record-list{display:flex;flex-direction:column;gap:3px;padding:6px;overflow:auto;}
+.diana-pose-record{display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;align-items:center;text-align:left;min-height:42px;padding:6px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--color-text);cursor:pointer;}
+.diana-pose-record:hover{background:var(--color-bg-button-hover);}
+.diana-pose-record[aria-selected=true]{background:var(--color-bg-selected);border-color:var(--color-accent);color:var(--color-text-strong);}
+.diana-pose-record-id,.diana-pose-id{font:600 11px 'Consolas',monospace;color:var(--color-accent);}
+.diana-pose-record-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;}
+.diana-pose-editor-main{min-width:0;display:flex;flex-direction:column;gap:10px;}
+.diana-pose-editor-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border:1px solid var(--color-border);border-radius:6px;background:var(--color-bg-surface);}
+.diana-pose-title{display:flex;align-items:center;gap:10px;min-width:0;}.diana-pose-title h2{margin:0;overflow:hidden;text-overflow:ellipsis;font-size:18px;color:var(--color-text-strong);}
+.diana-pose-editor-header>.diana-classic-field{grid-template-columns:auto 90px;margin:0;align-items:center;}
+.diana-pose-resource-row{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:0;}.diana-pose-resource-row legend{font-weight:600;}.diana-pose-resource-row>.diana-classic-field{min-width:190px;margin:0;}.diana-pose-graphic-name{max-width:min(32vw,340px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px;color:var(--color-text-strong);}
+.diana-pose-editor-tabs{border:1px solid var(--color-border);border-radius:6px;background:var(--color-bg-toolbar);}
+.diana-pose-authoring-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:10px;align-items:start;}
+.diana-pose-library,.diana-pose-detail,.diana-pose-animation-panel{padding:12px;}.diana-pose-library h3,.diana-pose-animation-panel h3{margin:2px 0 6px;font-size:14px;color:var(--color-text-strong);}
+.diana-pose-catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:7px;max-height:calc(100vh - 535px);min-height:220px;overflow:auto;padding:3px;}
+.diana-pose-choice{display:flex;min-height:132px;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:7px;border:1px solid var(--color-border);border-radius:5px;background:var(--color-bg-surface);color:var(--color-text);cursor:pointer;}
+.diana-pose-choice:hover{border-color:var(--color-accent);background:var(--color-bg-button-hover);}.diana-pose-choice[aria-selected=true]{border:2px solid var(--color-accent);background:var(--color-accent-tint-10);color:var(--color-text-strong);}
+.diana-pose-choice-preview{width:100px;height:92px;background:#203044;border:1px solid var(--color-border);image-rendering:pixelated;}.diana-pose-choice-name{font-size:11px;font-weight:600;text-align:center;line-height:1.25;}
+.diana-pose-detail-card{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,1fr);gap:8px;align-items:center;margin:0;padding:10px;}.diana-pose-detail-card legend{grid-column:1/-1;font-weight:600;color:var(--color-text-strong);}.diana-pose-focus-preview{grid-row:span 3;width:100%;max-width:320px;height:auto;aspect-ratio:16/11;background:#203044;border:1px solid var(--color-border);image-rendering:pixelated;}
+.diana-pose-detail-card>.diana-classic-field{grid-column:2;grid-template-columns:minmax(76px,1fr) minmax(90px,1fr);margin:2px 0;}.diana-pose-detail-card>button,.diana-pose-detail-card>small{grid-column:2;}.diana-pose-detail-card>small{font-size:10px;color:var(--color-text-muted);}.diana-pose-add-row{display:flex;gap:6px;margin-top:9px;}.diana-pose-add-row input{min-width:0;flex:1;}
+.diana-pose-animation-panel{min-height:280px;}.diana-pose-animation-panel>button{margin:8px 6px 10px 0;}.diana-pose-animation-list{display:grid;gap:5px;margin-top:12px;}.diana-pose-animation-row{display:grid;grid-template-columns:minmax(100px,1fr) auto auto auto;gap:12px;align-items:center;padding:9px;border:1px solid var(--color-border);border-radius:4px;background:var(--color-bg-surface);font-size:11px;}.diana-pose-animation-row strong{color:var(--color-text-strong);}.diana-pose-animation-row span{color:var(--color-text-muted);}
+@media(max-width:900px){.diana-pose-database{grid-template-columns:190px minmax(0,1fr);}.diana-pose-authoring-layout{grid-template-columns:1fr;}.diana-pose-detail-card{grid-template-columns:150px minmax(0,1fr);}.diana-pose-focus-preview{grid-row:span 3;}}
+@media(max-width:600px){.diana-pose-database{grid-template-columns:1fr;}.diana-pose-record-rail{max-height:220px;}.diana-pose-record-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}.diana-pose-catalog{max-height:none;}.diana-pose-detail-card{grid-template-columns:1fr;}.diana-pose-focus-preview{grid-row:auto;max-width:none;}.diana-pose-detail-card>.diana-classic-field,.diana-pose-detail-card>button,.diana-pose-detail-card>small{grid-column:1;}.diana-pose-animation-row{grid-template-columns:1fr 1fr;}}
+.diana-screen-columns{display:grid;grid-template-columns:minmax(270px,.58fr) minmax(0,1fr);gap:12px;align-items:start;}.diana-screen-group{margin:0 0 10px;padding:10px;border:1px solid var(--color-border);border-radius:6px;background:var(--color-bg-panel);}.diana-screen-group legend{padding:0 5px;font-weight:600;color:var(--color-text-strong);}
+.diana-battle-preview-controls{display:flex;gap:7px;align-items:end;flex-wrap:wrap;margin:0 0 8px;}.diana-battle-preview-controls>.diana-classic-field{flex:1;min-width:120px;margin:0;}.diana-battle-preview-controls>.rr-btn-secondary{min-height:32px;}
+.diana-battle-composition{display:block;width:100%;height:auto;max-height:68vh;aspect-ratio:25/18;object-fit:contain;border:1px solid var(--color-border-input);border-radius:5px;background:#182538;image-rendering:pixelated;touch-action:none;}
+.diana-position-row{display:grid;grid-template-columns:30px 1fr 1fr;gap:6px;align-items:center;margin:4px 0;}.diana-position-row .diana-classic-field{grid-template-columns:28px minmax(0,1fr);gap:3px;margin:0;}.diana-position-row .diana-classic-field input{width:100%;min-width:0;box-sizing:border-box;}
+@media(max-width:900px){.diana-screen-columns{grid-template-columns:1fr;}}
+
+/* Diana battle database: compact, numbered records and a classic pose detail sheet. */
+.diana-maker-button{min-height:32px;padding:6px 11px;border:1px solid #718198;border-radius:3px;background:linear-gradient(#40546d,#2d3c50);color:#f5f0e3;font:600 12px 'Segoe UI',sans-serif;box-shadow:inset 0 1px rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.18);cursor:pointer;}
+.diana-maker-button:hover{border-color:#e3c27b;background:linear-gradient(#536883,#36495f);}
+.diana-maker-button:focus-visible{outline:2px solid #f2ce7b;outline-offset:1px;}
+.diana-pose-authoring-layout{grid-template-columns:minmax(220px,270px) minmax(0,1fr);align-items:stretch;}
+.diana-pose-library{display:flex;min-height:430px;max-height:calc(100vh - 390px);flex-direction:column;gap:8px;}
+.diana-pose-list-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.diana-pose-list-heading h3{margin:0;}
+.diana-pose-count{display:grid;min-width:28px;height:24px;place-items:center;border:1px solid #88764f;border-radius:3px;background:#3b3b36;color:#f1d793;font:600 12px Consolas,monospace;}
+.diana-pose-list{display:flex;min-height:0;flex:1;flex-direction:column;gap:3px;overflow:auto;padding:2px;}
+.diana-pose-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:7px;min-height:37px;padding:4px 7px;border:1px solid transparent;border-radius:3px;background:transparent;color:var(--color-text);text-align:left;cursor:pointer;}
+.diana-pose-row:hover{border-color:#697b8f;background:#29394c;}
+.diana-pose-row[aria-selected=true]{border-color:#d1ad65;background:linear-gradient(90deg,#4a4b43,#303b49);color:#fff1c9;box-shadow:inset 3px 0 #e2c47f;}
+.diana-pose-row-number{color:#c9b47e;font:600 11px Consolas,monospace;}
+.diana-pose-row-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600;}
+.diana-pose-row-mark{padding:2px 4px;border:1px solid #718c78;border-radius:2px;color:#b9d2b7;font-size:9px;}
+.diana-pose-add-row{margin-top:auto;}
+.diana-pose-detail{display:flex;align-items:stretch;}
+.diana-pose-detail-card{width:100%;grid-template-columns:minmax(240px,.9fr) minmax(250px,1.1fr);align-content:start;gap:10px;padding:14px;}
+.diana-pose-detail-card legend{padding:0 8px;font-size:15px;}
+.diana-pose-detail-card .diana-pose-focus-preview{grid-column:1;grid-row:2/span 5;width:100%;max-width:380px;aspect-ratio:18/12;background:radial-gradient(ellipse at 50% 88%,#455d55 0,#26384a 62%,#1c2c3d 100%);border-color:#8794a0;}
+.diana-pose-selected-info{display:flex;flex-direction:column;gap:4px;padding:9px 10px;border:1px solid var(--color-border);border-radius:3px;background:var(--color-bg-surface);}
+.diana-pose-selected-info strong{font-size:12px;color:var(--color-text-strong);}
+.diana-pose-detail-card>.diana-pose-selected-info,.diana-pose-detail-card>.diana-maker-button,.diana-pose-detail-card>.diana-classic-field,.diana-pose-detail-card>small{grid-column:2;}
+.diana-pose-detail-card>.diana-maker-button{justify-self:start;min-width:190px;}
+.diana-pose-detail-card>.diana-classic-field{grid-template-columns:minmax(90px,1fr) minmax(90px,1fr);}
+.diana-welcome-village{width:100%;text-align:left;border-color:#a58a58!important;background:linear-gradient(115deg,rgba(102,132,103,.22),rgba(41,56,70,.92) 54%,rgba(69,80,71,.72))!important;box-shadow:inset 4px 0 #d1ad65!important;}
+.diana-welcome-village h2{color:#f0d18a!important;}
+.diana-welcome-village p{margin:0 0 8px;color:var(--color-text-strong);line-height:1.5;}
+.diana-welcome-village small{color:var(--color-text-muted);}
+@media(max-width:900px){.diana-pose-library{max-height:none;min-height:320px;}.diana-pose-authoring-layout{grid-template-columns:230px minmax(0,1fr);}.diana-pose-detail-card{grid-template-columns:1fr;}.diana-pose-detail-card .diana-pose-focus-preview{grid-column:1;grid-row:auto;max-width:100%;}.diana-pose-detail-card>.diana-pose-selected-info,.diana-pose-detail-card>.diana-maker-button,.diana-pose-detail-card>.diana-classic-field,.diana-pose-detail-card>small{grid-column:1;}}
+@media(max-width:600px){.diana-pose-authoring-layout{grid-template-columns:1fr;}.diana-pose-library{min-height:230px;max-height:380px;}.diana-pose-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;}.diana-pose-detail-card{grid-template-columns:1fr;}}
+
+/* Pose workbench: larger sprite reading, clear hierarchy, and precise alignment feedback. */
+.diana-grid-modal .rr-modal{width:min(1080px,96vw);}
+.diana-grid-actions{align-items:stretch;padding:10px;background:linear-gradient(125deg,var(--color-bg-panel),var(--color-bg-surface));}
+.diana-grid-diagnostics{display:flex;flex:1 1 100%;gap:7px;align-items:center;flex-wrap:wrap;padding:2px 0 7px;color:var(--color-text-muted);font-size:11px;}
+.diana-grid-diagnostics strong{margin-right:7px;color:var(--color-text-strong);font-size:13px;}
+.diana-grid-diagnostics span{padding:4px 7px;border:1px solid var(--color-border);border-radius:99px;background:var(--color-bg-toolbar);font-variant-numeric:tabular-nums;}
+.diana-grid-actions .diana-grid-result{flex:1 1 100%;padding-top:3px;color:var(--color-text-strong);}
+.diana-grid-sheet{grid-template-columns:repeat(auto-fit,64px);justify-content:start;gap:6px;max-height:390px;padding:8px;border:1px solid var(--color-border);border-radius:8px;background-color:#172330;background-image:linear-gradient(45deg,#202f3e 25%,transparent 25%),linear-gradient(-45deg,#202f3e 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#202f3e 75%),linear-gradient(-45deg,transparent 75%,#202f3e 75%);background-position:0 0,0 8px,8px -8px,-8px 0;background-size:16px 16px;}
+.diana-grid-cell{width:64px;height:64px;border:1px solid #536579;border-radius:5px;background:rgba(27,40,54,.78);transition:border-color .12s,transform .12s,box-shadow .12s;}
+.diana-grid-cell:hover{z-index:1;transform:scale(1.04);border-color:#f0d18a;box-shadow:0 3px 12px #0008;}
+.diana-grid-cell-thumb{width:60px;height:60px;}
+.diana-grid-cell[data-selected=true]{outline:2px solid #efcd84;outline-offset:1px;box-shadow:0 0 0 3px #efcd8433;}
+.diana-grid-preview{width:min(100%,576px);max-height:50vh;margin:12px auto 4px;border:1px solid #77889a;border-radius:8px;background:#1a2939;box-shadow:0 10px 28px #0005;}
+.diana-pose-database{gap:14px;}
+.diana-pose-record-rail,.diana-pose-library,.diana-pose-detail,.diana-pose-animation-panel{border-color:color-mix(in srgb,var(--color-border) 72%,#d1ad65);box-shadow:0 5px 16px #0002;}
+.diana-pose-rail-head{background:linear-gradient(120deg,var(--color-bg-toolbar),color-mix(in srgb,var(--color-bg-toolbar) 68%,#b18e55));}
+.diana-pose-editor-header{min-height:48px;background:linear-gradient(100deg,var(--color-bg-surface),color-mix(in srgb,var(--color-bg-surface) 78%,#c5a767));}
+.diana-pose-editor-tabs{border-radius:8px;background:var(--color-bg-toolbar);}
+.diana-pose-kind-tabs [aria-selected=true],.diana-pose-editor-tabs [aria-selected=true]{box-shadow:inset 0 1px #ffffff55,0 2px 5px #0003;}
+.diana-pose-row{min-height:43px;border-radius:6px;}
+.diana-pose-row[aria-selected=true]{box-shadow:inset 3px 0 #f1ce87,0 2px 7px #0003;}
+.diana-pose-detail-card{gap:12px;border-color:#8a7958;border-radius:9px;background:linear-gradient(145deg,var(--color-bg-panel),color-mix(in srgb,var(--color-bg-panel) 86%,#c69a4c));box-shadow:inset 0 1px #ffffff12,0 7px 18px #0002;}
+.diana-pose-detail-card legend{padding:4px 10px;border:1px solid #79684b;border-radius:99px;background:var(--color-bg-toolbar);}
+.diana-pose-detail-card .diana-pose-focus-preview{max-width:440px;border:1px solid #9a8968;border-radius:8px;background-color:#233244;background-image:linear-gradient(45deg,#2d4051 25%,transparent 25%),linear-gradient(-45deg,#2d4051 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#2d4051 75%),linear-gradient(-45deg,transparent 75%,#2d4051 75%);background-position:0 0,0 9px,9px -9px,-9px 0;background-size:18px 18px;box-shadow:inset 0 -26px 48px #0a111a55;}
+.diana-pose-selected-info{border-radius:7px;background:linear-gradient(110deg,var(--color-bg-surface),color-mix(in srgb,var(--color-bg-surface) 84%,#d1ad65));}
+.diana-pose-animation-row{min-height:46px;border-radius:7px;}
+.diana-repair-modal .rr-modal{width:min(1120px,96vw);max-height:94vh;display:flex;flex-direction:column;padding:16px;}
+.diana-repair-modal .rr-modal-body{overflow:auto;display:flex;flex-direction:column;gap:12px;}
+.diana-repair-modal .diana-grid-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;}
+.diana-repair-modal label{display:flex;flex-direction:column;gap:4px;font-size:12px;}
+.diana-repair-modal input[type=number]{width:110px;padding:6px;}
+.diana-repair-inspection{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.diana-repair-inspection canvas{max-width:100%;border:1px solid #8a7958;background-color:#213244;background-image:repeating-conic-gradient(#293e51 0% 25%,transparent 0% 50%);background-size:16px 16px;image-rendering:pixelated;}
+.diana-repair-modal [data-selected=true]{outline:2px solid #ffe09a;}
+.diana-repair-modal .rr-modal-footer{display:flex;justify-content:flex-end;gap:12px;}

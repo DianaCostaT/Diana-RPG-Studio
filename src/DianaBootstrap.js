@@ -11,9 +11,9 @@
     };
     const translate = I18nManager.prototype.t;
     I18nManager.prototype.t = function (key, ...args) {
-        const labels={'app.title':'Diana RPG Studio','menu.about':'Sobre o Diana','about.title':'Sobre o Diana RPG Studio','about.version':'Diana RPG Studio 0.2.6','about.description':'Crie JRPGs com mapas, personagens, eventos e combate editáveis.','about.compatibility':'Versão local em desenvolvimento. Licenças e avisos de terceiros acompanham o aplicativo.'};
+        const labels={'app.title':'Luae RPG','menu.about':'Sobre o Luae RPG','about.title':'Sobre o Luae RPG','about.version':'Luae RPG 0.2.6','about.description':'Crie JRPGs com mapas, personagens, eventos e combate editáveis.','about.compatibility':'Versão local em desenvolvimento. Licenças e avisos de terceiros acompanham o aplicativo.'};
         if(Object.prototype.hasOwnProperty.call(labels,key))return labels[key];
-        const value=translate.call(this,key,...args);return typeof value==='string'?value.replace(/RPG Reactor/g,'Diana RPG Studio'):value;
+        const value=translate.call(this,key,...args);return typeof value==='string'?value.replace(/RPG Reactor/g,'Luae RPG'):value;
     };
     if (typeof window !== 'undefined' && window.I18n) window.I18n.language = window.I18n._readSavedLanguage();
     ProjectManager.prototype.getTemplateProjectPath = function () { return null; };
@@ -60,20 +60,28 @@
     };
     document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.lang = 'pt-BR';
-        document.title = 'Diana RPG Studio';
+        document.title = 'Luae RPG';
         if (typeof RPGReactor !== 'undefined' && typeof DianaProjectValidation !== 'undefined') {
             const play = RPGReactor.prototype.playtest;
             RPGReactor.prototype.playtest = async function (...args) {
                 if (this.projectController.getCurrentProject()) {
                     const errors = DianaProjectValidation.validate(this.databaseManager.data);
+                    errors.push(...DianaProjectValidation.validateReferences(this.databaseManager.data));
                     const project=this.projectController.getCurrentProject(),manager=this.projectManager;
                     if (typeof RRAssetFiles !== 'undefined' && manager?.path) {
-                        errors.push(...DianaProjectValidation.validateAssets(this.databaseManager.data,
-                            this.projectController.tilemapManager?.currentMap,
+                        const current=this.projectController.tilemapManager?.currentMap;
+                        const maps=[];
+                        for(const entry of project?.maps||[]){if(!entry)continue;const id=Number(entry.id);if(current?.id===id){maps.push(current);continue;}
+                            try{const file=manager.path.join(project.path,'data',`Map${String(id).padStart(3,'0')}.json`);maps.push(JSON.parse(manager.fs.readFileSync(file,'utf8')));}
+                            catch{errors.push('NÃ£o foi possÃ­vel verificar o mapa #'+id+'; abra e salve o mapa ou confira o arquivo de dados.');}
+                        }
+                        if(!maps.length&&current)maps.push(current);
+                        errors.push(...DianaProjectValidation.validateAssets(this.databaseManager.data,maps,
                             (folder,name)=>!!RRAssetFiles.findImage(manager.path.join(project.path,'img',folder),name)));
                     }
-                    if (errors.length) {
-                        const message = 'Corrija estes dados antes de testar o jogo:\n\n' + errors.join('\n');
+                    const uniqueErrors=[...new Set(errors)];
+                    if (uniqueErrors.length) {
+                        const message = 'Corrija estes dados antes de testar o jogo:\n\n' + uniqueErrors.join('\n');
                         this.uiManager.updateStatus('Teste cancelado: dados essenciais incompletos.');
                         await RRDialog.alert(message, {title:'Verificar projeto',kind:'warning'});
                         return false;

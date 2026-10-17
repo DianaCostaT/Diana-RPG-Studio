@@ -4,11 +4,11 @@ Estado em 15/10/2026: **implementado e testado para validação local; distribui
 
 ## Uso
 
-Versão local pronta: `dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe`. O launcher C#
+Versão atual: `dist/Luae-RPG-Windows-0.2.6-20261016-r2/Luae RPG.exe`. O launcher C#
 original em `src/windows/DianaLauncher.cs` é compilado pelo .NET Framework local,
 sem instalação, e inicia o NW.js com caminhos absolutos, diretório correto e perfil
 local. É um executável de janela, sem terminal. Mantenha `nw.exe`, DLLs e `app`
-ao lado dele; não é um binário único autocontido. `Diana.cmd` permanece alternativo.
+ao lado dele; não é um binário único autocontido. `Luae RPG.cmd` permanece alternativo.
 
 `scripts/smoke-ready-windows.cjs` passou contra essa pasta: criação/salvamento,
 runtime e dependências resolvidos dentro do pacote, barra Diana e alternância de
@@ -24,7 +24,7 @@ node scripts/export-windows.cjs --project "C:/meus-projetos/Meu jogo" --out arti
 node scripts/smoke-package-windows.cjs
 ```
 
-`--prepared` seleciona outro staging preparado; `--sdk` seleciona outra pasta local do SDK. Use destinos novos: scripts recusam sobrescrita e sobreposição com origens. Execute `Diana.cmd` ou `Jogar.cmd` dentro do pacote; ambos usam caminhos relativos e perfil local. O smoke lança os mesmos executáveis e diretórios via WebDriver, sem testar o duplo clique dos arquivos CMD.
+`--prepared` seleciona outro staging preparado; `--sdk` seleciona outra pasta local do SDK. Use destinos novos: scripts recusam sobrescrita e sobreposição com origens. Execute `Luae RPG.cmd` ou `Jogar.cmd` dentro do pacote; ambos usam caminhos relativos e perfil local. O smoke lança os mesmos executáveis e diretórios via WebDriver, sem testar o duplo clique dos arquivos CMD.
 
 O pacote editor contém `app/editor`, `app/runtime`, licenças Diana/RPGReactor, notices upstream e dependências de produção copiadas fisicamente. O link de desenvolvimento `node_modules` é resolvido apenas na origem; links internos são recusados. O pacote inclui 17 dependências, respectivos textos disponíveis e código; o patch de preparação remove `lamejs` e o transitivo exclusivo `use-strict` do manifest e lockfile, e o empacotador recusa manifests que ainda declarem `lamejs`. Dependências exclusivas de desenvolvimento, testes, scripts de build, chromedriver e nwjc também ficam fora. O runtime mantém o `ffmpeg.dll` original da pasta SDK, identificado por SHA-256; não aplica overlay nem promete codecs proprietários. A integridade do arquivo ZIP registrada em `tools-lock.json` não certifica por si só toda a árvore extraída.
 
@@ -44,12 +44,12 @@ Cada pacote contém `diana-package.json`: inventário por arquivo com tamanho/SH
 
 ## Pendências de distribuição
 
-**Bloqueado:** o SDK existente contém `credits.html` de 401 bytes com “This is sample credits page” e `generate_about_credits=true`, sem licença completa NW.js/Chromium/Node local. O arquivo original acompanha ambos os pacotes, mas não cumpre o requisito de notices oficiais completos. Nenhum texto foi inventado nem buscado por download.
+**Bloqueado:** o SDK existente contém `credits.html` de 401 bytes com “This is sample credits page” e `generate_about_credits=true`. Verifiquei o binário exato NW.js 0.118.0 com WebDriver: `chrome://credits` também mostra o placeholder (165 caracteres de texto), logo os avisos completos NW.js/Chromium/Node não estão disponíveis nesse runtime. O empacotador registra esta evidência e mantém `distributionStatus: blocked-license-review`; o placeholder sozinho não é aviso suficiente. O [Chromium gera a página completa de créditos durante o build](https://chromium.googlesource.com/chromium/src/+/cd1a830ea08c7a13d3690ad8bf77ee6bd0d7c794/docs/adding_to_third_party.md), e o [NW.js pede redistribuir os arquivos do runtime](https://github.com/nwjs/nw.js/blob/main/docs/For%20Users/Package%20and%20Distribute.md), exceto ferramentas do SDK.
 
-**Bloqueado:** `@pixi/colord` 2.9.6 declara MIT, mas não contém texto de licença no pacote instalado. `gif.js` 0.2.0 contém MIT completo no README, que é preservado e inventariado. WASM/decoders e terceiros embutidos ainda requerem revisão da cadeia exata. Todos os manifests marcam `distributionStatus: blocked-license-review`; resolver esses pontos antes de publicar. A rotina oferece pacote local para revisão, sem promover seu conteúdo a distribuição liberada.
+**Resolvido no pacote de editor:** `@pixi/colord` 2.9.6 declara MIT, mas o tarball instalado não traz o texto. `licenses/pixi-colord-MIT.txt` agora fornece o aviso correspondente ao autor/ano e o empacotador o acrescenta ao pacote e inventário. `gif.js` 0.2.0 contém MIT completo no README, que é preservado e inventariado. WASM/decoders e terceiros embutidos ainda requerem revisão da cadeia exata. Todos os manifests continuam com `distributionStatus: blocked-license-review`; essa correção não libera publicação.
 
 **Resolvido no editor Diana preparado:** MP3 não é oferecido pelo AudioExport, `lamejs` é removido do manifest/lockfile através de patch versionado e o empacotador falha se a dependência reaparecer. A discrepância do tarball permanece apenas como evidência histórica upstream na auditoria. Reprepare antes de gerar um pacote atualizado.
 
 ## Prévia local da Clareira — 16/10/2026
 
-O executável de revisão é `dist/Diana-RPG-Studio-Clareira-preview-2026-10-16/Diana.exe`. Mantenha toda a pasta do pacote ao lado de `Diana.exe`; este é um bundle local de revisão, não um binário único nem uma liberação pública. `node scripts/smoke-ready-windows.cjs dist/Diana-RPG-Studio-Clareira-preview-2026-10-16` passou. Capturas reais do editor, do mapa, dos comandos de batalha e de um golpe ficam em `artifacts/clareira-restaurada-5z8mlD/`.
+O executável de revisão é `dist/Diana-RPG-Studio-Clareira-preview-2026-10-16/Diana.exe`. Mantenha toda a pasta do pacote ao lado de `Luae RPG.exe`; este é um bundle local de revisão, não um binário único nem uma liberação pública. `node scripts/smoke-ready-windows.cjs dist/Diana-RPG-Studio-Clareira-preview-2026-10-16` passou. Capturas reais do editor, do mapa, dos comandos de batalha e de um golpe ficam em `artifacts/clareira-restaurada-5z8mlD/`.

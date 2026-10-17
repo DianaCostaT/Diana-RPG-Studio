@@ -1,13 +1,15 @@
 /* Default editable village. Reuses native map, event and animation contracts. */
 (function(root){
  'use strict';
+ const walkRows=[[2,0],[4,6],[6,12],[8,18]];
+ const walkAnimation=(frames,speed)=>({frames,directions:Object.fromEntries(walkRows.map(([direction,offset])=>[String(direction),frames.map(cell=>offset+cell)])),speed,loop:true});
  function populate(data,B){
-  const system=data['System.json'];Object.assign(system,{gameTitle:'Vila da Clareira',tileSize:32,startMapId:1,startX:16,startY:20,optSideView:true,dianaSpriteAnimations:{version:1,characters:{'$Liora':{columns:6,rows:4,anchor:{x:.5,y:1},animations:{walk:{frames:[2,1,0,5,4,3],speed:6,loop:true}}}}}});
-  for(const name of ['Mira','Orin','Nila','Ivo'])system.dianaSpriteAnimations.characters['$'+name]={columns:6,rows:4,anchor:{x:.5,y:1},animations:{walk:{frames:[0,1,2,3,4,5],speed:8,loop:true}}};
+  const system=data['System.json'];Object.assign(system,{gameTitle:'Vila da Clareira',tileSize:32,startMapId:1,startX:16,startY:20,optSideView:true,dianaSpriteAnimations:{version:1,characters:{'$Liora':{columns:6,rows:4,anchor:{x:.5,y:1},animations:{walk:walkAnimation([2,1,0,5,4,3],8)}}}}});
+  for(const name of ['Mira','Orin','Nila','Ivo'])system.dianaSpriteAnimations.characters['$'+name]={columns:6,rows:4,anchor:{x:.5,y:1},animations:{walk:walkAnimation([0,1,2,3,4,5],8)}};
   Object.assign(data['Actors.json'][1],{name:'Liora',nickname:'Viajante da Clareira',profile:'Uma viajante que escuta as histórias da floresta.',characterName:'$Liora',faceName:'ClareiraRostos',faceIndex:0});
   Object.assign(data['Enemies.json'][1],{name:'Guardião de Musgo',params:[180,0,8,10,8,8,8,8],exp:20});
   Object.assign(data['Troops.json'][1],{name:'Guardião da Clareira',members:[{enemyId:1,x:250,y:380,hidden:false}]});
-  const map=data['Map001.json'];Object.assign(map,{id:1,displayName:'Vila da Clareira',parallaxName:'',parallaxShow:false,parallaxLoopX:false,parallaxLoopY:false,battleback1Name:'BosqueClareira',battleback2Name:'',specifyBattleback:true});
+  const map=data['Map001.json'];Object.assign(map,{id:1,displayName:'Vila da Clareira',parallaxName:'',parallaxShow:false,parallaxLoopX:false,parallaxLoopY:false,battleback1Name:'PracaClareira',battleback2Name:'',specifyBattleback:true});
   const npc=map.events[1];Object.assign(npc,{name:'Guardião da Clareira',x:18,y:25});const page=npc.pages[0];page.image.characterName='$Guardiao';page.image.direction=8;page.directionFix=true;
   page.list=[{code:101,indent:0,parameters:['ClareiraRostos',5,0,2]},{code:401,indent:0,parameters:['Bem-vinda, Liora.']},{code:401,indent:0,parameters:['A floresta guarda muitas histórias.']},{code:401,indent:0,parameters:['Vamos treinar suas novas poses?']},{code:301,indent:0,parameters:[0,1,true,true]},{code:0,indent:0,parameters:[]}];
   data['MapInfos.json'][1]={...data['MapInfos.json'][1],id:1,name:'Vila da Clareira',order:1};
@@ -72,13 +74,15 @@
  }
  function addNativeMedievalRtp(data){
   const characters=data['System.json']?.dianaSpriteAnimations?.characters;
-  if(characters)characters.$Brann={columns:6,rows:4,anchor:{x:.5,y:1},animations:{walk:{frames:[0,1,2,3,4,5],speed:8,loop:true}}};
+  if(characters)characters.$Brann={columns:6,rows:4,anchor:{x:.5,y:1},animations:{walk:walkAnimation([2,0,1,5,3,4],8)}};
   const add=(key,value)=>{if(Array.isArray(data[key]))data[key][value.id]=value;};
-  add('Actors.json',{id:2,name:'Brann',nickname:'Escudeiro do Vale',classId:1,initialLevel:1,maxLevel:99,profile:'Um defensor paciente da Vila da Clareira.',characterName:'$Brann',characterIndex:0,faceName:'',faceIndex:0,battlerName:'BrannMedieval',equips:[0,0,0,0,0],traits:[],note:'[DianaRTP:Medieval]'});
+  add('Actors.json',{id:2,name:'Brann',nickname:'Escudeiro do Vale',classId:1,initialLevel:1,maxLevel:99,profile:'Um defensor paciente da Vila da Clareira.',characterName:'$Brann',characterIndex:0,faceName:'ClareiraRostos',faceIndex:6,battlerName:'BrannMedieval',equips:[0,0,0,0,0],traits:[],note:'[DianaRTP:Medieval]'});
   add('Enemies.json',{id:2,name:'Lobo Cinzento',battlerName:'LoboCinza',battlerHue:0,params:[95,0,16,9,8,8,16,8],exp:16,gold:7,dropItems:[],actions:[{skillId:1,conditionType:0,conditionParam1:0,conditionParam2:0,rating:5}],traits:[],note:'[DianaRTP:Medieval]'});
   add('Enemies.json',{id:3,name:'Musgo Vivo',battlerName:'MusgoVivo',battlerHue:0,params:[120,0,12,16,12,14,7,8],exp:20,gold:9,dropItems:[],actions:[{skillId:3,conditionType:0,conditionParam1:0,conditionParam2:0,rating:5}],traits:[],note:'[DianaRTP:Medieval]'});
   add('Enemies.json',{id:4,name:'Bruxa Cinzenta',battlerName:'BruxaCinza',battlerHue:0,params:[105,40,10,8,23,18,12,14],exp:30,gold:16,dropItems:[],actions:[{skillId:7,conditionType:0,conditionParam1:0,conditionParam2:0,rating:5}],traits:[],note:'[DianaRTP:Medieval]'});
+  add('Enemies.json',{id:5,name:'Guardião da Raiz Antiga',battlerName:'GuardiaoRaiz',battlerHue:0,params:[260,35,22,24,16,20,10,12],exp:52,gold:28,dropItems:[{kind:1,dataId:1, denominator:3}],actions:[{skillId:3,conditionType:0,conditionParam1:0,conditionParam2:0,rating:5}],traits:[],note:'[DianaRTP:Medieval]'});
   add('Troops.json',{id:2,name:'Fauna da Clareira',members:[{enemyId:2,x:300,y:350,hidden:false}],pages:[],note:'[DianaRTP:Medieval]'});
+  add('Troops.json',{id:5,name:'Vigia da Raiz',members:[{enemyId:5,x:520,y:340,hidden:false}],pages:[],note:'[DianaRTP:Medieval]'});
   for(const actor of [data['Actors.json'][2],...data['Enemies.json'].slice(2)])if(actor)actor.traits=[{code:22,dataId:0,value:1}];
   const skill=(id,name,animationId,formula,note)=>({id,name,iconIndex:id,description:'Técnica nativa Medieval.',stypeId:1,scope:1,occasion:1,mpCost:4,tpCost:0,tpGain:0,hitType:2,animationId,speed:0,successRate:100,repeats:1,requiredWtypeId1:0,requiredWtypeId2:0,messageType:1,message1:'',message2:'',effects:[],damage:{type:1,elementId:0,formula,variance:10,critical:false},note});
   add('Skills.json',skill(3,'Corte de Carvalho',1,'Math.max(1,a.atk*2-b.def)','[DianaEffect:EfeitoCorte]'));
@@ -109,6 +113,7 @@
   // Preserve Liora's illustrated poses and sequence; RTP adds alternatives only.
   settings.actors[2]={graphic:nativeGraphic('BrannMedieval','sv_actors')};
   for(const [id,name] of [[2,'LoboCinza'],[3,'MusgoVivo'],[4,'BruxaCinza']])settings.enemies[id]={graphic:nativeGraphic(name,'enemies')};
+  settings.enemies[5]={graphic:{mode:'static',name:'GuardiaoRaiz',folder:'enemies',scale:1,spriteAnimation:{version:1,columns:4,rows:4,anchor:{x:.5,y:1},animations:{idle:{frames:[0,1,2,3],speed:10,loop:true},attack:{frames:[4,5,6,7],speed:6,loop:false},damage:{frames:[8,9,10,11],speed:8,loop:false},guard:{frames:[12,13,14,15],speed:10,loop:true}}},motions:{input:{pose:'idle'},ready:{pose:'idle'},wait:{pose:'idle'},moving:{pose:'idle'},attack:{pose:'attack'},punch:{pose:'attack'},swing:{pose:'attack'},thrust:{pose:'attack'},missile:{pose:'attack'},skill:{pose:'attack'},item:{pose:'attack'},damage:{pose:'damage'},guard:{pose:'guard'},dead:{pose:'damage'},dying:{pose:'damage'}}}};
   settings.skills={...(settings.skills||{}),3:{effect:{name:'EfeitoCorte',folder:'animations',columns:5,rows:1}},4:{effect:{name:'EfeitoFogo',folder:'animations',columns:5,rows:1}},5:{effect:{name:'EfeitoAgua',folder:'animations',columns:5,rows:1}},6:{effect:{name:'EfeitoGelo',folder:'animations',columns:5,rows:1}},7:{effect:{name:'EfeitoRaio',folder:'animations',columns:5,rows:1}},8:{effect:{name:'EfeitoArcano',folder:'animations',columns:5,rows:1}}};
   settings.items={...(settings.items||{}),1:{effect:{name:'EfeitoImpacto',folder:'animations',columns:5,rows:1}}};
  }
@@ -129,6 +134,7 @@
   // Defensive and item actions must not inherit an attack approach/turn sequence.
   if(B&&data['ActionSequences.json']){
    const sequences=data['ActionSequences.json'];const assign=(kind,id,name,motion)=>{const sequenceId=sequences.length;sequences.push({id:sequenceId,version:1,name,phases:B.phaseIds(),steps:[B.step('motion',{motion,duration:12,phase:'prepare'}),B.step('impact',{role:'allTargets',phase:'execute'}),B.step('wait',{duration:12,phase:'finish'})]});settings[kind][id]={...settings[kind][id],mode:'sequence',sequenceId};};
+   if(settings.actors[2]?.graphic&&sequences[1]){const sequenceId=sequences.length;sequences.push({...JSON.parse(JSON.stringify(sequences[1])),id:sequenceId,name:'Brann — investida da clareira'});settings.actors[2]={...settings.actors[2],mode:'sequence',sequenceId};}
    assign('skills',2,'Defender — manter a frente e bloquear','guard');for(const id of [1,2,3])assign('items',id,'Usar '+data['Items.json'][id].name,'item');
   }
   const map=data['Map001.json'];if(map){

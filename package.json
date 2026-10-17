@@ -1,16 +1,19 @@
 {
-  "name": "diana-rpg-studio",
+  "name": "luae-rpg",
   "version": "0.2.6",
   "private": true,
   "license": "MIT",
   "scripts": {
     "prepare:editor": "node scripts/prepare-editor.cjs",
-    "start": "node scripts/launch.cjs",
+    "start": "node scripts/launch-tauri.cjs",
+    "start:nw": "node scripts/launch.cjs",
+    "tauri:build": "cargo build --release --manifest-path src-tauri/Cargo.toml",
     "test": "node --test tests/*.test.cjs tests/upstream/*.test.cjs",
     "test:prepared": "node scripts/test-prepared.cjs",
     "verify:prepared": "node scripts/verify-prepared.cjs",
     "test:upstream": "npm --prefix upstream/RPGReactor/editor test",
     "smoke:windows": "node scripts/smoke-windows.cjs",
+    "smoke:learning:windows": "node scripts/smoke-learning-windows.cjs",
     "smoke:battle:windows": "node scripts/smoke-battle-windows.cjs",
     "smoke:poses:windows": "node scripts/smoke-pose-authoring-windows.cjs",
     "smoke:starter:windows": "node scripts/smoke-starter-windows.cjs",
@@ -29,7 +32,8 @@
     "assets:compile:rtp": "node scripts/compile-native-rtp.cjs",
     "smoke:assets:windows": "node scripts/smoke-jrpg-assets-windows.cjs",
     "smoke:classic:windows": "node scripts/smoke-classic-editor-windows.cjs",
-    "assets:compile:defense": "node scripts/compile-defense-assets.cjs"
+    "assets:compile:defense": "node scripts/compile-defense-assets.cjs",
+    "smoke:sprites:windows": "node scripts/smoke-sprite-repair-windows.cjs"
   },
   "engines": {
     "node": ">=22"

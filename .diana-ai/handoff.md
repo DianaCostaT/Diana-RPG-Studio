@@ -106,3 +106,108 @@ A regra permanente do usuário está em `AGENTS.md`, `.github/copilot-instructio
 Corrigida a prioridade das quatro portas novas para permitir a??o adjacente; regress?o em `tests/village-expansion.test.cjs`. Su?te completa 153/153; testes do build isolado `build/diana-village-final` 63/63. Smoke Windows percorreu seis passos e acionou a jardineira; confirmou transfer?ncia para Map006. No destino, o viewport ficou preto/fade sem avan?ar de forma confi?vel, sem erros JS; di?logo e sa?das internas seguem pendentes.
 
 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit-sprite-alignment-windows.ps1`: 32 linhas examinadas; moradores e `ClareiraCombate.png` passam centro ?0,5 px e base constante. `$Guardiao.png` foi realinhado pelo compilador sem alterar o original; 12/12 c?lulas agora passam centro ?0,5 px e base constante. Pr?ximo trabalho, ap?s homologar interiores: avan?ar estruturas editor/runtime para personagens, armas e itens com contratos e pr?vias alinhados.
+
+## Continuação do projeto — validação de combate no cenário (16/10/2026)
+
+`node scripts/smoke-field-combat-windows.cjs` passou no runtime Windows: o combate criou a cena com o mapa de campo 80×64, 28 personagens, aliado enquadrado na posição do jogador e fundos laterais ocultos. Captura: `artifacts/field-combat-wjw8RH/batalha-no-cenario.png`; relatório: `artifacts/field-combat-smoke.json`. O smoke cobre a montagem da cena, sem certificar áudio, combos ou combate tático.
+
+Os testes focados de vila, preparação de combate e modos de combate passaram 18/18. A validação interativa dos interiores segue parcial: Map006 carregou sem erros JS, mas a janela NW.js em segundo plano parou o loop depois da transferência; a captura está escurecida e não comprova conversa/saída. Ver `docs/VILLAGE_EXPANSION.md` e `docs/COMBAT_MODES.md`.
+
+## Simplificação da interface (16/10/2026)
+
+Aplicadas as recomendações de reduzir duplicação visual sem excluir capacidades: seis destinos principais (Mapas, Eventos, Banco de dados, Batalha, Recursos e Testar), mantendo o atalho contextual de Novo NPC; catálogo separado em Recursos com ação de importação; preparação tática recolhida e rotulada como planejamento experimental; perfil 2D + 3D sob opções avançadas. Projeto novo continua 2D e projetos existentes mantêm seus dados/perfil. `npm test` passou 157/157. O smoke de projeto NW.js com build isolado `build/diana-ui-clean` validou criação, biblioteca de 26 cartões, seletor de perfil, tela de batalha e playtest; captura `artifacts/project-ui-Sqrzfj/resource-library.png`. O smoke geral falhou na checagem de hit-target do canvas antes da pintura e requer investigação separada.
+
+## Implementação das recomendações da auditoria RPG Maker — 16/10/2026
+
+A busca de eventos está disponível na navegação Eventos: permite consultar o projeto por nome, switch ou variável e abrir o resultado no mapa correspondente. O bloqueio de playtest agora também percorre todos os mapas e valida referências cruzadas e imagens de atores, inimigos, tropas, eventos, tilesets e camadas, sem gravar alterações. Evidências: `artifacts/project-ui-smoke.json`, `tests/event-search.test.cjs` e `tests/project-validation.test.cjs`; suíte 163/163 e suíte preparada 63/63 passaram. O smoke geral ainda para no hit-target do canvas antes de pintar (`scripts/smoke-windows.cjs:100`); o smoke dedicado de interface, busca e playtest passou. Próximas entregas: combate lateral homologado integralmente, combate de campo jogável, combos que executam ações e modo tático real; distribuição pública segue bloqueada pela auditoria de licenças.
+
+## Atualização de smoke geral — 16/10/2026
+
+O smoke de pintura geral foi corrigido para calcular uma célula visível em mapas grandes e verificar a pintura contra o tile selecionado, sem coordenada/ID fixos da configuração antiga. `npm run smoke:windows` passou em `artifacts/windows-smoke-Ggzf0h` e executou o jogo.
+
+## Estado depois da tranche de implementação
+
+Build preparado e smokes atuais: `npm test` 164/164, testes preparados 63/63, smoke geral Windows `artifacts/windows-smoke-W3P38M`, smoke de busca/interface `artifacts/project-ui-0r7RQa` e smoke de batalha lateral `artifacts/battle-smoke-F3oD1I`. Busca e validação do projeto estão implementadas e testadas. O combo com golpe final automático é opt-in e testado por API; falta uma partida Windows que use a opção. Campo e tático ainda precisam de combate jogável completo.
+
+
+## Remoção de lamejs — 2026-10-16
+
+`patches/zzzzzzzz-remove-lamejs-dependency.patch` retira lamejs LGPL-3.0 e `use-strict` exclusivo de `editor/package.json` e `package-lock.json` no staging Diana. O upstream fixado não foi alterado. `tests/remove-lamejs-patch.test.cjs` passa; o empacotador agora recusa um manifest preparado que volte a declarar lamejs. O prepare isolado `build/diana-license-clean` confirma que os dois manifests não contêm lamejs nem o transitivo. A revisão ainda marca distribuição pública bloqueada por notices NW.js/Chromium/Node, licença de `@pixi/colord` e revisão WASM/terceiros.
+
+
+## Auditoria do bloqueio de distribuicao (2026-10-16)
+
+O empacotador agora acrescenta o texto MIT ausente de `@pixi/colord` 2.9.6 a partir de `licenses/pixi-colord-MIT.txt`; os testes de pacote e `npm test` passaram (168/168). Uma sessao WebDriver real no NW.js 0.118.0 confirmou que `chrome://credits` ainda mostra a pagina de amostra, por isso o pacote continua `blocked-license-review`. Evidencias: `artifacts/nw-credits-runtime-check.json` e `artifacts/publication-audit-f92009e870134a0b90e4890249bccf86/diana-package.json`. Restam os notices completos que correspondam ao runtime exato e a revisao de WASM/decoders.
+
+
+## Decisao de migracao Tauri (2026-10-16)
+
+O usuario pediu substituir NW.js por Tauri. Auditoria do staging: 577 `require()` literais em 121 arquivos, 898 usos sincronicos de filesystem em 110 arquivos, 116 referencias `nw.*` em 15 arquivos e 137 acessos `process.*` em 27 arquivos. Tauri e viavel como host, mas exige port async incremental. Rust MSVC e Visual Studio 18 Build Tools agora estao instalados pelo usuario; `docs/TAURI_MIGRATION.md` tem a auditoria e estado atual.
+
+## Inicio da migracao Tauri (2026-10-16)
+
+`npm start` agora usa `scripts/launch-tauri.cjs`; `npm run start:nw` mantém contingência temporária. `src-tauri/` contém o host Tauri v2. `cargo check` e `cargo build --release` passaram; `src-tauri/target/release/luae-rpg.exe` abriu a janela `Luae RPG`. Isso valida o host inicial, não os fluxos do editor: as APIs Node/NW.js ainda não foram portadas ao WebView. `tests/tauri-host.test.cjs` cobre configuração e launcher; `docs/TAURI_MIGRATION.md` registra os bloqueios seguintes, incluindo bridge async, playtest, export e pacote.
+
+Após a instalação do usuário, `cargo check` e build release passaram. `npm test` passou 171/171. `npm run smoke:windows` falhou na asserção de título do NW.js (`scripts/smoke-windows.cjs:90`: esperado Luae RPG, encontrado Diana RPG Studio | Vila da Clareira) antes dos fluxos de jogo; não certifica nem invalida o host Tauri. O pacote/exportador Windows continuam NW.js até o editor ter bridge e paridade Tauri.
+
+
+
+
+
+## Verificacao Tauri de abertura de projeto (2026-10-16)
+
+Pixi now loads before project map initialization. The local fixture `build/tauri-test-project-02ae3f39b9074a3589977a7b2b1c0286` opened in Tauri with its tileset and 17x13 map drawn. `npm test` passed 177/177; `cargo test --manifest-path src-tauri/Cargo.toml` passed 2/2; `npm run tauri:build` produced the release executable. Playtest, import, export and packaging still need porting; see `docs/TAURI_MIGRATION.md`.
+
+
+## Clareira and pose editor update ? 2026-10-16
+
+The battle database UI now has ally/enemy records and separate pose and animation tabs, with sound-on-entry controls. The running Tauri window exposed those controls in its accessibility tree. The battle preview displays the chosen background/troop and supports drag-to-place ally formation. An original plaza battle backdrop is compiled into the sample pack and selected for Map001; existing village art remains preserved. Validation: npm test 178/178 and npm run test:prepared 63/63. The NW smoke reached game launch but timed out after 90 seconds waiting for Scene_Title; Tauri editor inspection is separate and does not certify gameplay, export or package migration. See docs/CLAREIRA_VISUAL_DIRECTION.md and docs/JRPG_GENERATION_REVIEW.md.
+
+
+## Clareira e poses ? 2026-10-17
+
+Pose database: numbered pose rows, selected-pose preview, and contextual crop/frame and sound controls. Startup welcome calls out Vila da Clareira; the normal new-project flow still asks the user where to create it. Tauri accessibility tree confirmed both views. `npm test` 179/179; `prepare:editor` succeeded; prepared tests 63/63. Legacy Windows smoke reached export but generated game timed out waiting for `Scene_Title` (90s). See `docs/DIANA_STUDIO_UI.md`, `docs/CLAREIRA_VISUAL_DIRECTION.md`.
+
+## Autoria de sprites — 2026-10-17
+
+Seleção de quadros por clique, numeração da ordem, prévia animada, centralização por transparência e salvamento de PNG corrigido em nova cópia foram implementados no compositor compartilhado para batalha e mapa. `npm test` passou 184/184; `npm run test:prepared` passou 63/63; regressões direcionadas na build integrada passaram 18/18. `npm start` abriu o host Tauri e a tela do compositor confirmou visualmente que clicar no segundo quadro atualiza a sequência de 1 para 2 quadros; captura em `images/prints-editor/pose-grid-tauri-2026-10-17.png`. Estado: **implementado e testado por API/DOM e fluxo visual Tauri**; playtest e pacote Tauri permanecem pendentes. Folhas opacas ou com células que preenchem toda a área são preservadas por segurança. Veja `docs/SPRITE_SHEET_AUTHORING.md`.
+
+## Runtime exportado e jogo inicial da Clareira — 17/10/2026
+
+O smoke anterior falhava porque `patches/zzzzzzzzzzzzzz-diana-directional-walk.patch` declarava um hunk menor que suas linhas adicionadas; o runtime preparado era truncado no fim de `reactor_sprites.js`. Corrigi o tamanho do hunk e acrescentei uma verificação de contagem em `tests/directional-map-sprites.test.cjs`. Após `prepare:editor`, `node --check build/diana/runtime/reactor_sprites.js`, `npm test` 184/184, `npm run test:prepared` 63/63 e `npm run smoke:windows` passaram. O smoke `scripts/smoke-starter-windows.cjs` agora confere o ponto inicial e o herói contra os dados do projeto, alcança o guardião com teclado real e calcula XP esperado a partir da tropa; vitória, fuga e derrota passaram. Capturas: `images/prints-vila-clareira/`; relatórios: `artifacts/windows-smoke.json`, `artifacts/starter-smoke.json`, `artifacts/starter-escape-smoke.json`, `artifacts/starter-defeat-smoke.json`. Tauri segue parcial para playtest, exportação e pacote.
+
+## Abertura da Clareira no Tauri release — 17/10/2026
+
+Verifiquei o executável release Tauri pelo fluxo real: o seletor de pasta abre, aceita `artifacts/clareira-restaurada-U2Dgui/Vila da Clareira` e carrega o mapa 80×64, oito mapas e NPCs/eventos. A carga observada levou cerca de 30 segundos para 168 arquivos/32,1 MiB, sem indicador de progresso; a limitação está registrada em `docs/TAURI_MIGRATION.md`. Captura: `images/prints-editor/clareira-tauri-open-project-2026-10-17.png`. `cargo test --manifest-path src-tauri/Cargo.toml` passou 2/2; playtest, persistência por edição, exportação e empacotamento Tauri continuam pendentes.
+# Estado Tauri — salvamento e playtest
+
+Em 17/10/2026, corrigido o bloqueio do salvamento Tauri: o adaptador não anuncia mais renameSync sem suporte aos descritores que o gravador atômico exige. A regressão percorre ProjectManager.saveProject() e verifica que project.rpgreactor e data/MapInfos.json chegam ao flush. O jogo agora também abre no playtest integrado: salva primeiro, monta a raiz aprovada no host Rust e serve o index.html do projeto por iframe usando http://diana-project.localhost no Windows. A tela inicial da Vila da Clareira carregou visualmente; fechar o teste remove o iframe e retoma o editor.
+
+Validação atual: npm test 187/187; npm run test:prepared 63/63; tests/tauri-project-host.test.cjs 9/9; cargo test --manifest-path src-tauri/Cargo.toml 3/3. O arquivo original permaneceu intacto; o teste de salvamento usou artifacts/tauri-save-test-00ce8fbb/Projeto. Ainda falta validar interação no mapa e combate dentro do iframe, e portar exportação/empacotamento. Os smokes Windows existentes usam NW.js e não foram executados nesta integração Tauri parcial. Consulte docs/TAURI_MIGRATION.md.
+
+## Dire??o e escala dos sprites ? 2026-10-17
+
+Ajustada a caminhada da Liora, Brann e moradores para mapear explicitamente os quadros das quatro dire??es. O retrato pixel art original de Brann ocupa `ClareiraRostos`, ?ndice 6, e seu ataque agora usa investida com retorno ao ponto de origem. As folhas de mapa usam o espa?o completo de 48?48 px com centro e linha dos p?s comuns; as folhas de batalha alinham todas as poses do Brann por uma escala e base compartilhadas. Regress?es direcionadas passaram 14/14; build preparada 63/63; `smoke:windows` passou; partida inicial venceu com teclado real em `artifacts/starter-smoke-uRfPIs/`. `npm test` integral teve 4 falhas existentes fora desta altera??o (cat?logo de recursos: 28/27; tr?s falhas nos mocks de `sprite-sheet-tools.test.cjs`). Estado: implementado e testado por API, contrato preparado e partida Windows; a revis?o est?tica final ? visual.
+
+## Correção de sprites direcionais e runtime salvo — 17/10/2026
+
+A troca visual durante caminhada foi validada no runtime em jogo: `smoke-starter:windows` chegou ao guardião por busca de caminho em tiles transitáveis; a captura `artifacts/starter-smoke-7JW7qo/facing-right.png` mostra o herói de perfil para a direita. O teste confirmou `$gamePlayer.direction() === 6`, `characterPatternY() === 2` e recorte vertical na terceira linha da folha. O caminho do smoke foi corrigido para contornar obstáculos reais da Clareira.
+
+Projetos Tauri existentes também renovam agora sua cópia antiga do runtime ao abrir. O host fornece o caminho dos recursos empacotados e o patch versionado compara os arquivos de sprite/direção antes de pular a atualização. API Tauri 11/11, runtime preparado 63/63, smoke Windows do editor e smoke jogável de vitória passaram. `npm test` total ficou em 189/194; cinco falhas de alinhamento/catalogação/mocks permanecem fora desta correção. Estado: implementado e testado por API, jogo real e inspeção de captura.
+
+## Corretor de vazamentos ? 17/10/2026
+
+Estado: **implementado e testado por API/DOM; revis?o visual da nova limpeza e execu??o com uma folha corrigida ainda pendentes**. No compositor de mapa ou de Anima??es 2, use **Centralizar e proteger quadros** e **Salvar folha corrigida no projeto**. O diagn?stico agora l? pixels pelo canvas; antes recebia uma imagem sem dados RGBA e impedia abrir a ferramenta com imagem real.
+
+A op??o **Remover fragmentos pequenos e soltos nas bordas** remove apenas componentes desconectados que tocam a borda e t?m menos de 25% dos pixels do maior componente do quadro (conectividade de oito vizinhos). ? opcional porque armas e efeitos tamb?m podem ser separados. Partes conectadas cruzando divis?es continuam preservadas e sinalizadas: o algoritmo n?o reconstr?i desenhos j? cortados. Revise a pr?via; **Restaurar folha original** desfaz o processamento antes de salvar. O original n?o ? sobrescrito. Margens s?o limitadas ao tamanho real da c?lula para impedir escrita fora do frame em grades pequenas.
+
+Evid?ncias: testes da ferramenta 9/9; runtime preparado 63/63; npm test 194/196 (falhas existentes em jrpg-polish: base 47 versus 46, e rtp-expansion: 28 versus 27 itens). Smoke Windows NW.js passou em artifacts/windows-smoke-b3d8tB; n?o certifica a limpeza visual nem o host Tauri. Logs: artifacts/sprite-tools-tests.log e artifacts/sprite-tools-smoke.log.
+
+## Atlas de possibilidades RPG Maker — 17/10/2026
+
+Estado: extração documental concluída; melhorias planejadas. Consultar docs/RPG_MAKER_RESOURCE_ATLAS.md e .diana-ai/rpgmaker-sheet-study.json. Catálogo pesquisável em .diana-ai/references/: 13.859 registros CSV e hyperlinks adicionais XLSX, total de 7.918 URLs únicas nas 30 abas da planilha SigmaSuccour. Fontes oficiais e autores selecionados foram estudados; destinos restantes estão indexados, sem compatibilidade comprovada Diana. Nenhum plugin, demo, asset ou dependência foi incorporado; testes de aplicação não foram executados nesta entrega documental. Preservar RPGReactor, Tauri e direção visual Clareira.
+
+
+## Corretor de sprites — 17/10/2026
+
+Implementado e testado por pixels, DOM e jogo NW.js: recuperação de componentes completos da caminhada Liora/Brann e combate Brann; BrannCaminhada-v2.png com repouso neutro e passadas; grade respeita poses fixadas para aliados/inimigos. Acesso: Corrigir sprites na barra. Originais preservados. Evidências: docs/SPRITE_REPAIR_VALIDATION.md e artifacts/sprite-repair-smoke-cH8cUG (84 células de origem, 48 recortes no mapa, teclado líder/seguidor, 36 recortes de combate). Tauri: controles inspecionados; persistência e playtest destas folhas ainda pendentes. Sem instalações nem commits.

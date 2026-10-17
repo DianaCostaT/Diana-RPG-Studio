@@ -1,6 +1,6 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
-const {populate:starter}=require('../src/DianaStarterData.js'),sample=require('../src/DianaJRPGSample.js'),village=require('../src/DianaVillageExpansion.js');
+const {populate:starter}=require('../src/DianaStarterData.js'),sample=require('../src/DianaJRPGSample.js'),village=require('../src/DianaVillageExpansion.js'),kit=require('../src/DianaTileKit.js');
 const B=require('../upstream/RPGReactor/editor/src/battle/BattleData.js');
 function fixture(){
  const data=starter({'System.json':{terms:{}},'MapInfos.json':[null,{id:1}],'Map001.json':{width:17,height:13,data:Array(17*13*6).fill(0),events:[null]},'Tilesets.json':[null,{tilesetNames:Array(9).fill(''),flags:Array(8192).fill(0)}]});
@@ -41,9 +41,15 @@ test('embute a vila original, desloca as referências de map1 e conserva seis ca
 test('distritos, portas, NPCs e retornos permanecem navegáveis por flags nativas',()=>{
  const d=fixture(),map=d['Map001.json'],tiles=d['Tilesets.json'][1],occupied=new Set(map.events.filter(Boolean).map(event=>[event.x,event.y].join(','))),reached=flood(map,tiles,[36,36],occupied);
  for(const event of map.events.filter(Boolean))assert.ok(directions.some(([dx,dy,bit,reverse])=>reached.has([event.x+dx,event.y+dy].join(','))&&passage(map,tiles,event.x,event.y,bit)&&passage(map,tiles,event.x+dx,event.y+dy,reverse)),event.name+' abordável');
- for(const id of [6,7,8,9]){const interior=d[mapName(id)],exit=transferOf(interior.events[1]);assert.equal(exit[1],1);assert.deepEqual(exit.slice(2,4),id===6?[10,10]:id===7?[50,10]:id===8?[70,28]:[52,55]);assert.equal(interior.data.length,20*16*6);assert.ok(flood(interior,tiles,[10,13]).has('10,13'));}
+ for(const id of [6,7,8,9]){const interior=d[mapName(id)],event=interior.events[1],exit=transferOf(event);assert.equal(exit[1],1);assert.deepEqual(exit.slice(2,4),id===6?[10,10]:id===7?[50,10]:id===8?[70,28]:[52,55]);assert.equal(event.pages[0].trigger,1,'interior exits trigger when walked onto');assert.equal(event.pages[0].priorityType,0,'interior exits stay below the player');assert.equal(interior.data.length,20*16*6);assert.ok(flood(interior,tiles,[10,13]).has('10,13'));}
 });
 function mapName(id){return 'Map'+String(id).padStart(3,'0')+'.json';}
+test('mapas novos declaram dados nativos de encontro e evitam crash no runtime',()=>{
+ const d=fixture();
+ for(const id of [2,3,4,5,6,7,8,9]){
+  const map=d[mapName(id)];assert.deepEqual(map.encounterList,[],mapName(id)+' encounter list');assert.equal(map.encounterStep,30,mapName(id)+' encounter step');
+ }
+});
 test('interiores oferecem cura, loja, leituras e baú único sem expor termos técnicos',()=>{
  const d=fixture(),maps=[6,7,8,9].map(id=>d[mapName(id)]);
  assert.equal(maps.length,4);
@@ -52,4 +58,13 @@ test('interiores oferecem cura, loja, leituras e baú único sem expor termos t�
  assert.ok(maps[2].events[2].pages[0].list.some(item=>item.code===401));
  const chest=maps[3].events[2];assert.ok(chest.pages[0].list.some(item=>item.code===123));assert.equal(chest.pages[1].conditions.selfSwitchValid,true);
  for(const map of maps)for(const event of map.events.filter(Boolean))for(const page of event.pages)for(const item of page.list)if(item.code===401)assert.equal(item.parameters[0].includes('tile'),false);
+ assert.equal(maps[0].events[3].pages[0].image.characterName,'','the herb event must not duplicate the apothecary sprite');
+ assert.equal(maps[1].events[3].pages[0].image.characterName,'','the anvil event must not duplicate the blacksmith sprite');
+ assert.equal(maps[2].events[3].pages[0].image.characterName,'','the bookshelf event must not duplicate the librarian sprite');
+ const bedIds=new Set(Array.from({length:6},(_,index)=>kit.objectTileId(kit.objects.bed,kit.objects.bed.x+index%2,kit.objects.bed.y+Math.floor(index/2))));
+ const libraryShelfIds=Array.from({length:4},(_,index)=>kit.objectTileId(kit.objects.shelf,kit.objects.shelf.x+index%2,kit.objects.shelf.y+Math.floor(index/2)));
+ const objectLayer=map=>map.data.slice(2*map.width*map.height,3*map.width*map.height);
+ assert.equal(objectLayer(maps[1]).filter(id=>bedIds.has(id)).length,0,'the forge must not contain a bed');
+ assert.equal(objectLayer(maps[3]).filter(id=>bedIds.has(id)).length,0,'the salon must not contain a bed');
+ assert.ok(libraryShelfIds.every(id=>objectLayer(maps[2]).includes(id)),'the library must show all four bookcases');
 });

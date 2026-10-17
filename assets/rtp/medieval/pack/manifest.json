@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "diana-native-medieval-rtp",
-  "version": 2,
+  "version": 3,
   "license": "MIT",
-  "origin": "Arte original imagegen (BatalhadoresOriginais.png e BrannCaminhada.png), Liora original do pack Clareira; efeitos, ícones e props procedurais Diana. Prompts em docs/JRPG_GENERATION_REVIEW.md; sem assets de jogos comerciais.",
+  "origin": "Arte original imagegen (BatalhadoresOriginais.png, BrannCaminhada-v2.png e GuardiaoRaizOriginais.png), Liora original do pack Clareira; efeitos, ícones e props procedurais Diana. Prompts em assets/rtp/GENERATION_PROMPTS.md; sem assets de jogos comerciais.",
   "grid": {
     "characters": [
       288,
@@ -12,6 +12,10 @@
     "battlers": [
       1152,
       1152
+    ],
+    "rootGuardian": [
+      768,
+      768
     ],
     "effects": [
       960,
@@ -73,43 +77,49 @@
       "path": "img/characters/$Brann.png",
       "width": 288,
       "height": 192,
-      "sha256": "5ac4e945ba17aca8c4e9821ab9360b87fb5a1811a58e0177beb3d39f0c0e13e7"
+      "sha256": "bee3be5ddbe6e8c8fc718aa353502c6f6f48c1d3b3510331f477786dae3ee817"
     },
     {
       "path": "img/characters/$LioraMedieval.png",
       "width": 288,
       "height": 192,
-      "sha256": "cac482e8fed4c68ca342cd0c0d47ec22cf47eb5aa0247bf207de5dfa861437f2"
+      "sha256": "1a2c20c9d983db351ef39d0d7ce3e9f7a4ed97ba976d5dbdbe04b639e3acf14e"
     },
     {
       "path": "img/enemies/BruxaCinza.png",
       "width": 1152,
       "height": 1152,
-      "sha256": "90741fbe95e8db6a31bcef645fabe2ddbe3015344b318cc82421ad4c07d8e675"
+      "sha256": "08847f09fd357086ac97ec86d347750b996d4d90f5bbc2e72e86d8bbfbf36efb"
+    },
+    {
+      "path": "img/enemies/GuardiaoRaiz.png",
+      "width": 768,
+      "height": 768,
+      "sha256": "c34318ef5248b7d6f040c8be3c404e10499878decdd365e1440cf9d677197e3a"
     },
     {
       "path": "img/enemies/LoboCinza.png",
       "width": 1152,
       "height": 1152,
-      "sha256": "19acacf9487bd9519fdf1822088156375dee2ee4571d29419a6dd9a188a3f506"
+      "sha256": "0c7e834eba9650b42ea058489b485801a6b7c28e257f3afe10cd27087ef2e710"
     },
     {
       "path": "img/enemies/MusgoVivo.png",
       "width": 1152,
       "height": 1152,
-      "sha256": "1bce4b249a839758699e39f33323aac3fcb329ec6136f4ee9b4bd0cc9abe5b5a"
+      "sha256": "0402f02984fa1ea5f5f0ffa9d578acac78d16230e1f2bb5c4af94d4b79e73ec8"
     },
     {
       "path": "img/sv_actors/BrannMedieval.png",
       "width": 1152,
       "height": 1152,
-      "sha256": "3565806aebf92d6419e4c4b847b120af91561e729bc692ff5369e2e789aa57d5"
+      "sha256": "e0eabc70229a3a40918cabf8efd2eab3957ee38afa44595653dcce95ce530fb7"
     },
     {
       "path": "img/sv_actors/LioraMedieval.png",
       "width": 1152,
       "height": 1152,
-      "sha256": "e74b9f453e0fb90bba1550921abce7067f382ded63bf3474fa6c9461e7aa5060"
+      "sha256": "4bc3715acca7e554503110469edc1561196631d1f06f59028267fc7ed503417d"
     },
     {
       "path": "img/system/IconSet.png",

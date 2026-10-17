@@ -23,12 +23,12 @@ test('marca somente rótulos explícitos do chrome Diana', () => {
     const branded = new Element('[data-diana-brandable]', 'RPGReactor Editor', {title: 'Open RPGReactor Project'});
 
     assert.equal(Studio.brandElement(title), true);
-    assert.equal(title.textContent, 'Diana RPG Studio');
+    assert.equal(title.textContent, 'Luae RPG');
     assert.equal(Studio.brandElement(welcome), true);
-    assert.equal(welcome.textContent, 'Bem-vinda ao Diana RPG Studio');
+    assert.equal(welcome.textContent, 'Bem-vinda ao Luae RPG');
     Studio.brandElement(branded);
-    assert.equal(branded.textContent, 'Diana RPG Studio');
-    assert.equal(branded.attributes.title, 'Abrir projeto Diana');
+    assert.equal(branded.textContent, 'Luae RPG');
+    assert.equal(branded.attributes.title, 'Abrir projeto Luae RPG');
 });
 
 test('não altera conteúdo autoral, campos de dados ou avisos legais', () => {
@@ -54,7 +54,7 @@ test('documento troca título e nós de chrome sem buscar conteúdo arbitrário'
     };
 
     assert.equal(Studio.brandDocument(document), 2);
-    assert.equal(document.title, 'Diana RPG Studio');
-    assert.equal(title.textContent, 'Diana RPG Studio');
+    assert.equal(document.title, 'Luae RPG');
+    assert.equal(title.textContent, 'Luae RPG');
     assert.equal(custom.textContent, 'RPGReactor');
 });

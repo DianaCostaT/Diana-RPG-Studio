@@ -17,7 +17,7 @@ por revisão, hashes de patches/bootstrap e lockfile em `build/diana/provenance.
 | Smoke de poses/batalha | Formulário real para ator/inimigo, persistência, recortes/âncoras no jogo e dano verificados | Ataque é disparado por API; cenário completo de comandos, derrota e efeitos ainda pendente |
 | `npm run smoke:poses:windows` | Grade e arraste por ponteiro real, prévia avançando/pausada, seek, bounds e recortes iguais no runtime para ambos os lados | Timeline básica de pose; não cobre timeline de efeitos, comandos de combate por mouse ou derrota |
 | NW.js SDK | Versão do executável e SHA-256 do ZIP confirmados contra manifest oficial | Não atesta todos os arquivos extraídos ou instalação em máquina limpa |
-| `npm start` | Janela `Diana RPG Studio` visível e respondendo, após corrigir o launcher | Perfil do workspace atual; instalação limpa pendente |
+| `npm start` | Janela `Luae RPG` visível e respondendo, após corrigir o launcher | Perfil do workspace atual; instalação limpa pendente |
 | Suíte `i18n.test.cjs` após correção | 25 testes aprovados | Catálogos e contratos de tradução; qualidade linguística de todos os idiomas não revisada por falantes nativos |
 | `npm run test:upstream` | 7.016 testes: 6.950 aprovados, 40 falhas, 26 ignorados | Execução anterior à correção de tradução; não substituir por contagem inferida |
 
@@ -56,6 +56,14 @@ Timeline avançada de efeitos e movimentos; referências após renomear pose;
 foreground/parallax composto; colisão e oclusão; recursos ausentes;
 comandos de batalha por GUI; vitória/derrota/fuga e efeitos/som; exportação portátil
 e inventário completo de licenças. Instalação limpa Windows continua pendente.
+
+## Atualização integrada — 17/10/2026
+
+- Corrigido `patches/zzzzzzzzzzzzzz-diana-directional-walk.patch`: a contagem do hunk agora inclui todas as linhas, evitando truncamento e erro de sintaxe no runtime exportado. `tests/directional-map-sprites.test.cjs` protege a contagem e a lógica por direção; `node --check build/diana/runtime/reactor_sprites.js` passou.
+- `npm test`: **184/184**; `npm run test:prepared`: **63/63**; regressões direcionadas no editor preparado: **18/18**.
+- `npm run smoke:windows`: **passou**, incluindo exportação, abertura da tela de título e execução do mapa e diálogo (`artifacts/windows-smoke-LmHvkE`).
+- `npm run smoke:starter:windows` e as variantes `escape` e `defeat`: **passaram** por teclado WebDriver real, cobrindo exploração, conversa, batalha, vitória/XP, fuga e derrota com recuperação. Capturas: `images/prints-vila-clareira/06-dialogo-2026-10-17.png` a `10-derrota-2026-10-17.png`.
+- Inspeção visual Tauri: editor de batalha, poses e compositor de grade visíveis; seleção do segundo quadro verificada na árvore de acessibilidade. Captura: `images/prints-editor/pose-grid-tauri-2026-10-17.png`. O smoke de jogo ainda é NW.js; migração de playtest/exportação/instalador Tauri permanece parcial.
 
 ## Incremento de autoria visual
 
@@ -103,3 +111,23 @@ por ponteiro/teclado reais; persistência e execução comparadas. Prévia ident
 imagens ausentes e cancela com orientação em português. Capturas inspecionadas e
 limites em [UI_AUTHORING_VALIDATION.md](UI_AUTHORING_VALIDATION.md).
 
+
+## Implementação da auditoria RPG Maker — 16/10/2026
+
+**Implementado e testado:** busca visual em todos os mapas por nome do evento, ID de switch ou ID de variável. Selecionar o resultado carrega o mapa e seleciona o evento no editor. Coberto por `tests/event-search.test.cjs` e smoke NW.js em `artifacts/project-ui-smoke.json`.
+
+**Implementado e testado:** validação pré-playtest de referências cruzadas de grupo, classe, equipamento, habilidade de inimigo, animação e recompensa; checagem de retratos, battlers, poses, eventos, tilesets, parallax e camadas de imagem em todos os mapas. A validação é somente leitura. Cobertura em `tests/project-validation.test.cjs`.
+
+`npm test`: **163/163**. `npm run test:prepared -- build/diana`: **63/63**. `node scripts/smoke-project-ui-windows.cjs build/diana/editor`: aprovado; criou projeto, pesquisou e abriu evento e manteve playtest executando.
+
+**Parcial:** `npm run smoke:windows` continua falhando antes da pintura porque a verificação de hit-target não reconhece o canvas em `scripts/smoke-windows.cjs:100`. O smoke dedicado de projeto passou. Combate tático jogável, combos que executam ações, fluxo de batalha homologado por teclado/áudio e tutorial integrado continuam pendentes conforme a auditoria comparativa.
+
+## Correção do smoke de pintura — 16/10/2026
+
+O smoke geral foi atualizado para mapas grandes: agora calcula uma célula que está no centro visível da câmera em vez de clicar em coordenadas fixas fora da Vila da Clareira, e verifica que a pintura altera a célula selecionada sem assumir um ID de tile antigo. `npm run smoke:windows` passou em `artifacts/windows-smoke-Ggzf0h`, incluindo edição por ponteiro, undo/redo, gravação, eventos, parallax e execução do jogo.
+
+## Validação final da tranche — 16/10/2026
+
+`npm test`: **164/164**. `npm run test:prepared -- build/diana`: **63/63**. `npm run smoke:windows` passou em `artifacts/windows-smoke-W3P38M`; `node scripts/smoke-project-ui-windows.cjs build/diana/editor` passou em `artifacts/project-ui-0r7RQa`, cobrindo busca e seleção de evento; `npm run smoke:battle:windows` passou em `artifacts/battle-smoke-F3oD1I`, cobrindo batalha lateral existente, poses e dano.
+
+O combo com golpe final automático está **implementado e testado por API**, incluindo sequência, enfileiramento após a ação, alvo e bloqueio de recursão. O smoke de batalha acima não configurou `autoExecute`; a validação dessa opção dentro de uma partida real permanece pendente. Combate tático jogável e combate de campo completo também permanecem pendentes.

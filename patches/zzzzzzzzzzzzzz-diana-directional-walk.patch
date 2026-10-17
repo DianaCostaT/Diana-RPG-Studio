@@ -1,0 +1,40 @@
+diff --git a/runtime/reactor_sprites.js b/runtime/reactor_sprites.js
+--- a/runtime/reactor_sprites.js
++++ b/runtime/reactor_sprites.js
+@@ -7005,4 +7005,36 @@
+ const _dianaGridBlockX = Sprite_Character.prototype.characterBlockX;
+ Sprite_Character.prototype.characterBlockX = function() {
+     return dianaGridForCharacter(this._character) ? 0 : _dianaGridBlockX.call(this);
+ };
++
++// Four-row character sheets follow the usual down, left, right, up order.
++// Optional per-direction cell lists preserve artists' custom spacing/layouts.
++const _dianaDirectionalPatternX = Sprite_Character.prototype.characterPatternX;
++Sprite_Character.prototype.characterPatternX = function() {
++    const grid = dianaGridForCharacter(this._character);
++    const animation = this._character?.dianaWalkAnimation?.();
++    if (!grid || !animation) return _dianaDirectionalPatternX.call(this);
++    const direction = this._character.direction?.();
++    const frames = animation.directions?.[String(direction)];
++    if (!Array.isArray(frames) || frames.length !== animation.frames.length ||
++            !frames.every(cell => Number.isInteger(cell) && cell >= 0 && cell < grid.columns * grid.rows)) {
++        return _dianaDirectionalPatternX.call(this);
++    }
++    const index = frames[Math.min(frames.length - 1, Math.max(0, this._character.pattern()))];
++    return index % grid.columns;
++};
++const _dianaDirectionalPatternY = Sprite_Character.prototype.characterPatternY;
++Sprite_Character.prototype.characterPatternY = function() {
++    const grid = dianaGridForCharacter(this._character);
++    const animation = this._character?.dianaWalkAnimation?.();
++    if (!grid || !animation) return _dianaDirectionalPatternY.call(this);
++    const direction = this._character.direction?.();
++    const frames = animation.directions?.[String(direction)];
++    if (Array.isArray(frames) && frames.length === animation.frames.length &&
++            frames.every(cell => Number.isInteger(cell) && cell >= 0 && cell < grid.columns * grid.rows)) {
++        const index = frames[Math.min(frames.length - 1, Math.max(0, this._character.pattern()))];
++        return Math.floor(index / grid.columns);
++    }
++    if (grid.rows === 4) return ({2: 0, 4: 1, 6: 2, 8: 3})[direction] ?? 0;
++    return _dianaDirectionalPatternY.call(this);
++};

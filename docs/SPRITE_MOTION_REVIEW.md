@@ -1,17 +1,19 @@
 # Revisão de aliases de movimentos de sprites
 
-Estado em 2026-10-16: **implementado e testado por API**; interação visual e execução de jogo **não testadas nesta tarefa**.
+Estado em 2026-10-17: **implementado e testado por API em fonte isolada com patches**; interação visual e execução de jogo **não testadas nesta tarefa**.
 
-O contrato de poses já resolve `graphic.motions[motion].pose`, mas a grade Diana procurava apenas `spriteAnimation.animations[motion]` e depois `idle`. Assim, `swing` e `thrust` mapeados para `attack` exibiam repouso quando não existia uma chave literal para esses movimentos.
+`B.graphicPose` já consulta `graphic.motions[motion].pose`, mas `B.spriteGridFrame` não aplicava esse alias ao selecionar uma animação da grade. Por isso, movimentos como `swing` e `thrust`, mapeados para `attack`, podiam mostrar `idle` em vez da animação de ataque.
 
-O patch aditivo `patches/zzzzzzzzz-sprite-motion-aliases.patch`, posterior aos patches existentes, aplica a mesma resolução em `editor/src/battle/BattleData.js` e `runtime/reactor_battle_data.js`. A ordem é chave explícita do movimento, chave indicada por `graphic.motions[motion].pose`, depois `idle`. A animação selecionada continua fornecendo quadros, velocidade e repetição; aliases não sobrescrevem essas propriedades. A validação da grade e o retorno `null` quando não há animação continuam existentes. Não há migração de dados nem encadeamento recursivo de aliases.
+O patch aditivo `patches/zzzzzzzzz-sprite-motion-aliases.patch` aplica a mesma resolução em `editor/src/battle/BattleData.js` e `runtime/reactor_battle_data.js`: primeiro a chave exata do movimento, depois a pose de `graphic.motions[motion].pose` e, por fim, `idle`. Quadros, velocidade e repetição vêm da animação resolvida. A validação da grade e o retorno `null` quando não há animação válida permanecem preservados; não há migração de dados nem encadeamento de aliases.
 
-Evidências:
+`tests/sprite-motion-aliases.test.cjs` cobre `swing`/`thrust` → `attack`, `guard` → `idle`, cadência e término, prioridade da chave explícita sobre o alias, fallback para alias ausente ou desconhecido e ausência de `idle`. Cada cenário é executado para aliados e inimigos nos módulos do editor e runtime.
 
-- Exportação isolada do commit fixado `dc918245cbf8f10ae6eef4ed8cb54b850fed9caa`, com `git archive`, sem copiar alterações locais do upstream. Todos os patches foram aplicados na ordem usada por `prepare-source.cjs`, começando por `held-poses.patch`; `git apply --check --whitespace=error` passou para o patch novo.
-- Cópia validada: `C:\Users\lethe\AppData\Local\Temp\diana-motion-aliases-VPKFAY`.
-- Antes do patch novo: 12 testes novos, 8 passaram e 4 falharam, detectando aliases de ataque nas quatro combinações editor/runtime e aliados/inimigos.
-- Depois do patch: 41 testes selecionados passaram, sem falhas. A suíte nova cobre `swing`/`thrust` para `attack`, `guard` para `idle`, cadência e término da animação mapeada, prioridade de chave explícita, fallback para alias inexistente e movimento desconhecido, e ausência de `idle`, em editor/runtime e aliados/inimigos.
-- Comando com `DIANA_BATTLE_SOURCE` apontando para a cópia isolada: `node --test tests/sprite-motion-aliases.test.cjs tests/diana-sprite-audio-contract.test.cjs tests/battle-poses.test.cjs tests/animation-sequences.test.cjs tests/upstream/diana-battle-held-poses.test.cjs tests/diana-battle-preparation.test.cjs`.
+Evidências desta tarefa:
 
-Não foram executados `prepare:editor`, o smoke global ou instalações, conforme divisão de trabalho. O upstream local não foi editado. A integração deve executar a suíte completa e `npm run smoke:windows`; os testes que aceitam `DIANA_BATTLE_SOURCE` devem apontar para fonte preparada contendo este patch. A atualização de `.diana-ai/` fica com o coordenador, fora da propriedade desta tarefa.
+- O patch foi aplicado após os demais patches numa exportação temporária de `upstream-lock.json` (`dc918245cbf8f10ae6eef4ed8cb54b850fed9caa`). `git apply --check --whitespace=error` e aplicação de todos os patches passaram; o repositório upstream não foi modificado.
+- Fonte isolada usada: `C:\Users\lethe\AppData\Local\Temp\diana-motion-aliases-5287c3e9daba479ba1cf334048da6170`.
+- `node --test tests/sprite-motion-aliases.test.cjs` com `DIANA_BATTLE_SOURCE` apontado à fonte isolada: **12/12 passaram**.
+- `node --test tests/diana-sprite-audio-contract.test.cjs tests/battle-poses.test.cjs tests/animation-sequences.test.cjs tests/upstream/diana-battle-held-poses.test.cjs tests/diana-battle-preparation.test.cjs` com a mesma fonte: **29/29 passaram**.
+- O patch tem SHA-256 `bc116f0022de16a3023d1b0966ed40a0a06d6f81e0676d41dd885fe115f6de2c`, igual ao registrado em `build/diana/provenance.json`.
+
+Esta verificação cobre API e seleção persistida da grade; não cobre interação visual nem execução de jogo. Conforme o limite de integração desta tarefa, não foram executados `prepare:editor`, `npm test` ou `npm run smoke:windows`; a integração deve executar os dois últimos checks.

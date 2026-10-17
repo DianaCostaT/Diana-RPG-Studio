@@ -12,52 +12,58 @@
       "sha256": "d43d7112743289ce1dfeff4a98f6066563be10c5113979d63c558cd31a5c3b6b"
     },
     {
+      "path": "img/battlebacks1/PracaClareira.png",
+      "width": 1000,
+      "height": 740,
+      "sha256": "76456d46f7687a69698159cc34fa8f0bfdc1cd632fb170e33efe3d3e8e51c7db"
+    },
+    {
       "path": "img/characters/$Guardiao.png",
       "width": 144,
       "height": 192,
-      "sha256": "18a33853b83a006239678871d2df359d6468831e0c950b79261a0e0248d1d3fd"
+      "sha256": "27f6999089b46fe7b706f812410899c04b71d379408d83134a4b42027975c96e"
     },
     {
       "path": "img/characters/$Ivo.png",
       "width": 288,
       "height": 192,
-      "sha256": "5e0f75336b4c79a3d25c2d9067fa4433599a94ab3b5cc8dfd27278d6774fe0e4"
+      "sha256": "1c072e2a92faf4b33c09c4ebc652f80df197b5bdfc7ec60b258c2653402f52c5"
     },
     {
       "path": "img/characters/$Liora.png",
       "width": 288,
       "height": 192,
-      "sha256": "cac482e8fed4c68ca342cd0c0d47ec22cf47eb5aa0247bf207de5dfa861437f2"
+      "sha256": "1a2c20c9d983db351ef39d0d7ce3e9f7a4ed97ba976d5dbdbe04b639e3acf14e"
     },
     {
       "path": "img/characters/$Liora[f6].png",
       "width": 288,
       "height": 192,
-      "sha256": "cac482e8fed4c68ca342cd0c0d47ec22cf47eb5aa0247bf207de5dfa861437f2"
+      "sha256": "1a2c20c9d983db351ef39d0d7ce3e9f7a4ed97ba976d5dbdbe04b639e3acf14e"
     },
     {
       "path": "img/characters/$Mira.png",
       "width": 288,
       "height": 192,
-      "sha256": "ac2fe9330d9a288240088a393f4ff5c03de6322236311384149c4bbca63c409f"
+      "sha256": "7a07d16a06a3362ed50e89e8209164acc2bd1bd4f609cde320484b7a736d7608"
     },
     {
       "path": "img/characters/$Nila.png",
       "width": 288,
       "height": 192,
-      "sha256": "ba3a20c2db008074db92948f8c81cdcebc6a696e6614ee3a84cd95160cd6c193"
+      "sha256": "22ce79495bb8bdc346f70534e9e2241c3187f084a19ace9862b2f0256b0fbc4e"
     },
     {
       "path": "img/characters/$Orin.png",
       "width": 288,
       "height": 192,
-      "sha256": "5b2e2ef25ada5f563946f097e8cbf2e4821cc896a8800172c1b1681c712c580a"
+      "sha256": "2a4043ed3447983601df582bc1ba10aa210dccea860805b1b1da6b9b7e84f0f5"
     },
     {
       "path": "img/faces/ClareiraRostos.png",
       "width": 576,
       "height": 288,
-      "sha256": "c8514f1639c2dd2bc6f54ed0d225b041aa4d283a6d662df5556671ceffe26ddf"
+      "sha256": "e3f9b39cdccd271612eaf08cd3b2ac1232b7a3d1a55f1924dc855fdd9a4b67fa"
     },
     {
       "path": "img/parallaxes/!VilaClareira.png",

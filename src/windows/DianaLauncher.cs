@@ -14,7 +14,7 @@ internal static class DianaLauncher
             string editor = Path.Combine(root, "app", "editor");
             string runtime = Path.Combine(root, "nw.exe");
             if (!File.Exists(runtime) || !File.Exists(Path.Combine(editor, "index.html")))
-                throw new IOException("A pasta do Diana está incompleta. Mantenha Diana.exe junto de nw.exe e da pasta app.");
+                throw new IOException("A pasta do Luae RPG está incompleta. Mantenha o executável junto de nw.exe e da pasta app.");
             Process.Start(new ProcessStartInfo {
                 FileName = runtime,
                 Arguments = "--user-data-dir=\"" + Path.Combine(root, "profile") + "\" \"" + editor + "\"",
@@ -26,7 +26,7 @@ internal static class DianaLauncher
         }
         catch (Exception error)
         {
-            MessageBox.Show(error.Message, "Não foi possível iniciar o Diana", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(error.Message, "Não foi possível iniciar o Luae RPG", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
     }

@@ -123,19 +123,19 @@
   createInterior(data,6,'Boticário das Folhas','boticario',kit.populateCottage,template,base=>[
    () => [1,'Saída do boticário',10,13,returnTo(10,10),{trigger:1,priorityType:0}],
    () => [2,'Alda, boticária',12,7,[...text('',0,['Respire fundo. Uma pausa também faz parte da viagem.']),command(314,[0,0]),command(0,[])],{characterName:'$Nila'}],
-   () => [3,'Canteiro de camomila',15,7,text('',0,['Camomila, alecrim e hortelã crescem melhor onde há passagem de luz.']),{characterName:'$Nila'}]
+   () => [3,'Canteiro de camomila',15,7,text('',0,['Camomila, alecrim e hortelã crescem melhor onde há passagem de luz.']),{characterName:''}]
   ]);
-  createInterior(data,7,'Forja do Vale','forja',kit.populateInn,template,base=>[
+  createInterior(data,7,'Forja do Vale','forja',kit.populateForge,template,base=>[
    () => [1,'Saída da forja',10,13,returnTo(50,10),{trigger:1,priorityType:0}],
    () => [2,'Dário, ferreiro',8,6,[...text('',0,['Espadas e escudos para proteger os caminhos da vila.']),command(302,[1,1,0,0,false]),command(605,[2,1,0,0]),command(605,[2,2,0,0]),command(0,[])],{characterName:'$Ivo'}],
-   () => [3,'Bigorna antiga',16,5,text('',0,['A bigorna carrega marcas de muitas ferramentas feitas para a vila.']),{characterName:'$Ivo'}]
+   () => [3,'Bigorna antiga',16,5,text('',0,['A bigorna carrega marcas de muitas ferramentas feitas para a vila.']),{characterName:''}]
   ]);
-  createInterior(data,8,'Biblioteca das Caminhadas','biblioteca',kit.populateCottage,template,base=>[
+  createInterior(data,8,'Biblioteca das Caminhadas','biblioteca',kit.populateLibrary,template,base=>[
    () => [1,'Saída da biblioteca',10,13,returnTo(70,28),{trigger:1,priorityType:0}],
    () => [2,'Rui, livreiro',12,7,text('',0,['Um bom livro não apressa quem o lê.','Escolha uma estante e descubra um pedaço da vila.']),{characterName:'$Mira'}],
-   () => [3,'Estante de relatos',15,7,text('',0,['Relatos de viajantes lembram que toda estrada começa perto de casa.']),{characterName:'$Mira'}]
+   () => [3,'Estante de relatos',15,7,text('',0,['Relatos de viajantes lembram que toda estrada começa perto de casa.']),{characterName:''}]
   ]);
-  createInterior(data,9,'Salão do Mirante','salao',kit.populateInn,template,base=>[
+  createInterior(data,9,'Salão do Mirante','salao',kit.populateHall,template,base=>[
    () => [1,'Saída do salão',10,13,returnTo(52,55),{trigger:1,priorityType:0}],
    () => [2,'Baú de boas-vindas',16,5,[command(101,['',0,0,2]),command(401,['Um presente para a próxima caminhada.']),command(126,[1,0,0,2]),command(123,['A',0]),command(0,[])],{characterName:'',trigger:0}],
    () => [3,'Lena, anfitriã',8,6,text('',0,['Do mirante, a vila parece um jardim entre rios.','Sente-se um pouco; a vista não vai embora.']),{characterName:'$Orin'}]

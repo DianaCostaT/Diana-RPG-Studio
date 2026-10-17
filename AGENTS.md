@@ -28,3 +28,7 @@ suas limitações ficam em `docs/BASE_EVALUATION.md` e `docs/LICENSE_AUDIT.md`.
 A primeira versão aprovada da Vila da Clareira é a referência visual permanente para o projeto. Todo agente deve preservar e desenvolver essa direção: sprites grandes e legíveis, cenários ricos em camadas, vegetação e arquitetura detalhadas, e animações de batalha fluidas no mesmo estilo. Não troque essa identidade por arte menor, simplificada ou visualmente genérica; ao melhorar um recurso, mantenha o padrão da Clareira e confira o resultado dentro do jogo.
 
 Consulte `docs/CLAREIRA_VISUAL_DIRECTION.md` antes de alterar arte, sprites, mapas ou apresentação de batalha. Trate mudanças de estilo como regressões a corrigir, não como nova direção.
+
+## Host desktop decidido: Tauri
+
+O usuário determinou substituir NW.js por Tauri. Preserve RPGReactor como base provisória e não adicione outra engine; Tauri é o host desktop. Mantenha dados, assets e runtime do jogo compatíveis. Porte chamadas Node/NW por subsistema para comandos Rust e APIs do WebView, sem declarar a migração concluída até editor, playtest e export funcionarem no pacote Tauri. Registre testes Tauri separados dos smokes atuais, que ainda usam NW.js. Consulte `docs/TAURI_MIGRATION.md` para inventário, etapas e bloqueios.

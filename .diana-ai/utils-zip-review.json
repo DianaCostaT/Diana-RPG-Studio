@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-17",
+  "status": "análise estática realizada; propostas planejadas",
+  "source": "C:\\Users\\lethe\\Downloads\\Utils.zip",
+  "sha256": "513a5f28a5d3a084cdd808a5c1de7cae09e38eb3d90953f3e36a73122b4e46f9",
+  "documentation": "docs/UTILS_ZIP_REVIEW.md",
+  "files": 1681,
+  "tool_folders": 11,
+  "lessons": [
+    "Receitas reeditáveis de composição por camadas, com arte original Clareira",
+    "Importação em lote com prévia, classificação corrigível e preservação de alfa",
+    "Diálogos em lote com IDs estáveis, conflitos, prévia e undo/redo",
+    "Biblioteca de partes de tilesets com regras explícitas de autotiles",
+    "Exportação de mapas completos com seleção de camadas"
+  ],
+  "integration": "nenhuma; código e assets do ZIP não incorporados",
+  "validation": "inventário, documentos, configurações e trechos do fonte Charas; sem execução dos utilitários",
+  "limitations": "interfaces e comportamento dos executáveis não validados; licenças por recurso não auditadas; propostas não implementadas"
+}

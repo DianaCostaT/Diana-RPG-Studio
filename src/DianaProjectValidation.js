@@ -26,17 +26,50 @@
         const check=(folder,name)=>{
             if(typeof name==='string'&&name.trim()&&!exists(folder,name))missing.add('img/'+folder+'/'+name);
         };
-        for(const id of Array.isArray(data?.system?.partyMembers)?data.system.partyMembers:[]) {
-            const actor=data?.actors?.[id];
-            check('characters',actor?.characterName);check('faces',actor?.faceName);
+        const checkAny=(folders,name)=>{
+            if(typeof name==='string'&&name.trim()&&!folders.some(folder=>exists(folder,name)))missing.add(folders.map(folder=>'img/'+folder+'/'+name).join(' ou '));
+        };
+        const all=(value)=>Array.isArray(value)?value.filter(Boolean):[];
+        const actors=all(data?.actors), enemies=all(data?.enemies);
+        for(const actor of actors) {
+            check('characters',actor.characterName);check('faces',actor.faceName);check('sv_actors',actor.battlerName);
         }
-        for(const page of (map?.events||[]).filter(Boolean).flatMap(event=>event.pages||[]))check('characters',page.image?.characterName);
-        for(const name of data?.tilesets?.[map?.tilesetId]?.tilesetNames||[])check('tilesets',name);
-        check('parallaxes',map?.parallaxName);
-        for(const layer of map?.rrImageLayers||[])check('parallaxes',layer?.name);
+        for(const enemy of enemies)checkAny(['sv_enemies','enemies','characters'],enemy.battlerName);
+        for(const troop of all(data?.troops))for(const member of all(troop.members)){
+            if(!data?.enemies?.[member.enemyId])missing.add('referência para inimigo inexistente #'+member.enemyId+' na tropa '+(troop.name||'?'));
+        }
+        const presentation=data?.battlePresentation||{};
+        const graphics=[...Object.values(presentation.actors||{}),...Object.values(presentation.enemies||{})];
+        for(const entry of graphics){const graphic=entry?.graphic||entry;if(graphic?.name&&graphic?.folder)check(graphic.folder,graphic.name);}
+        for(const entry of Object.values(presentation.troops||{}))for(const key of ['battleback1','battleback2'])check(key==='battleback1'?'battlebacks1':'battlebacks2',entry?.[key]);
+        const maps=Array.isArray(map)?map.filter(Boolean):map?[map]:[];
+        for(const entry of maps){
+            for(const page of (entry?.events||[]).filter(Boolean).flatMap(event=>event.pages||[]))check('characters',page.image?.characterName);
+            for(const name of data?.tilesets?.[entry?.tilesetId]?.tilesetNames||[])check('tilesets',name);
+            check('parallaxes',entry?.parallaxName);
+            for(const layer of entry?.rrImageLayers||[])check('parallaxes',layer?.name);
+        }
         return [...missing].map(file=>'Imagem ausente: '+file+'. Importe o recurso ou altere a referência antes de testar.');
     }
-    const api={validate,validateAssets};
+    function validateReferences(data) {
+        const issues=new Set();
+        const records=key=>Array.isArray(data?.[key])?data[key]:[];
+        const exists=(key,id)=>Number.isInteger(Number(id))&&Number(id)>0&&!!records(key)[Number(id)];
+        for(const [index,actor] of records('actors').entries())if(actor){
+            if(actor.classId&&!exists('classes',actor.classId))issues.add('O personagem '+(actor.name||'#'+index)+' referencia a classe inexistente #'+actor.classId+'.');
+            for(const equipId of actor.equips||[])if(equipId&&!exists('weapons',equipId)&&!exists('armors',equipId))issues.add('O personagem '+(actor.name||'#'+index)+' referencia um equipamento inexistente #'+equipId+'.');
+        }
+        for(const [index,enemy] of records('enemies').entries())if(enemy){
+            for(const action of enemy.actions||[])if(action.skillId&&!exists('skills',action.skillId))issues.add('O inimigo '+(enemy.name||'#'+index)+' referencia a habilidade inexistente #'+action.skillId+'.');
+            for(const drop of enemy.dropItems||[])if(drop.kind===1&&!exists('items',drop.dataId)||drop.kind===2&&!exists('weapons',drop.dataId)||drop.kind===3&&!exists('armors',drop.dataId))issues.add('O inimigo '+(enemy.name||'#'+index)+' tem um item de recompensa inexistente #'+drop.dataId+'.');
+        }
+        for(const [index,skill] of records('skills').entries())if(skill){
+            const animationId=Number(skill.animationId||0);if(animationId>0&&!exists('animations',animationId))issues.add('A habilidade '+(skill.name||'#'+index)+' referencia a animação inexistente #'+animationId+'.');
+        }
+        for(const id of Array.isArray(data?.system?.partyMembers)?data.system.partyMembers:[])if(!exists('actors',id))issues.add('O grupo inicial referencia o personagem inexistente #'+id+'.');
+        return [...issues];
+    }
+    const api={validate,validateAssets,validateReferences};
     if(typeof module!=='undefined'&&module.exports)module.exports=api;
     root.DianaProjectValidation=api;
 })(globalThis);

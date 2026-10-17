@@ -1,4 +1,4 @@
-# Diana RPG Studio
+# Luae RPG
 
 Editor de JRPGs para Windows em desenvolvimento, com português brasileiro como
 idioma principal. A base escolhida é RPGReactor 0.99.0, revisão fixada em
@@ -7,7 +7,7 @@ alternativa, sem incorporar seu código.
 
 ## Executar neste workspace
 
-Há uma versão local pronta em `dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe`.
+Há uma versão local pronta em `dist/Luae-RPG-Windows-0.2.6-20261016-r2/Luae RPG.exe`.
 Abra esse executável para usar o editor sem comandos, Node ou Git instalados
 separadamente. Mantenha a pasta completa junta. Esta é uma versão de desenvolvimento
 para teste local; os bloqueios de distribuição pública continuam documentados.
@@ -32,7 +32,7 @@ npm start
 
 `npm start` abre `build/diana/editor` com perfil local em `artifacts/profile`.
 O launcher abre uma janela visível e registra saída em `artifacts/launch.log`.
-Também há `Diana.bat`, um atalho por arquivo para preparar e iniciar no Windows;
+Também há `Luae RPG.cmd`, um atalho por arquivo para preparar e iniciar no Windows;
 o fluxo automatizado validado usa os comandos npm acima.
 O preparo exporta o commit fixado, aplica patches versionados e registra hashes
 em `build/diana/provenance.json`. Ele preserva a versão anterior em `build/previous-*`.

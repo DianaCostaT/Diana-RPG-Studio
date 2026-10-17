@@ -15,8 +15,8 @@
   document.querySelectorAll('#compat-titlebar img').forEach(img=>img.src='images/diana.png');
   const appearance=document.getElementById('diana-appearance');appearance?.insertAdjacentHTML('afterbegin',svg('palette'));
   const about=document.getElementById('about-modal');
-  if(about){for(const [selector,text] of [['h2','Sobre o Diana RPG Studio'],['h3','Diana RPG Studio · '+(root.nw?.App?.manifest?.version||'')],['[data-i18n="about.description"]','Editor de JRPGs com foco em autoria 2D. Base tecnológica RPGReactor, por Psychronic Games; licenças e avisos preservados.']]){const node=about.querySelector(selector);if(node){node.removeAttribute('data-i18n');node.textContent=text;}}
-   const logo=about.querySelector('img');if(logo){logo.src='images/diana.svg';logo.alt='Diana RPG Studio';logo.style.maxWidth='88px';}about.querySelector('h3').style.color='var(--color-accent)';
+  if(about){for(const [selector,text] of [['h2','Sobre o Luae RPG'],['h3','Luae RPG · '+(root.nw?.App?.manifest?.version||'')],['[data-i18n="about.description"]','Editor de JRPGs com foco em autoria 2D. Licenças e avisos de terceiros acompanham o aplicativo.']]){const node=about.querySelector(selector);if(node){node.removeAttribute('data-i18n');node.textContent=text;}}
+   const logo=about.querySelector('img');if(logo){logo.src='images/diana.svg';logo.alt='Luae RPG';logo.style.maxWidth='88px';}about.querySelector('h3').style.color='var(--color-accent)';
   }
  }
  root.DianaIcons={svg,paths};if(typeof module!=='undefined')module.exports=root.DianaIcons;

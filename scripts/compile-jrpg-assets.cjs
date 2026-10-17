@@ -2,6 +2,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {PNG}=require('../upstream/RPGReactor/editor/node_modules/pngjs');
+const repair=require('../src/DianaSpriteRepair.js');
 const raster=require('./jrpg-raster.cjs'),kit=require('../src/DianaTileKit.js');
 const root=path.resolve(__dirname,'..'),base=path.join(root,'assets/jrpg-test'),source=path.join(base,'originals'),out=path.join(base,'pack');
 const read=name=>PNG.sync.read(fs.readFileSync(path.join(source,name+'.png')));
@@ -20,16 +21,16 @@ function interiorTileset(){
 function compile(){
  const alignment={walking:[],battle:[],guardian:[]};
  for(const [name,output] of [['GuardiaoCaminhada','$Guardiao']]){const src=raster.cells(read(name),3,4),dst=new PNG({width:144,height:192});
-  for(let row=0;row<4;row++){const frames=src[row].slice();if(row===1)frames[2]=frames[0];alignment.guardian.push(...raster.aligned(frames,dst,{cellWidth:48,cellHeight:48,row,targetHeight:42,baseline:46}));}write('characters',output,dst);
+  for(let row=0;row<4;row++){const frames=src[row].slice();if(row===1)frames[2]=frames[0];alignment.guardian.push(...raster.aligned(frames,dst,{cellWidth:48,cellHeight:48,row,targetHeight:48,baseline:47}));}write('characters',output,dst);
  }
- const walking=raster.cells(read('LioraCaminhada6'),6,4),walk=new PNG({width:288,height:192});
- for(let row=0;row<4;row++)alignment.walking.push(...raster.aligned([2,1,0,5,4,3].map(i=>walking[row][i]),walk,{cellWidth:48,cellHeight:48,row,targetHeight:42,baseline:46}));write('characters','$Liora[f6]',walk);
- // The canonical name uses the same six-column contract as System.json.
- write('characters','$Liora',walk);
+ const originalWalk=read('LioraCaminhada6'),repaired=repair.repack(originalWalk,6,4,{cellWidth:48,cellHeight:48,padding:1,threshold:95,isolate:true}),walk=new PNG({width:288,height:192});
+ Buffer.from(repaired.data).copy(walk.data);alignment.walking=repaired.metrics;alignment.walkingSources=repaired.rects;alignment.walkingWarnings=repaired.warnings;
+ write('characters','$Liora[f6]',walk);write('characters','$Liora',walk);
  const residents=raster.cells(read('MoradoresClareira'),12,8);
  for(const [name,bx,by] of [['Mira',0,0],['Orin',6,0],['Nila',0,4],['Ivo',6,4]]){
   const sheet=new PNG({width:288,height:192});
-  for(let row=0;row<4;row++)raster.aligned(residents[by+row].slice(bx,bx+6),sheet,{cellWidth:48,cellHeight:48,row,targetHeight:42,baseline:46});
+  const frames=Array.from({length:4},(_,row)=>residents[by+row].slice(bx,bx+6)).flat();
+  raster.aligned(frames,sheet,{cellWidth:48,cellHeight:48,columns:6,targetHeight:48,baseline:47});
   write('characters','$'+name,sheet);
  }
  const old=raster.cells(read('Combate'),4,4),damage=raster.cells(read('Dano'),4,2),golem=raster.cells(read('GuardiaoCombate6'),6,3),victory=raster.isolatedCells(read('Vitoria6Final'),6,2),sheet=new PNG({width:1152,height:1536});
@@ -61,7 +62,8 @@ function compile(){
  write('tilesets','ClareiraInteriores',interiorTileset(textures));
  fs.writeFileSync(path.join(out,'alignment.json'),JSON.stringify(alignment,null,2)+'\n');
  fs.writeFileSync(path.join(out,'chipset.json'),JSON.stringify({schemaVersion:1,tileSize:32,pages:{A5:{name:'ClareiraTerrenos',tileIdStart:1536,columns:8},B:{name:'ClareiraObjetos',tileIdStart:0,columns:16},C:{name:'ClareiraInteriores',tileIdStart:256,columns:16},D:{name:'ClareiraPaisagem',tileIdStart:512,columns:16}},terrain:kit.terrain,objects:kit.objects},null,2)+'\n');
- const portraits=read('Rostos'),faces=new PNG({width:576,height:288});for(let row=0;row<2;row++)for(let col=0;col<2;col++)blit(portraits,faces,col*portraits.width/2,row*portraits.height/2,portraits.width/2,portraits.height/2,col*144,row*144,144,144);write('faces','ClareiraRostos',faces);
+ const portraits=read('Rostos'),faces=new PNG({width:576,height:288});for(let row=0;row<2;row++)for(let col=0;col<2;col++)blit(portraits,faces,col*portraits.width/2,row*portraits.height/2,portraits.width/2,portraits.height/2,col*144,row*144,144,144);
+ const brannFace=PNG.sync.read(fs.readFileSync(path.join(source,'BrannRosto.png')));blit(brannFace,faces,0,0,brannFace.width,brannFace.height,2*144,144,144,144);write('faces','ClareiraRostos',faces);
  const map=read('Clareira'),parallax=new PNG({width:1024,height:1024});blit(map,parallax,0,0,map.width,map.height,0,0,1024,1024);write('parallaxes','!VilaClareira',parallax);
  // Keep the first approved scene intact at its original tile scale within the
  // expanded, editable world. Transparent margins let native terrain and
@@ -70,6 +72,7 @@ function compile(){
  blit(parallax,expanded,0,0,parallax.width,parallax.height,20*32,16*32,parallax.width,parallax.height);
  write('parallaxes','!VilaClareiraExpandida',expanded);
  const forest=read('BosqueBatalha'),battleback=new PNG({width:1000,height:740});blit(forest,battleback,0,0,forest.width,forest.height,0,0,1000,740);write('battlebacks1','BosqueClareira',battleback);
+ const plaza=read('ClareiraPracaBatalha'),plazaBattleback=new PNG({width:1000,height:740});blit(plaza,plazaBattleback,0,0,plaza.width,plaza.height,0,0,1000,740);write('battlebacks1','PracaClareira',plazaBattleback);
  write('tilesets','ClareiraColisao',new PNG({width:768,height:48}));
  const files=[];function scan(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){const file=path.join(dir,entry.name);if(entry.isDirectory())scan(file);else if(file.endsWith('.png')){const bytes=fs.readFileSync(file),img=PNG.sync.read(bytes);files.push({path:path.relative(out,file).replaceAll('\\','/'),width:img.width,height:img.height,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}}}scan(path.join(out,'img'));
  const manifest={schemaVersion:1,name:'Vila da Clareira',license:'MIT',origin:'Arte original gerada para Diana com imagegen; sem extração de jogos comerciais.',sampling:'nearest-neighbor; original art retained in ../originals',files};fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');fs.copyFileSync(path.join(root,'LICENSE'),path.join(out,'LICENSE'));return manifest;

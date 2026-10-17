@@ -2,7 +2,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {PNG}=require('../upstream/RPGReactor/editor/node_modules/pngjs');
-const raster=require('./jrpg-raster.cjs');
+const raster=require('./jrpg-raster.cjs'),repair=require('../src/DianaSpriteRepair.js');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'assets','rtp','medieval','pack');
 const C={clear:[0,0,0,0],ink:[35,31,43,255],skin:[239,190,143,255],steel:[154,176,187,255],gold:[239,190,74,255],leaf:[68,126,81,255],wood:[119,74,45,255],fire:[244,111,47,255],water:[62,160,207,255],ice:[174,225,244,255],arcane:[169,99,223,255],wine:[194,52,64,255],wineLight:[255,132,96,255],blueLight:[118,220,242,255],leafLight:[145,205,92,255],steelLight:[223,238,235,255],goldDark:[151,93,44,255]};
 function image(w,h,draw){const png=new PNG({width:w,height:h});for(let y=0;y<h;y++)for(let x=0;x<w;x++){const c=draw(x,y)||C.clear,i=(y*w+x)*4;png.data[i]=c[0];png.data[i+1]=c[1];png.data[i+2]=c[2];png.data[i+3]=c[3];}return png;}
@@ -31,27 +31,36 @@ function compile(){
  fs.mkdirSync(out,{recursive:true});
  const staleIcons=path.join(out,'img/system/DianaMedievalIcons.png');if(fs.existsSync(staleIcons))fs.unlinkSync(staleIcons);
  write('characters','$LioraMedieval',PNG.sync.read(fs.readFileSync(path.join(root,'assets/jrpg-test/pack/img/characters/$Liora.png'))));
- const walking=raster.cells(PNG.sync.read(fs.readFileSync(path.join(root,'assets/rtp/medieval/BrannCaminhada.png'))),6,4),brann=new PNG({width:288,height:192});
- for(let row=0;row<4;row++)raster.aligned(walking[row],brann,{cellWidth:48,cellHeight:48,row,targetHeight:42,baseline:46});
+ const walkingSource=PNG.sync.read(fs.readFileSync(path.join(root,'assets/rtp/medieval/BrannCaminhada-v2.png'))),fixedWalk=repair.repack(walkingSource,6,4,{cellWidth:48,cellHeight:48,padding:1,threshold:95,isolate:true}),brann=new PNG({width:288,height:192});
+ Buffer.from(fixedWalk.data).copy(brann.data);
  write('characters','$Brann',brann);
  const lioraSource=PNG.sync.read(fs.readFileSync(path.join(root,'assets/jrpg-test/pack/img/sv_actors/ClareiraCombate.png'))),lioraSheet=new PNG({width:1152,height:1152});
- for(const [row,from,count] of [[0,0,4],[1,1,4],[2,4,4],[3,0,4],[4,6,6],[5,4,4]]){
+ const lioraFrames=[];for(const [row,from,count] of [[0,0,4],[1,1,4],[2,4,4],[3,0,4],[4,6,6],[5,4,4]]){
   const frames=Array.from({length:6},(_,i)=>({source:lioraSource,...raster.bounds(lioraSource,Math.min(i,count-1)*192,from*192,192,192)}));
-  raster.aligned(frames,lioraSheet,{cellWidth:192,cellHeight:192,row,targetHeight:154,baseline:184});
- }
+  lioraFrames.push(...frames);
+ }raster.aligned(lioraFrames,lioraSheet,{cellWidth:192,cellHeight:192,columns:6,targetHeight:154,baseline:184});
  write('sv_actors','LioraMedieval',lioraSheet);
  // Import original illustrated atlases with one consistent scale per row and feet aligned.
  const combat=raster.cells(PNG.sync.read(fs.readFileSync(path.join(root,'assets/rtp/medieval/BatalhadoresOriginais.png'))),12,12);
  for(const [folder,name,bx,by] of [['sv_actors','BrannMedieval',0,0],['enemies','LoboCinza',6,0],['enemies','MusgoVivo',0,6],['enemies','BruxaCinza',6,6]]){
   const sheet=new PNG({width:1152,height:1152});
-  for(let row=0;row<6;row++)raster.aligned(combat[by+row].slice(bx,bx+6),sheet,{cellWidth:192,cellHeight:192,row,targetHeight:154,baseline:184});
+  raster.aligned(combat.slice(by,by+6).flatMap(row=>row.slice(bx,bx+6)),sheet,{cellWidth:192,cellHeight:192,columns:6,targetHeight:154,baseline:184});
+  if(name==='BrannMedieval'){
+   const original=PNG.sync.read(fs.readFileSync(path.join(root,'assets/rtp/medieval/BatalhadoresOriginais.png'))),quadrant=new PNG({width:627,height:627});
+   raster.blit(original,quadrant,0,0,627,627,0,0,627,627);
+   const fixed=repair.repack(quadrant,6,6,{cellWidth:192,cellHeight:192,padding:7,threshold:95,isolate:true,allowUpscale:true});Buffer.from(fixed.data).copy(sheet.data);
+   fs.writeFileSync(path.join(out,'brann-frame-audit.json'),JSON.stringify({rects:fixed.rects,warnings:fixed.warnings,metrics:fixed.metrics},null,2)+'\n');
+  }
   write(folder,name,sheet);
  }
+ const guardianSource=PNG.sync.read(fs.readFileSync(path.join(root,'assets/rtp/medieval/GuardiaoRaizOriginais.png'))),guardianCells=raster.cells(guardianSource,4,4),guardian=new PNG({width:768,height:768});
+ for(let row=0;row<4;row++)raster.aligned(guardianCells[row],guardian,{cellWidth:192,cellHeight:192,row,targetHeight:160,baseline:174,padding:12});
+ write('enemies','GuardiaoRaiz',guardian);
  write('tilesets','MedievalProps',props());write('system','IconSet',icons());
  for(const [name,col,style] of [['Corte',C.steel,'slash'],['Impacto',C.gold,'impact'],['Fogo',C.fire,'impact'],['Agua',C.water,'water'],['Gelo',C.ice,'ice'],['Raio',C.gold,'lightning'],['Arcano',C.arcane,'impact']])write('animations','Efeito'+name,effect(col,style));
  fs.copyFileSync(path.join(root,'LICENSE'),path.join(out,'LICENSE'));
  const files=[];const scan=dir=>fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name)).forEach(e=>{const f=path.join(dir,e.name);if(e.isDirectory())scan(f);else if(e.name.endsWith('.png')){const b=fs.readFileSync(f),p=PNG.sync.read(b);files.push({path:path.relative(out,f).replaceAll('\\','/'),width:p.width,height:p.height,sha256:crypto.createHash('sha256').update(b).digest('hex')});}});scan(path.join(out,'img'));
- const manifest={schemaVersion:1,id:'diana-native-medieval-rtp',version:2,license:'MIT',origin:'Arte original imagegen (BatalhadoresOriginais.png e BrannCaminhada.png), Liora original do pack Clareira; efeitos, ícones e props procedurais Diana. Prompts em docs/JRPG_GENERATION_REVIEW.md; sem assets de jogos comerciais.',grid:{characters:[288,192],battlers:[1152,1152],effects:[960,192],icons:[512,512],props:[512,512]},files};
+ const manifest={schemaVersion:1,id:'diana-native-medieval-rtp',version:3,license:'MIT',origin:'Arte original imagegen (BatalhadoresOriginais.png, BrannCaminhada-v2.png e GuardiaoRaizOriginais.png), Liora original do pack Clareira; efeitos, ícones e props procedurais Diana. Prompts em assets/rtp/GENERATION_PROMPTS.md; sem assets de jogos comerciais.',grid:{characters:[288,192],battlers:[1152,1152],rootGuardian:[768,768],effects:[960,192],icons:[512,512],props:[512,512]},files};
  fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');return manifest;
 }
 module.exports={compile};if(require.main===module)console.log('RTP Medieval compilado: '+compile().files.length+' PNGs.');

@@ -19,6 +19,8 @@ test('valida contrato side/field, IDs de habilidades e limites de combo', () => 
     assert.match(CombatModes.validateSettings(invalid, skills).join('\n'), /2 a 4 IDs únicos/);
     invalid.mode = 'chrono';
     assert.match(CombatModes.validateSettings(invalid, skills).join('\n'), /mode "side" ou "field"/);
+    const automatic=settings();automatic.combos[0].autoExecute=true;delete automatic.combos[0].resultSkillId;
+    assert.match(CombatModes.validateSettings(automatic,skills).join('\n'),/golpe final autom.*habilidade de resultado/);
 });
 
 test('prévia tática encontra caminho ao redor de obstáculo e respeita alcance', () => {
@@ -35,7 +37,7 @@ test('combo reconhece a sequência sem injetar ações ou repetir golpes', () =>
     const tracker = new CombatModes.ComboTracker(settings());
     const subject = { actorId: () => 7 };
     assert.equal(tracker.record(subject, 1), null);
-    assert.deepEqual(tracker.record(subject, 2), { id: 'corte-em-dupla', resultSkillId: 3, skillIds: [1, 2] });
+    assert.deepEqual(tracker.record(subject, 2), { id: 'corte-em-dupla', resultSkillId: 3, autoExecute:false, skillIds: [1, 2] });
     assert.equal(tracker.history.length, 2);
     assert.deepEqual(tracker.history.map(entry => entry.skillId), [1, 2]);
 });
@@ -46,9 +48,23 @@ test('combos usam IDs distintos para ator/inimigo e reiniciam a cada batalha', (
     const enemy = { enemyId: () => 7 };
     tracker.record(actor, 1);
     assert.equal(tracker.record(enemy, 2), null);
-    assert.deepEqual(tracker.record(actor, 2), { id: 'corte-em-dupla', resultSkillId: 3, skillIds: [1, 2] });
+    assert.deepEqual(tracker.record(actor, 2), { id: 'corte-em-dupla', resultSkillId: 3, autoExecute:false, skillIds: [1, 2] });
     assert.equal(tracker.history[0].subjectId, 'actor:7');
     assert.equal(tracker.history[1].subjectId, 'enemy:7');
+});
+
+test('combo opcional executa a habilidade final uma vez depois da sequência sem recursão',()=>{
+    const config=settings();config.combos[0].autoExecute=true;assert.deepEqual(CombatModes.validateSettings(config,skills),[]);
+    const forced=[],actor={actorId:()=>1,isActor:()=>true,isAlive:()=>true,forceAction:(id,target)=>forced.push(['skill',id,target])};
+    const enemy={isAlive:()=>true},actions=[1,2,3].map(id=>({item:()=>({id}),isSkill:()=>true,targetIndex:()=>0}));
+    const manager={_subject:actor,_logWindow:{addText(){}},startBattle(){},startAction(){this._action=actions.shift();},endAction(){this._subject=null;},forceAction(subject){forced.push(['manager',subject===actor]);}};
+    function SceneBattle(){}SceneBattle.prototype.createSpriteset=function(){};
+    const globals={Scene_Battle:SceneBattle,BattleManager:manager,$dataSystem:{dianaCombat:config},$dataSkills:[null,...skills],$gameParty:{members:()=>[actor],battleMembers:()=>[actor]},$gameTroop:{aliveMembers:()=>[enemy]}};
+    CombatModes.installRuntime(globals);manager.startBattle();manager._subject=actor;
+    manager.startAction();manager.endAction();manager._subject=actor;manager.startAction();
+    assert.deepEqual(manager._dianaPendingComboAction,{subject:actor,skillId:3,targetIndex:0});manager.endAction();
+    assert.deepEqual(forced,[['skill',3,0],['manager',true]]);
+    manager._subject=actor;manager.startAction();assert.equal(manager._dianaComboTracker.history.length,2,'finisher is excluded from combo recognition');
 });
 
 test('hook registra a habilidade escolhida após a ação, libera resultado só na batalha e restaura ao terminar', () => {
@@ -124,8 +140,8 @@ test('editor permite ativar preparação, pré-visualizar rota e administrar com
     const document = {
         createElement(tag) {
             return {
-                tag, children: [], textContent: '', style: {}, append(...nodes) { this.children.push(...nodes); },
-                replaceChildren(...nodes) { this.children = nodes; }, setAttribute() {}
+                tag, children: [], textContent: '', style: {}, attributes:{}, append(...nodes) { this.children.push(...nodes); },
+                replaceChildren(...nodes) { this.children = nodes; }, setAttribute(name,value) { this.attributes[name]=value; },getAttribute(name){return this.attributes[name]??null;}
             };
         },
         createTextNode(text) { return { textContent: text }; }
@@ -143,6 +159,10 @@ test('editor permite ativar preparação, pré-visualizar rota e administrar com
         const system = { dianaCombat: { ...settings(), combos: [] } };
         const host = document.createElement('div');
         CombatModes.mountEditor(host, { system, skills });
+        const tactical=find(host,node=>node.tag==='details');
+        assert.ok(tactical,'preparação tática fica recolhida por padrão');
+        assert.match(find(tactical,node=>node.tag==='summary').textContent,/planejamento experimental/);
+        assert.match(find(tactical,node=>node.tag==='p').textContent,/ainda não iniciam nem controlam batalhas táticas/);
         const enabled = find(host, node => node.tag === 'input' && node.type === 'checkbox');
         enabled.checked = false;
         enabled.onchange();
@@ -150,6 +170,8 @@ test('editor permite ativar preparação, pré-visualizar rota e administrar com
         assert.match(find(host, node => node.tag === 'output' && node.textContent.startsWith('Rota:')).textContent, /Rota:/);
         find(host, node => node.tag === 'button' && node.textContent === 'Adicionar combo').onclick();
         assert.equal(system.dianaCombat.combos.length, 1);
+        const auto=find(host,node=>node.tag==='input'&&node.getAttribute('aria-label')==='Executar habilidade de resultado automaticamente');
+        assert.ok(auto);auto.checked=true;auto.onchange();assert.equal(system.dianaCombat.combos[0].autoExecute,true);
         find(host, node => node.tag === 'button' && node.textContent === 'Remover').onclick();
         assert.deepEqual(system.dianaCombat.combos, []);
     } finally {

@@ -17,6 +17,7 @@
   {id:'npc-guardiao',kind:'npc',label:'Guardião da Clareira',asset:'img/characters/$Guardiao.png',database:{table:'Map001.events',id:1}},
   {id:'enemy-lobo',kind:'enemy',label:'Lobo Cinzento',asset:'img/enemies/LoboCinza.png',database:{table:'Enemies',id:2}},
   {id:'enemy-musgo',kind:'enemy',label:'Musgo Vivo',asset:'img/enemies/MusgoVivo.png',database:{table:'Enemies',id:3}},
+  {id:'enemy-raiz',kind:'enemy',label:'Guardião da Raiz Antiga',asset:'img/enemies/GuardiaoRaiz.png',database:{table:'Enemies',id:5}},
   {id:'enemy-bruxa',kind:'enemy',label:'Bruxa Cinzenta',asset:'img/enemies/BruxaCinza.png',database:{table:'Enemies',id:4}},
   {id:'map-vila',kind:'map',label:'Vila da Clareira',asset:'img/tilesets/ClareiraTerrenos.png',database:{table:'MapInfos',id:1}},
   {id:'map-rota',kind:'map',label:'Rota de navegação',asset:'img/tilesets/ClareiraTerrenos.png',database:{table:'MapInfos',id:2}},
@@ -24,6 +25,7 @@
   {id:'map-hospedaria',kind:'map',label:'Hospedaria da Lanterna',asset:'img/tilesets/ClareiraInteriores.png',database:{table:'MapInfos',id:4}},
   {id:'map-casa',kind:'map',label:'Casa do Jardineiro',asset:'img/tilesets/ClareiraInteriores.png',database:{table:'MapInfos',id:5}},
   {id:'background-bosque',kind:'background',label:'Bosque da Clareira',asset:'img/battlebacks1/BosqueClareira.png',database:{table:'Map001',id:1}},
+  {id:'background-praca',kind:'background',label:'Praça da Clareira',asset:'img/battlebacks1/PracaClareira.png',database:{table:'Map001',id:1}},
   ...[[1,'Corte'],[2,'Impacto'],[3,'Fogo'],[4,'Agua'],[5,'Gelo'],[6,'Raio'],[7,'Arcano']].map(([id,name])=>({id:'effect-'+name.toLowerCase(),kind:'effect',label:'Efeito '+name,asset:'img/animations/Efeito'+name+'.png',database:{table:'Animations',id}})),
   ...vehicleSpecs.map(([id,label,file])=>({id:'vehicle-'+id,kind:'vehicle',label,asset:'img/characters/'+file+'.png',database:{table:'System',id}}))
  ];
@@ -63,19 +65,25 @@
   paintVehicleStarts(data);return data;
  }
  function completeStarter(data){return populate(data);}
- function mountEditor(host,{system,onChange,openDatabase,projectPath}={}){
+ function mountFollowers(host,{system,onChange}={}){
   const make=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
   const box=make('fieldset');box.className='diana-screen-group';box.append(make('legend','Grupo no mapa'));
   const label=make('label','Seguidores: '),picker=make('select');picker.className='database-field-value';picker.setAttribute('aria-label','Seguidores no mapa');
   for(const [value,text] of [['show','Visíveis, seguindo o herói'],['gather','Todos recolhidos no herói']]){const option=make('option',text);option.value=value;picker.append(option);}
   picker.value=system.optFollowers===false?'gather':'show';picker.onchange=()=>{system.optFollowers=picker.value==='show';onChange?.();};label.append(picker);box.append(label);host.append(box);
-  const library=make('details');library.className='diana-screen-group';library.append(make('summary','RTP — biblioteca de exemplos'));
+  return {picker};
+ }
+ function mountLibrary(host,{openDatabase,openMap,projectPath}={}){
+  const make=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
+  const intro=make('p','Exemplos editáveis de personagens, mapas, fundos, efeitos e veículos instalados neste projeto.');intro.className='diana-help';host.append(intro);
+  const library=make('section');library.className='diana-rtp-library-section';
   const grid=make('div');grid.className='diana-rtp-library';
   for(const entry of catalog){const card=make('button');card.type='button';card.title=entry.label;card.className='rr-btn-secondary';
    if(projectPath){const fs=require('fs'),path=require('path'),file=path.join(projectPath,entry.asset);if(fs.existsSync(file)){const img=make('img');img.src=RRAssetFiles.toUrl(file);img.alt='';img.width=96;img.height=64;img.style.objectFit='contain';img.style.imageRendering='pixelated';card.append(img);}}
-   card.append(make('span',entry.label));const table={hero:'actors',npc:'actors',enemy:'enemies',map:'tilesets',background:'troops',effect:'animations',vehicle:'system'}[entry.kind];card.onclick=()=>openDatabase?.(table);grid.append(card);
-  }library.append(grid);host.append(library);return {picker};
+   card.append(make('span',entry.label));const table={hero:'actors',npc:'actors',enemy:'enemies',background:'troops',effect:'animations',vehicle:'system'}[entry.kind];card.onclick=()=>entry.kind==='map'?openMap?.(entry.database.id):openDatabase?.(table);grid.append(card);
+  }library.append(grid);host.append(library);return {catalog,grid};
  }
- root.DianaRTPExpansion={catalog,followerControls,populate,completeStarter,mountEditor};
+ function mountEditor(host,options={}){return mountFollowers(host,options);}
+ root.DianaRTPExpansion={catalog,followerControls,populate,completeStarter,mountEditor,mountFollowers,mountLibrary};
  if(typeof module!=='undefined')module.exports=root.DianaRTPExpansion;
 })(globalThis);

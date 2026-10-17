@@ -7,8 +7,8 @@ function buildLauncher(destination){
  if(!compiler)throw Error('Compilador C# local não encontrado; nenhuma instalação foi realizada.');
  const icon=require('./diana-icons.cjs').generate(path.dirname(destination));
  execFileSync(compiler,['/nologo','/target:winexe','/optimize+','/codepage:65001','/win32icon:'+icon,'/reference:System.Windows.Forms.dll','/out:'+destination,path.resolve(__dirname,'../src/windows/DianaLauncher.cs')],{stdio:'pipe',windowsHide:true});
- if(!fs.existsSync(destination))throw Error('Compilador não produziu Diana.exe.');
+ if(!fs.existsSync(destination))throw Error('Compilador não produziu o executável do Luae RPG.');
  return destination;
 }
 module.exports={buildLauncher};
-if(require.main===module)buildLauncher(path.resolve(process.argv[2]||'artifacts/Diana.exe'));
+if(require.main===module)buildLauncher(path.resolve(process.argv[2]||'artifacts/Luae RPG.exe'));

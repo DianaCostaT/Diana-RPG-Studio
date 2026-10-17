@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-17",
+  "source": "C:/Users/lethe/Downloads/photocraft-main.zip",
+  "sha256": "33712cdbfe447c1033f0cce51e0ca1496cada8aae818d62a18336a8ad035c9a4",
+  "status": "estudo estático e guia de produção concluídos; implementação planejada",
+  "inventory": {"files": 1816, "rust_files": 1365, "markdown_files": 102, "bytes": 44588387},
+  "evidence": "docs/PHOTOCRAFT_ART_LEARNINGS.md",
+  "local_inventory": "artifacts/photocraft-study/inventory.json",
+  "scope": "inventário completo; leitura seletiva de documentação e implementação relevante à arte; captura de máscaras inspecionada",
+  "art_rules": [
+    "preservar direção visual e fontes aprovadas da Clareira",
+    "trabalhar por componentes e máscaras; exportar cópias",
+    "usar escala adequada ao tipo de arte e verificar alpha/halos",
+    "manter escala e pivô coerentes na animação sem apagar deslocamentos intencionais",
+    "verificar transparência, limites da célula, repetição dos tiles e resultado dentro do jogo"
+  ],
+  "application_changes": false,
+  "assets_changed": false,
+  "external_components_imported": false,
+  "tests": "não executados: entrega documental, sem integração de código ou arte",
+  "constraints": ["RPGReactor", "Tauri", "contrato de animação compartilhado entre aliados e inimigos"]
+}

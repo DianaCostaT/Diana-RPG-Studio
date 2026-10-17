@@ -18,11 +18,23 @@ test('veículos nativos usam sprites próprios e nascem em água ou solo transit
  assert.equal(flags[1538]&0x0600,0,'barcos podem navegar na água');assert.equal(flags[1536]&0x0600,0x0600,'barcos não navegam em solo');assert.equal(flags[1536]&0x0800,0,'aeronave pode pousar em solo');
 });
 test('catálogo aponta recursos existentes e registros reais, sem cartões fictícios',()=>{
- const ids=new Set(expansion.catalog.map(entry=>entry.id));assert.equal(expansion.catalog.length,26);
- for(const id of ['hero-brann','npc-mira','enemy-lobo','map-vila','background-bosque','effect-fogo','vehicle-airship'])assert.ok(ids.has(id));
+ const ids=new Set(expansion.catalog.map(entry=>entry.id));assert.equal(expansion.catalog.length,28);
+ for(const id of ['hero-brann','npc-mira','enemy-lobo','map-vila','background-bosque','background-praca','effect-fogo','vehicle-airship'])assert.ok(ids.has(id));
  for(const entry of expansion.catalog){assert.ok(entry.asset);assert.ok(entry.database.table);assert.ok(Number.isInteger(entry.database.id)||typeof entry.database.id==='string');}
  const data={'Actors.json':[null,{}],'Enemies.json':[null,{}],'Troops.json':[null],'Skills.json':[null,null,null],'Items.json':[null],'Animations.json':[null],'BattlePresentation.json':{actors:{},enemies:{},skills:{},items:{}}};require('../src/DianaJRPGSample.js').addNativeMedievalRtp(data);
  for(const entry of expansion.catalog.filter(e=>e.kind==='effect'))assert.equal('img/animations/'+data['Animations.json'][entry.database.id].animation1Name+'.png',entry.asset);
+});
+test('biblioteca de recursos apresenta catálogo, abre a tabela certa e navega diretamente ao mapa',()=>{
+ const previous=global.document,opened=[],maps=[],make=tag=>({tag,children:[],style:{},append(...nodes){this.children.push(...nodes);},setAttribute(){}});
+ global.document={createElement:make};
+ try{
+  const host=make('div'),result=expansion.mountLibrary(host,{openDatabase:table=>opened.push(table),openMap:id=>maps.push(id)});
+  assert.equal(result.grid.children.length,expansion.catalog.length);
+  assert.match(host.children[0].textContent,/Exemplos editáveis/);
+  const vehicleIndex=expansion.catalog.findIndex(item=>item.kind==='vehicle');result.grid.children[vehicleIndex].onclick();
+  assert.deepEqual(opened,['system']);
+  const mapIndex=expansion.catalog.findIndex(item=>item.id==='map-vila');result.grid.children[mapIndex].onclick();assert.deepEqual(maps,[1]);
+ }finally{global.document=previous;}
 });
 test('pack de veículos é determinístico, contém sprites RGBA 3x4 e hashes corretos',()=>{
  const first=compile(),base=path.resolve('assets/vehicles/pack'),before=fs.readFileSync(path.join(base,'manifest.json'));compile();assert.deepEqual(fs.readFileSync(path.join(base,'manifest.json')),before);assert.equal(first.files.length,3);

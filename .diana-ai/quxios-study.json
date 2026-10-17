@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-17",
+  "source": "https://github.com/quxios",
+  "status": "pesquisa documental concluída; aplicação planejada",
+  "evidence": "docs/QUXIOS_STUDY.md",
+  "scope": "13 repositórios inventariados; oito READMEs e arquivos selecionados consultados",
+  "runtime_changes": false,
+  "external_code_or_assets_imported": false,
+  "tests": "não executados: alteração exclusivamente documental",
+  "priorities": ["poses e âncoras visuais", "objetos de mapa em camadas", "diálogos e ações de entrada", "geração por salas autorais"],
+  "constraints": ["RPGReactor preservado", "host Tauri", "direção visual Clareira", "licenças por componente antes de reutilização"]
+}

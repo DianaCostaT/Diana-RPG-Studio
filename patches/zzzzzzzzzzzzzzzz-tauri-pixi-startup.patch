@@ -1,0 +1,32 @@
+diff --git a/editor/index.html b/editor/index.html
+--- a/editor/index.html
++++ b/editor/index.html
+@@ -898,7 +898,7 @@
+     </div>
+ 
+     <script>
+-        if (typeof PIXI === 'undefined') {
++        if (typeof PIXI === 'undefined' && !window.RPGReactorHost?.isTauri) {
+             try {
+                 const fs = require('fs');
+                 const path = require('path');
+@@ -924,7 +924,7 @@
+         }
+     </script>
+     <script>
+-        if (typeof PIXI === 'undefined') {
++        if (typeof PIXI === 'undefined' && !window.RPGReactorHost?.isTauri) {
+             throw new Error('PixiJS failed to load. Keep runtime/libs/pixi.js beside the editor source or run npm install in editor/.');
+         }
+ 
+diff --git a/editor/src/main.js b/editor/src/main.js
+--- a/editor/src/main.js
++++ b/editor/src/main.js
+@@ -43,6 +43,7 @@ class RPGReactor {
+     }
+ 
+     async init() {
++        if (window.RPGReactorHost?.isTauri) await window.RPGReactorHost.ensureRuntime();
+         if (this.relaunchFramelessForWine()) return;
+ 
+         this.centerWindowOnStartup();

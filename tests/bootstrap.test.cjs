@@ -53,7 +53,7 @@ test('Vila da Clareira não aceita opt-out em projetos novos',async()=>{
 
 test('marca Diana permanece no título ao abrir projeto e traduz outros textos',()=>{
     const {window} = context(null);
-    assert.equal(window.I18n.t('app.title'),'Diana RPG Studio');
+    assert.equal(window.I18n.t('app.title'),'Luae RPG');
     assert.equal(window.I18n.t('menu.openProject'),'translated:menu.openProject');
 });
 

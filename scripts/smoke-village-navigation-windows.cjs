@@ -75,23 +75,24 @@ async function activate() {
   await wait('return $gameMessage.isBusy() || SceneManager._scene.isBusy() || $gameMap.isEventRunning();', [], 15000);
   await delay(250);
 }
-async function clearMessage() {
+async function clearMessage(waitForEventEnd = true) {
   if (!await driver.execute('return $gameMessage.isBusy();')) return;
   for (let attempt = 0; attempt < 3 && await driver.execute('return $gameMessage.isBusy();'); attempt++) {
     await wait('return !SceneManager._scene._messageWindow?._waitCount && !Input.isPressed("ok");', [], 15000);
     await key('\uE007');
     await delay(180);
   }
-  await wait('return !$gameMessage.isBusy() && !$gameMap.isEventRunning();', [], 15000);
+  await wait(waitForEventEnd ? 'return !$gameMessage.isBusy() && !$gameMap.isEventRunning();' : 'return !$gameMessage.isBusy();', [], 15000);
 }
 async function finishAutomatedTransfer(targetMapId) {
   await wait('return $gameMap.mapId()===arguments[0] && $gamePlayer.canMove();', [targetMapId], 20000);
-  // A background NW.js window can throttle requestAnimationFrame during fades.
-  // End that presentation-only fade in the temporary smoke project so the next
-  // real key action is tested against the fully loaded destination map.
-  await driver.execute('const s=SceneManager._scene;if(s&&s._fadeDuration>0){s._fadeDuration=0;s._fadeSign=0;s._fadeOpacity=0;s._colorFilter?.setBlendColor([0,0,0,0]);}');
+  // Background NW.js windows can throttle both fades and rendering after a map
+  // transfer. Wake the temporary test window before inspecting or interacting.
+  await driver.execute('const w=nw.Window.get();w.restore();w.show();w.focus();const s=SceneManager._scene;if(s&&s._fadeDuration>0){s._fadeDuration=0;s._fadeSign=0;s._fadeOpacity=0;if(s._fadeSprite)s._fadeSprite.opacity=0;s._colorFilter?.setBlendColor([0,0,0,0]);}Input.clear();TouchInput.clear();');
   await wait('return SceneManager._scene?.isReady?.() && !SceneManager._scene?.isBusy?.() && SceneManager._scene?.isActive?.() && $gamePlayer.canMove();', [], 15000);
-  await delay(300);
+  await delay(1200);
+  const foregroundHold = Number(process.env.DIANA_VILLAGE_SMOKE_FOREGROUND_HOLD_MS || 0);
+  if (targetMapId === 6 && Number.isFinite(foregroundHold) && foregroundHold > 0) await delay(foregroundHold);
 }
 
 (async () => {
@@ -131,10 +132,12 @@ async function finishAutomatedTransfer(targetMapId) {
       await driver.execute('$gamePlayer.locate(arguments[0],arguments[1]);$gamePlayer.setDirection(8);', [npc.x, npc.y + 1]);
       await activate();
       if (label === 'forja') {
-        await wait('return SceneManager._scene?.constructor.name==="Scene_Shop" || $gameMessage.isBusy() || $gameMap.isEventRunning();', [], 15000);
-        report.conversations.push({ room: label, event: interiorNpcId, interaction: await driver.execute('return SceneManager._scene?.constructor.name;') });
-        if (await driver.execute('return SceneManager._scene?.constructor.name==="Scene_Shop";')) await key('\uE00C');
-        else await clearMessage();
+        await wait('return $gameMessage.isBusy();', [], 15000);
+        report.conversations.push({ room: label, event: interiorNpcId, text: await driver.execute('return $gameMessage.allText();') });
+        await clearMessage(false);
+        await wait('return SceneManager._scene?.constructor.name==="Scene_Shop";', [], 15000);
+        report.conversations.push({ room: label, interaction: await driver.execute('return SceneManager._scene?.constructor.name;') });
+        await key('\uE00C');
         await wait('return SceneManager._scene?.constructor.name==="Scene_Map" && !$gameMap.isEventRunning();');
       } else {
         await wait('return $gameMessage.isBusy();');
@@ -143,16 +146,16 @@ async function finishAutomatedTransfer(targetMapId) {
         report.conversations.push({ room: label, event: interiorNpcId, text: spoken });
         await clearMessage();
       }
-      await driver.execute('$gamePlayer.locate(10,13);');
-      await key('\uE007');
+      await driver.execute('$gamePlayer.locate(10,12);$gamePlayer.setDirection(2);');
+      await key('\uE015');
       await finishAutomatedTransfer(1);
-      report.transfers.push({ name: label, direction: 'saida', from: targetMapId, to: 1, actionKey: true, positionPrepared: true });
+      report.transfers.push({ name: label, direction: 'saida', from: targetMapId, to: 1, steppedOntoExit: true });
     }
     await screenshot('04-praca-retorno');
     report.status = 'passed';
   } catch (error) {
     report.status = 'failed'; report.failure = String(error.stack || error);
-    if (driver) try { await screenshot('falha'); report.diagnostic = await driver.execute('const s=SceneManager._scene,e=$gameMap?.event(14),ss=s?._spriteset,t=ss?._tilemap;return {scene:s?.constructor.name,map:$gameMap?.mapId(),sceneReady:s?.isReady?.(),active:s?.isActive?.(),busy:s?.isBusy?.(),mapLoaded:s?._mapLoaded,fade:s?._fadeDuration,frame:Graphics.frameCount,mapDataReady:DataManager.isMapLoaded(),screenChildren:s?.children?.length,tilemapReady:t?.isReady?.(),tilemapVisible:t?.visible,tilemapChildren:t?.children?.length,errors:window.__villageErrors,player:$gamePlayer&&{x:$gamePlayer.x,y:$gamePlayer.y,direction:$gamePlayer.direction(),normal:$gamePlayer.isNormalPriority(),canMove:$gamePlayer.canMove(),canStart:$gamePlayer.canStartLocalEvents()},door:e&&{x:e.x,y:e.y,trigger:e._trigger,priority:e._priorityType,normal:e.isNormalPriority(),triggerOk:e.isTriggerIn([0,1,2]),starting:e.isStarting()},message:$gameMessage?.allText(),running:$gameMap?.isEventRunning()};'); } catch {}
+    if (driver) try { await screenshot('falha'); report.diagnostic = await driver.execute('const s=SceneManager._scene,e=$gameMap?.event(14),npc=$gameMap?.event(2),ss=s?._spriteset,t=ss?._tilemap;return {scene:s?.constructor.name,map:$gameMap?.mapId(),sceneReady:s?.isReady?.(),active:s?.isActive?.(),busy:s?.isBusy?.(),gameActive:SceneManager.isGameActive(),mapLoaded:s?._mapLoaded,fade:s?._fadeDuration,fadeSprite:s?._fadeSprite?.opacity,frame:Graphics.frameCount,ticker:Graphics.app?.ticker?.started,mapDataReady:DataManager.isMapLoaded(),screenChildren:s?.children?.length,tilemapReady:t?.isReady?.(),tilemapVisible:t?.visible,tilemapChildren:t?.children?.length,errors:window.__villageErrors,body:document.body.innerText,player:$gamePlayer&&{x:$gamePlayer.x,y:$gamePlayer.y,direction:$gamePlayer.direction(),normal:$gamePlayer.isNormalPriority(),canMove:$gamePlayer.canMove(),canStart:$gamePlayer.canStartLocalEvents()},npc:npc&&{x:npc.x,y:npc.y,trigger:npc._trigger,priority:npc._priorityType,normal:npc.isNormalPriority(),triggerOk:npc.isTriggerIn([0,1,2]),starting:npc.isStarting()},door:e&&{x:e.x,y:e.y,trigger:e._trigger,priority:e._priorityType,normal:e.isNormalPriority(),triggerOk:e.isTriggerIn([0,1,2]),starting:e.isStarting()},message:$gameMessage?.allText(),running:$gameMap?.isEventRunning()};'); } catch {}
     throw error;
   } finally {
     if (driver) await driver.close();

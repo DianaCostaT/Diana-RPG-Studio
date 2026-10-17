@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-17",
+  "status": "implementado e testado por pixels, DOM e jogo NW.js",
+  "documentation": "docs/SPRITE_REPAIR_VALIDATION.md",
+  "runtimeSmoke": "artifacts/sprite-repair-smoke.json",
+  "tauri": "controls inspected; full save and gameplay pending",
+  "sourceFrames": {
+    "LioraWalk": 24,
+    "BrannWalk": 24,
+    "BrannBattle": 36
+  },
+  "runtimeCrops": {
+    "walking": 48,
+    "battle": 36
+  },
+  "source": "assets/rtp/medieval/BrannCaminhada-v2.png",
+  "tool": [
+    "src/DianaSpriteRepair.js",
+    "src/DianaSpriteRepairUI.js"
+  ],
+  "tests": {
+    "suite": "210/210",
+    "prepared": "69/69",
+    "focused": "6/6",
+    "windowsSmoke": "artifacts/windows-smoke-NuQHpD",
+    "spritesSmoke": "artifacts/sprite-repair-smoke-cH8cUG"
+  },
+  "limitations": [
+    "disconnected effects need manual crop review",
+    "map events can select the saved copy",
+    "existing projects must apply corrections using toolbar"
+  ],
+  "preserved": "original sheets and canonical village"
+}

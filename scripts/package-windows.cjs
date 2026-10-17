@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -32,6 +32,7 @@ function copySdk(sdk, out) {
 }
 function dependencies(source, names, out) {
     const inventory = [], visited = new Set();
+    const supplementalLicenses = { '@pixi/colord': path.join(root, 'licenses', 'pixi-colord-MIT.txt') };
     function visit(name) {
         if (visited.has(name)) return;
         if (!/^(@[\w.-]+\/)?[\w.-]+$/.test(name)) throw new Error('Dependencia invalida: ' + name);
@@ -41,7 +42,13 @@ function dependencies(source, names, out) {
         const target = path.join(out, ...name.split('/'));
         copyTree(folder, target, file => path.basename(file) === 'node_modules');
         const licenses = fs.readdirSync(folder).filter(f => /^(licen[sc]e|copying|notice)(\.|$)/i.test(f) || (/^readme/i.test(f) && /Permission is hereby granted/.test(fs.readFileSync(path.join(folder, f), 'utf8'))));
-        inventory.push({ name, version: pkg.version, declaredLicense: pkg.license || null, licenseFiles: licenses, licenseReview: licenses.length ? 'text-preserved; embedded-code-review-pending' : 'blocked-missing-license-text', packageSha256: hash(path.join(folder, 'package.json')) });
+        let supplementalLicense = null;
+        if (!licenses.length && supplementalLicenses[name] && fs.existsSync(supplementalLicenses[name])) {
+            supplementalLicense = 'LICENSE';
+            fs.copyFileSync(supplementalLicenses[name], path.join(target, supplementalLicense));
+            licenses.push(supplementalLicense);
+        }
+        inventory.push({ name, version: pkg.version, declaredLicense: pkg.license || null, licenseFiles: licenses, licenseSource: supplementalLicense ? 'project supplemental text; upstream package omits license file' : 'package', licenseReview: licenses.length ? 'text-preserved; embedded-code-review-pending' : 'blocked-missing-license-text', packageSha256: hash(path.join(folder, 'package.json')) });
         for (const dependency of Object.keys(pkg.dependencies || {})) visit(dependency);
     }
     names.forEach(visit);
@@ -58,8 +65,14 @@ function manifest(out, info) {
         }
     }
     walk(out);
+    const incompleteSdkCredits = info.sdk?.officialCreditsComplete === false;
+    const missingPackageLicenses = info.dependencies?.filter(item => item.licenseReview === 'blocked-missing-license-text').map(item => `${item.name}@${item.version}`) || [];
     const report = { schemaVersion: 1, createdAt: new Date().toISOString(), distributionStatus: 'blocked-license-review',
-        limitations: ['SDK local possui credits.html placeholder; avisos oficiais completos ausentes, publicacao bloqueada.', 'Inventario documental nao certifica licencas transitivas de WASM ou bibliotecas embutidas.'], ...info, files };
+        limitations: [
+            ...(incompleteSdkCredits ? ['O SDK/runtime distribuido mostra credits.html de amostra em chrome://credits; notices completos do Chromium/NW.js/Node ainda ausentes.'] : []),
+            ...(missingPackageLicenses.length ? [`Texto de licença ausente para dependências: ${missingPackageLicenses.join(', ')}.`] : []),
+            'Inventario documental nao certifica licencas transitivas de WASM ou bibliotecas embutidas.'
+        ], ...info, files };
     fs.writeFileSync(path.join(out, 'diana-package.json'), JSON.stringify(report, null, 2) + '\n');
     return report;
 }
@@ -80,9 +93,9 @@ function packageWindows({ prepared = path.join(root, 'build', 'diana'), sdk = pa
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
     const source = fs.realpathSync(path.join(prepared, 'editor', 'node_modules'));
     const inventory = dependencies(source, Object.keys(pkg.dependencies), path.join(app, 'editor', 'node_modules'));
-    fs.writeFileSync(path.join(out, 'Diana.cmd'), '@echo off\r\nstart "" "%~dp0nw.exe" --user-data-dir="%~dp0profile" "%~dp0app\\editor"\r\n');
-    require('./build-windows-launcher.cjs').buildLauncher(path.join(out,'Diana.exe'));
-    fs.writeFileSync(path.join(out,'LEIA-ME.txt'),'Diana RPG Studio — versão local de desenvolvimento\r\n\r\nAbra Diana.exe. Não é necessário instalar Node, Git ou executar comandos.\r\nMantenha todos os arquivos desta pasta juntos.\r\n\r\nCriar projeto: Arquivo > Novo projeto. Use Testar jogo para executar.\r\nEsta versão é para teste local; distribuição pública aguarda revisão de licenças.\r\n');
+    fs.writeFileSync(path.join(out, 'Luae RPG.cmd'), '@echo off\r\nstart "" "%~dp0nw.exe" --user-data-dir="%~dp0profile" "%~dp0app\\editor"\r\n');
+    require('./build-windows-launcher.cjs').buildLauncher(path.join(out,'Luae RPG.exe'));
+    fs.writeFileSync(path.join(out,'LEIA-ME.txt'),'Luae RPG — versão local de desenvolvimento\r\n\r\nAbra Luae RPG.exe. Não é necessário instalar Node, Git ou executar comandos.\r\nMantenha todos os arquivos desta pasta juntos.\r\n\r\nCriar projeto: Arquivo > Novo projeto. Use Testar jogo para executar.\r\nEsta versão é para teste local; distribuição pública aguarda revisão de licenças.\r\n');
     return { out, report: manifest(out, { kind: 'editor', sdk: sdkInfo, dependencies: inventory, mp3Encoding: 'disabled; lamejs removed from prepared manifest and lockfile', demoIncluded: false, provenance: JSON.parse(fs.readFileSync(path.join(prepared, 'provenance.json'), 'utf8')) }) };
 }
 function options(args) {

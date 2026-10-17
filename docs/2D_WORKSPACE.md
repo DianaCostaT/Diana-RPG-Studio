@@ -2,9 +2,10 @@
 
 ## Implementado e testado
 
-- Novo projeto oferece **Inteiramente 2D** (padrão) e **2D + 3D**. A escolha
-  fica em `project.rpgreactor`, campo `diana.mode`. O seletor no topo permite
-  alterar as ferramentas visíveis e persiste essa escolha atomicamente.
+- Novo projeto usa **Inteiramente 2D** por padrão. A opção **2D + 3D** fica
+  recolhida em opções avançadas. A escolha fica em `project.rpgreactor`, campo
+  `diana.mode`; o menu de modo no topo também recolhe essa opção e persiste a
+  escolha atomicamente.
 - Projetos anteriores sem esse campo mantêm o modo completo por compatibilidade.
   Escolha **Projeto 2D** no topo para usar a interface reduzida. Nenhum mapa,
   modelo ou vínculo é removido/convertido ao trocar a interface.
@@ -15,8 +16,11 @@
   Sequências iniciam com projeção plana. Esses caminhos adicionais foram
   inspecionados no código; o smoke visual cobre mapa, camada de objetos e a
   troca de modo, não todas as janelas avançadas.
-- Banco de dados organizado em abas horizontais. Entradas próprias
-  **Animações 2 — Poses** e **Tela de batalha** também acessíveis no topo.
+- Banco de dados organizado em abas horizontais. A barra principal tem seis
+  destinos: Mapas, Eventos, Banco de dados, Batalha, Recursos e Testar jogo.
+  Inimigos continuam na tabela de dados; poses e sequências continuam nas
+  páginas de batalha; camadas de imagem continuam junto às ferramentas de mapas.
+  A biblioteca de exemplos tem uma janela própria em **Recursos**.
 - Animações 2 tem grupo Aliados/Inimigos, seleção do registro, gráfico, formato,
   velocidade de prévia e oito poses por página com prévias e botão **Definir**.
   As primeiras doze posições seguem a organização da referência; poses extras
@@ -47,6 +51,9 @@ e inimigos e posição (510, 280) do primeiro aliado. Capturas e resumo ficam em
 de todos os ataques/efeitos/HUDs.
 
 ## Parcial e planejado
+
+A preparação tática permanece recolhida e identificada como experimental. Seus
+parâmetros e prévia de rota não iniciam nem controlam um combate tático.
 
 Esta implementação reproduz a organização de poses da
 [referência Animations 2](https://haylee.garden/rpg2003/danimations2), sem copiar

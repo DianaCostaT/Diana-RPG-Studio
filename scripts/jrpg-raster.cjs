@@ -30,9 +30,9 @@ function blit(src,dst,sx,sy,sw,sh,dx,dy,dw,dh){
   src.data.copy(dst.data,(ty*dst.width+tx)*4,a,a+4);
  }
 }
-function aligned(frames,dst,{cellWidth,cellHeight,row=0,columns=frames.length,targetHeight=cellHeight-8,baseline=cellHeight-3}={}){
+function aligned(frames,dst,{cellWidth,cellHeight,row=0,columns=frames.length,targetHeight=cellHeight-8,baseline=cellHeight-3,padding=3}={}){
  // One scale for the complete animation, never independent X/Y stretching.
- const scale=Math.min(targetHeight/Math.max(...frames.map(f=>f.height)),(cellWidth-6)/Math.max(...frames.map(f=>f.width)));
+ const scale=Math.min(targetHeight/Math.max(...frames.map(f=>f.height)),(cellWidth-padding*2)/Math.max(...frames.map(f=>f.width)));
  const metrics=[];
  frames.forEach((f,i)=>{const w=Math.max(1,Math.round(f.width*scale)),h=Math.max(1,Math.round(f.height*scale)),x=(i%columns)*cellWidth+Math.floor((cellWidth-w)/2),y=(row+Math.floor(i/columns))*cellHeight+baseline-h+1;
   blit(f.source,dst,f.x,f.y,f.width,f.height,x,y,w,h);metrics.push({column:i%columns,row:row+Math.floor(i/columns),x:x%cellWidth,y:y%cellHeight,width:w,height:h,baseline});

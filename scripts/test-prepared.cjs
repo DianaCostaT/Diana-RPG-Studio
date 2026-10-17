@@ -4,6 +4,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const fs = require('node:fs');
 const tests = ['tests/battle-poses.test.cjs', 'tests/upstream/diana-battle-held-poses.test.cjs'];
+tests.push('tests/sprite-repair.test.cjs');
 if (fs.existsSync(path.join(root,'tests/pose-authoring.test.cjs'))) tests.push('tests/pose-authoring.test.cjs');
 if (fs.existsSync(path.join(root,'tests/pose-translations.test.cjs'))) tests.push('tests/pose-translations.test.cjs');
 if (fs.existsSync(path.join(root,'tests/animation-sequences.test.cjs'))) tests.push('tests/animation-sequences.test.cjs');

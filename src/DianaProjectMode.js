@@ -7,11 +7,15 @@
   UIManager.prototype.showNewProjectDialog=function(options){
    const result=dialog.call(this,options),body=document.querySelector('#rr-new-project-dialog .rr-modal-body');
    if(!body)return result;
-   const label=document.createElement('label');label.htmlFor='diana-project-mode';label.textContent='Tipo de jogo';
+   const advanced=document.createElement('details');advanced.className='diana-project-mode-choice';
+   const summary=document.createElement('summary');summary.textContent='Opções avançadas de modo';
+   const label=document.createElement('label');label.htmlFor='diana-project-mode';label.textContent='Ferramentas do projeto';
    const select=document.createElement('select');select.id='diana-project-mode';select.className='database-field-value';
-   for(const [value,text] of [['2d','Inteiramente 2D — recomendado'],['hybrid','2D + 3D — ferramentas completas']]){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option);}
-   const help=document.createElement('p');help.className='diana-help';help.textContent='No modo 2D, modelos, câmeras e ferramentas de construção 3D ficam ocultos. Os dados existentes são preservados.';
-   body.prepend(label,select,help);
+   for(const [value,text] of [['2d','Inteiramente 2D — padrão'],['hybrid','2D + 3D — avançado']]){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option);}
+   const help=document.createElement('p');help.className='diana-help';help.textContent='Novos projetos usam o modo 2D por padrão. O modo avançado mantém as ferramentas 3D disponíveis; mudar a interface não converte nem remove dados.';
+   advanced.append(summary,label,select,help);
+   const defaultMode=document.createElement('p');defaultMode.className='diana-help';defaultMode.textContent='Novo projeto: Inteiramente 2D (padrão).';
+   body.prepend(defaultMode,advanced);
    return result.then(choice=>choice?{...choice,mode:select.value}:null);
   };
   const open=ProjectController.prototype.openProjectAtPath;
@@ -40,8 +44,11 @@
   new MutationObserver(mark).observe(document.body,{childList:true,subtree:true});
   document.addEventListener('diana-mode-changed',mark);
   const workspace=document.getElementById('diana-workspace');
-  if(workspace){const badge=document.createElement('select');badge.id='diana-mode-badge';badge.setAttribute('aria-label','Modo de edição do projeto');badge.title='Troca as ferramentas visíveis; não converte nem remove dados do jogo.';
-   for(const [value,text] of [['2d','Projeto 2D'],['hybrid','Projeto 2D + 3D']]){const option=document.createElement('option');option.value=value;option.textContent=text;badge.append(option);}workspace.append(badge);
+  if(workspace){const options=document.createElement('details');options.id='diana-mode-options';options.className='diana-mode-options';
+   const summary=document.createElement('summary');summary.textContent='Projeto 2D';summary.title='Opções avançadas de ferramentas do projeto';
+   const badge=document.createElement('select');badge.id='diana-mode-badge';badge.setAttribute('aria-label','Modo de edição do projeto');badge.title='Troca as ferramentas visíveis; não converte nem remove dados do jogo.';
+   for(const [value,text] of [['2d','Projeto 2D'],['hybrid','Projeto 2D + 3D — avançado']]){const option=document.createElement('option');option.value=value;option.textContent=text;badge.append(option);}
+   options.append(summary,badge);workspace.append(options);
    badge.onchange=async()=>{const project=window.reactor?.projectController?.currentProject;if(!project)return;
     try{const manager=window.reactor.projectManager,file=manager.path.join(project.path,'project.rpgreactor'),data=JSON.parse(manager.fs.readFileSync(file,'utf8').replace(/^\uFEFF/,''));
      data.diana={...data.diana,mode:badge.value};manager._writeFileAtomic(manager.fs,file,JSON.stringify(data,null,2),'utf8');project.diana=data.diana;apply(project);
@@ -53,6 +60,7 @@
  function apply(project){
   const mode=project?modeOf(project):'2d';document.documentElement.dataset.dianaMode=mode;
   const badge=document.getElementById('diana-mode-badge');if(badge){badge.value=mode;badge.disabled=!project;}
+  const summary=document.querySelector('#diana-mode-options summary');if(summary)summary.textContent=mode==='hybrid'?'Projeto 2D + 3D — avançado':'Projeto 2D';
   document.dispatchEvent(new Event('diana-mode-changed'));
  }
  const api={modeOf,apply};root.DianaProjectMode=api;if(typeof module!=='undefined')module.exports=api;

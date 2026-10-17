@@ -47,6 +47,7 @@
                 if (combo.resultSkillId !== undefined && (!integer(combo.resultSkillId) || combo.resultSkillId <= 0 || (ids.size && !ids.has(combo.resultSkillId)))) {
                     errors.push(`${at}: resultSkillId deve referenciar uma habilidade existente.`);
                 }
+                if (combo.autoExecute === true && !combo.resultSkillId) errors.push(`${at}: o golpe final automático requer uma habilidade de resultado.`);
             });
         }
         const tactical = value.tacticalPreparation;
@@ -131,7 +132,7 @@
                 const tail = subjectHistory.slice(-candidate.skillIds.length);
                 return tail.every((entry, index) => entry.subjectId === subjectId && entry.skillId === candidate.skillIds[index]);
             });
-            return combo ? { id: combo.id, resultSkillId: combo.resultSkillId || null, skillIds: [...combo.skillIds] } : null;
+            return combo ? { id: combo.id, resultSkillId: combo.resultSkillId || null, autoExecute: combo.autoExecute === true, skillIds: [...combo.skillIds] } : null;
         }
     }
 
@@ -214,6 +215,8 @@
     function resetBattleCombos(globals) {
         globals.BattleManager._dianaComboTracker = null;
         globals.BattleManager._dianaLastCombo = null;
+        globals.BattleManager._dianaPendingComboAction = null;
+        globals.BattleManager._dianaExecutingComboFinisher = false;
         for (const actor of globals.$gameParty?.members?.() || []) delete actor._dianaCombatTemporarySkills;
     }
 
@@ -269,15 +272,28 @@
             const result = startAction.apply(this, arguments);
             const action = this._action || this._subject?.currentAction?.();
             const item = action?.item?.();
-            if (item?.id && action?.isSkill?.()) {
+            const comboFinisher=this._dianaExecutingComboFinisher===true;
+            this._dianaExecutingComboFinisher=false;
+            if (!comboFinisher && item?.id && action?.isSkill?.()) {
                 const settings = runtimeSettings(globals);
                 this._dianaComboTracker ||= new ComboTracker(settings);
                 const combo = this._dianaComboTracker.record(this._subject, item.id);
                 if (combo) {
                     this._dianaLastCombo = combo;
                     const unlocked = combo.resultSkillId && unlockSkill(this._subject, combo.resultSkillId);
+                    if(combo.autoExecute&&combo.resultSkillId){const opponents=this._subject?.isActor?.()?globals.$gameTroop?.aliveMembers?.():globals.$gameParty?.battleMembers?.();
+                        if(this._subject?.forceAction&&typeof this.forceAction==='function'&&opponents?.length){this._dianaPendingComboAction={subject:this._subject,skillId:combo.resultSkillId,targetIndex:Number.isInteger(action?.targetIndex?.())?action.targetIndex():-1};}
+                    }
                     this._logWindow?.addText?.(unlocked ? `Combo: ${combo.id}. Nova habilidade disponível nesta batalha.` : `Combo: ${combo.id}.`);
                 }
+            }
+            return result;
+        };
+        const endAction=BattleManager.endAction;
+        BattleManager.endAction=function(){
+            const result=endAction.apply(this,arguments),pending=this._dianaPendingComboAction;this._dianaPendingComboAction=null;
+            if(pending&&pending.subject?.isAlive?.()!==false){const opponents=pending.subject?.isActor?.()?globals.$gameTroop?.aliveMembers?.():globals.$gameParty?.battleMembers?.();
+                if(opponents?.length&&typeof this.forceAction==='function'){pending.subject.forceAction(pending.skillId,pending.targetIndex);this._dianaExecutingComboFinisher=true;this.forceAction(pending.subject);}
             }
             return result;
         };
@@ -320,6 +336,8 @@
             mode.value = config.mode;
             mode.onchange = () => { config.mode = mode.value; commit(); render(); };
             const row = make('label', 'Modo: '); row.append(mode); host.append(title, row);
+            const tacticalDetails = make('details'); tacticalDetails.className = 'diana-tactical-planned';
+            tacticalDetails.append(make('summary', 'Preparação tática — planejamento experimental'), make('p', 'A grade e a rota são apenas uma prévia de planejamento; ainda não iniciam nem controlam batalhas táticas.'));
             const tactical = config.tacticalPreparation;
             const controls = make('div');
             const enabled = make('input'); enabled.type = 'checkbox'; enabled.checked = tactical.enabled;
@@ -331,7 +349,7 @@
                 input.onchange = () => { tactical[field] = Math.max(minimum, Math.min(maximum, Number(input.value) || minimum)); commit(); render(); };
                 const labelNode = make('label', `${label}: `); labelNode.append(input); controls.append(labelNode);
             }
-            host.append(make('h4', 'Preparação tática'), controls, make('p', 'Clique nas células para alternar obstáculos. A prévia mostra uma rota possível, sem iniciar combate tático.'));
+            tacticalDetails.append(make('h4', 'Parâmetros'), controls, make('p', 'Clique nas células para alternar obstáculos.'));
             const grid = make('div'); grid.setAttribute('role', 'grid'); grid.style.display = 'grid'; grid.style.gridTemplateColumns = `repeat(${tactical.columns}, 28px)`;
             const obstacles = new Set(tactical.obstacles.map(key));
             for (let y = 0; y < tactical.rows; y++) for (let x = 0; x < tactical.columns; x++) {
@@ -340,7 +358,7 @@
                 button.onclick = () => { tactical.obstacles = obstacles.has(key(point)) ? tactical.obstacles.filter(item => key(item) !== key(point)) : [...tactical.obstacles, point]; commit(); render(); };
                 grid.append(button);
             }
-            host.append(grid);
+            tacticalDetails.append(grid);
             const preview = { from: { x: 0, y: 0 }, target: { x: tactical.columns - 1, y: tactical.rows - 1 } };
             const previewControls = make('div');
             for (const [name, point, label] of [['from', preview.from, 'Origem'], ['target', preview.target, 'Alvo']]) {
@@ -355,7 +373,8 @@
                 const result = previewTactical(config, preview.from, preview.target);
                 previewOutput.textContent = result.valid ? `Rota: ${result.path.map(key).join(' -> ') || 'sem rota'} (${result.reason})` : result.errors.join(' ');
             };
-            host.append(make('h4', 'Prévia de caminho'), previewControls, previewOutput); showPreview();
+            tacticalDetails.append(make('h4', 'Prévia de caminho'), previewControls, previewOutput); showPreview();
+            host.append(tacticalDetails);
             host.append(make('h4', 'Combos'), make('p', `Cada regra aceita de 2 a ${MAX_COMBO_SKILLS} habilidades existentes e somente registra/libera o resultado: nunca repete golpes automaticamente.`));
             const skillOptions = () => skills.filter(Boolean).map(skill => ({ id: Number(skill.id), name: skill.name || `Habilidade ${skill.id}` })).filter(skill => integer(skill.id) && skill.id > 0);
             for (const combo of config.combos) {
@@ -369,6 +388,8 @@
                 for (const skill of skillOptions()) { const option = make('option', `#${skill.id} ${skill.name}`); option.value = skill.id; result.append(option); }
                 result.value = combo.resultSkillId || '';
                 result.onchange = () => { if (result.value) combo.resultSkillId = Number(result.value); else delete combo.resultSkillId; commit(); render(); };
+                const auto=make('input');auto.type='checkbox';auto.checked=combo.autoExecute===true;auto.setAttribute('aria-label','Executar habilidade de resultado automaticamente');
+                auto.onchange=()=>{combo.autoExecute=auto.checked;commit();render();};
                 const remove = make('button', 'Remover'); remove.type = 'button'; remove.onclick = () => { config.combos = config.combos.filter(item => item !== combo); commit(); render(); };
                 row.append(make('label', 'Nome: '),id);
                 combo.skillIds.forEach((selected,index)=>{
@@ -379,7 +400,7 @@
                 const append=make('button','Mais um passo');append.type='button';append.disabled=combo.skillIds.length>=MAX_COMBO_SKILLS||!skillOptions().some(s=>!combo.skillIds.includes(s.id));append.onclick=()=>{combo.skillIds.push(skillOptions().find(s=>!combo.skillIds.includes(s.id)).id);commit();render();};
                 const trim=make('button','Remover último passo');trim.type='button';trim.disabled=combo.skillIds.length<=2;trim.onclick=()=>{combo.skillIds.pop();commit();render();};
                 const advanced=make('details');advanced.append(make('summary','IDs — avançado'),sequence);
-                row.append(append,trim,make('label','Resultado: '),result,remove,advanced);host.append(row);
+                row.append(append,trim,make('label','Habilidade final: '),result,make('label','Executar automaticamente'),auto,remove,advanced);host.append(row);
             }
             const add = make('button', 'Adicionar combo'); add.type = 'button'; add.disabled = config.combos.length >= MAX_COMBOS;
             add.onclick = () => { config.combos.push({ id: `combo-${config.combos.length + 1}`, skillIds: skillOptions().slice(0, 2).map(skill => skill.id) }); commit(); render(); };

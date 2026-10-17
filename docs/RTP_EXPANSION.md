@@ -1,6 +1,6 @@
 # Expansão RTP nativa
 
-**Estado: implementado e testado por API e execução Windows.** `DianaRTPExpansion.populate(data)` complementa o projeto inicial sem sobrescrever Liora, Brann ou seus atlas. O catálogo editável é persistido em `System.dianaRtpCatalog`; os cartões mostram os recursos instalados e abrem as tabelas reais correspondentes.
+**Estado: implementado e testado por API; biblioteca em janela própria verificada por DOM.** `DianaRTPExpansion.populate(data)` complementa o projeto inicial sem sobrescrever Liora, Brann ou seus atlas. O catálogo editável é persistido em `System.dianaRtpCatalog`; a janela **Recursos e biblioteca de exemplos** mostra os recursos instalados e abre as tabelas correspondentes. O catálogo não ocupa mais a tela de batalha.
 
 ## Seguidores
 
@@ -15,5 +15,5 @@ Os campos nativos `System.boat`, `System.ship` e `System.airship` recebem sprite
 ## Validação
 
 - **API:** `node --test tests/rtp-expansion.test.cjs` valida catálogo, preferência de seguidores, comandos nativos, posições e passagem dos veículos, sprites e manifesto.
-- **Visual:** controle de seguidores e biblioteca aparecem no painel de poses; o seletor altera e persiste a preferência. A biblioteca aponta para registros reais.
+- **Visual:** o seletor de seguidores permanece na tela de batalha e a biblioteca abre em Recursos. O teste DOM confirma que os cartões são exibidos e encaminham a tabela do item selecionado; revisão visual no NW.js pendente.
 - **Execução de jogo:** defesa, novo jogo, dois heróis, suprimentos e combate de campo são verificados nos smokes Windows; embarque e navegação dos três veículos ainda precisam de teste manual de interação.

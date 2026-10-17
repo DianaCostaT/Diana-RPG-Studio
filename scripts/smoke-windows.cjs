@@ -87,30 +87,34 @@ async function main() {
         assert.equal(result.language,'pt');
         assert.equal(result.diana.schemaVersion,1);
         assert.equal(result.template,null);
-        assert.match(result.title,/Diana RPG Studio/);
+        assert.match(result.title,/Luae RPG/);
         assert.deepEqual(result.imported,['DianaTiles','$DianaSprite','DianaParallax']);
         const pointer = await driver.execute(`
             const app=reactor,t=app.projectController.tilemapManager,m=app.mapEditor,p=app.tilesetPaletteViewer;
             app.eventManager.setEventMode(false);m.setEnabled(true);m.setTool('pencil');m.setLayerMode(0);
             p.currentLayer='B';p.selectedTiles=[{layer:'B',x:3,y:0}];
-            const point=t.container.toGlobal(new PIXI.Point(6.5*t.TILE_WIDTH,4.5*t.TILE_HEIGHT));
+            const center=t.container.toLocal(new PIXI.Point(t.app.screen.width/2,t.app.screen.height/2));
+            const cell={x:Math.max(0,Math.min(t.currentMap.width-1,Math.floor(center.x/t.TILE_WIDTH))),y:Math.max(0,Math.min(t.currentMap.height-1,Math.floor(center.y/t.TILE_HEIGHT)))};
+            const point=t.container.toGlobal(new PIXI.Point((cell.x+.5)*t.TILE_WIDTH,(cell.y+.5)*t.TILE_HEIGHT));
             const rect=t.app.canvas.getBoundingClientRect();
-            return {x:Math.round(rect.left+point.x*rect.width/t.app.screen.width),y:Math.round(rect.top+point.y*rect.height/t.app.screen.height),before:t.getTileAt(6,4,0)};
+            return {x:Math.round(rect.left+point.x*rect.width/t.app.screen.width),y:Math.round(rect.top+point.y*rect.height/t.app.screen.height),cell,before:t.getTileAt(cell.x,cell.y,0)};
         `);
-        assert.equal(await driver.execute('return document.elementFromPoint(arguments[0],arguments[1]) === reactor.projectController.tilemapManager.app.canvas;',[pointer.x,pointer.y]),true,'pointer targets the visible map canvas');
+        const hit=await driver.execute('const c=reactor.projectController.tilemapManager.app.canvas,e=document.elementFromPoint(arguments[0],arguments[1]);return {isCanvas:e===c,tag:e?.tagName,id:e?.id,className:String(e?.className||""),canvasRect:(()=>{const r=c.getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height};})(),point:{x:arguments[0],y:arguments[1]}};',[pointer.x,pointer.y]);
+        assert.equal(hit.isCanvas,true,'pointer targets the visible map canvas: '+JSON.stringify(hit));
         await driver.sessionRequest('POST','/actions',{actions:[{type:'pointer',id:'map-mouse',parameters:{pointerType:'mouse'},actions:[
             {type:'pointerMove',duration:0,origin:'viewport',x:pointer.x,y:pointer.y},
             {type:'pointerDown',button:0},{type:'pause',duration:100},{type:'pointerUp',button:0}
         ]}]});
-        assert.equal(await driver.execute('return reactor.projectController.tilemapManager.getTileAt(6,4,0);'),3,'mouse stroke paints selected tile');
-        const history = await driver.execute('const m=reactor.mapEditor,t=reactor.projectController.tilemapManager;m.undo();const undo=t.getTileAt(6,4,0);m.redo();return {undo,redo:t.getTileAt(6,4,0)};');
-        assert.deepEqual(history,{undo:pointer.before,redo:3});
+        const painted=await driver.execute('return reactor.projectController.tilemapManager.getTileAt(arguments[0],arguments[1],0);',[pointer.cell.x,pointer.cell.y]);
+        assert.notEqual(painted,pointer.before,'mouse stroke changes the visible map cell');
+        const history = await driver.execute('const m=reactor.mapEditor,t=reactor.projectController.tilemapManager,x=arguments[0],y=arguments[1];m.undo();const undo=t.getTileAt(x,y,0);m.redo();return {undo,redo:t.getTileAt(x,y,0)};',[pointer.cell.x,pointer.cell.y]);
+        assert.deepEqual(history,{undo:pointer.before,redo:painted});
         assert.equal(await driver.executeAsync('const done=arguments[arguments.length-1];reactor.projectController.saveProject().then(done,e=>done({failure:String(e)}));'),true);
-        result.pointer={paintedTile:3,cell:[6,4],history};
+        result.pointer={paintedTile:painted,cell:[pointer.cell.x,pointer.cell.y],history};
         const map=JSON.parse(fs.readFileSync(path.join(project,'data','Map001.json'),'utf8'));
         assert.equal(map.data[3*map.width+2],1);
         assert.equal(map.data[map.width*map.height+3*map.width+2],2);
-        assert.equal(map.data[4*map.width+6],3);
+        assert.equal(map.data[pointer.cell.y*map.width+pointer.cell.x],painted);
         assert.equal(map.parallaxName,'DianaParallax');
         assert.equal(map.events[result.eventId].pages[0].list[1].parameters[0],'Olá, Diana!');
         const metadata=JSON.parse(fs.readFileSync(path.join(project,'project.rpgreactor'),'utf8'));

@@ -2,14 +2,14 @@
 (function(root) {
     'use strict';
 
-    const product = 'Diana RPG Studio';
+    const product = 'Luae RPG';
     const labels = new Map([
         ['RPGReactor', product],
         ['RPGReactor Editor', product],
         ['RPGReactor Project Manager', product],
         ['Welcome to RPGReactor', `Bem-vinda ao ${product}`],
-        ['New RPGReactor Project', 'Novo projeto Diana'],
-        ['Open RPGReactor Project', 'Abrir projeto Diana']
+        ['New RPGReactor Project', 'Novo projeto Luae RPG'],
+        ['Open RPGReactor Project', 'Abrir projeto Luae RPG']
     ]);
     const chromeSelector = [
         '#app-title', '#titlebar-title', '#compat-titlebar .title',

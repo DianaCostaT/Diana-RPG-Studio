@@ -44,9 +44,47 @@ async function main({outcome='victory'}={}) {
         await driver.waitForScript('return SceneManager._scene?.constructor.name === "Scene_Map" && $gamePlayer?.canMove() && !SceneManager._scene.isBusy();',[],{timeout:30000});
         console.log('Mapa pronto');
         await driver.execute('window.__starterErrors=[];addEventListener("error",e=>__starterErrors.push(String(e.error||e.message)));');
-        const initial=await driver.execute('return {x:$gamePlayer.x,y:$gamePlayer.y,hp:$gameParty.leader().hp,maxHp:$gameParty.leader().mhp,graphic:$gamePlayer.characterName()};');
-        assert.deepEqual([initial.x,initial.y],[8,6]); assert.equal(initial.hp,initial.maxHp); assert.equal(initial.graphic,'$Diana');
-        // Enter starts an ordinary action-button event in front of the player.
+        const initial=await driver.execute('return {mapId:$gameMap.mapId(),x:$gamePlayer.x,y:$gamePlayer.y,hp:$gameParty.leader().hp,maxHp:$gameParty.leader().mhp,graphic:$gamePlayer.characterName(),canMove:[2,4,6,8].some(d=>$gamePlayer.canPass($gamePlayer.x,$gamePlayer.y,d))};');
+        const start=JSON.parse(fs.readFileSync(path.join(project,'data','System.json'),'utf8'));
+        const startMap=JSON.parse(fs.readFileSync(path.join(project,'data',`Map${String(start.startMapId).padStart(3,'0')}.json`),'utf8'));
+        const actors=JSON.parse(fs.readFileSync(path.join(project,'data','Actors.json'),'utf8'));
+        const enemies=JSON.parse(fs.readFileSync(path.join(project,'data','Enemies.json'),'utf8'));
+        const troops=JSON.parse(fs.readFileSync(path.join(project,'data','Troops.json'),'utf8'));
+        assert.equal(initial.mapId,start.startMapId); assert.deepEqual([initial.x,initial.y],[start.startX,start.startY]);
+        assert.ok(initial.x>=0&&initial.y>=0&&initial.x<startMap.width&&initial.y<startMap.height,'configured start fits its map');
+        assert.equal(initial.canMove,true,'player starts on an accessible tile');
+        assert.equal(initial.hp,initial.maxHp); assert.equal(initial.graphic,actors[start.partyMembers[0]].characterName);
+        // Walk to the starter guardian and engage through the visible map controls.
+        const guardian=startMap.events.find(event=>event?.name==='Guardião da Clareira');
+        assert.ok(guardian,'starter village has its guardian encounter');
+        const troopId=guardian.pages[0].list.find(command=>command.code===301)?.parameters[1];
+        assert.ok(troopId>0,'guardian starts a configured encounter');
+        const expectedExp=troops[troopId].members.reduce((sum,member)=>sum+enemies[member.enemyId].exp,0);
+        const steps=await driver.execute(`return (() => {
+            const start={x:$gamePlayer.x,y:$gamePlayer.y}, goal={x:${guardian.x-1},y:${guardian.y}};
+            const dirs=[[2,0,1,'\\uE015'],[4,-1,0,'\\uE012'],[6,1,0,'\\uE014'],[8,0,-1,'\\uE013']];
+            const key=p=>p.x+','+p.y, queue=[start], previous=new Map([[key(start),null]]), via=new Map();
+            for(let head=0;head<queue.length && !previous.has(key(goal));head++) {
+                const p=queue[head];
+                for(const [d,dx,dy,button] of dirs) {
+                    const next={x:p.x+dx,y:p.y+dy}, id=key(next);
+                    if(previous.has(id) || !$gamePlayer.canPass(p.x,p.y,d)) continue;
+                    previous.set(id,key(p)); via.set(id,button); queue.push(next);
+                }
+            }
+            if(!previous.has(key(goal))) throw new Error('NÃ£o hÃ¡ caminho transitÃ¡vel atÃ© o guardiÃ£o.');
+            const result=[]; let current=key(goal);
+            while(current!==key(start)){result.unshift(via.get(current));current=previous.get(current);}
+            return result;
+        })()`);
+        for(const direction of steps){await key(direction);await delay(260);await driver.waitForScript('return !$gamePlayer.isMoving();',[],{timeout:5000});}
+        const approach=await driver.execute('return {x:$gamePlayer.x,y:$gamePlayer.y,direction:$gamePlayer.direction()};');
+        assert.deepEqual([approach.x,approach.y,approach.direction],[guardian.x-1,guardian.y,6]);
+        const facing=await driver.execute(`const s=SceneManager._scene._spriteset._characterSprites.find(sprite=>sprite._character===$gamePlayer);return {direction:$gamePlayer.direction(),patternY:s?.characterPatternY(),frameY:s?._frame?.y,cellHeight:s?.patternHeight()};`);
+        assert.equal(facing.direction,6,'player turns toward the guardian before the encounter');
+        assert.equal(facing.patternY,2,'right-facing walking selects the right-facing source row');
+        assert.equal(facing.frameY,facing.cellHeight*2,'runtime crops the right-facing source row');
+        await shot('facing-right');
         await key('\uE007');
         await driver.waitForScript('return $gameMessage.isBusy() && SceneManager._scene._messageWindow?.pause && SceneManager._scene._messageWindow._waitCount===0;',[],{timeout:15000});
         await shot('dialogue'); await key('\uE007');
@@ -73,7 +111,7 @@ async function main({outcome='victory'}={}) {
         }
         const result=await driver.execute('return {exp:$gameParty.leader().currentExp(),hp:$gameParty.leader().hp,dead:$gameTroop.isAllDead(),errors:__starterErrors,textColour:ColorManager.textColor(0)};');
         assert.equal(result.dead,outcome==='victory');
-        assert.equal(result.exp,outcome==='victory'?5:0);
+        assert.equal(result.exp,outcome==='victory'?expectedExp:0);
         assert.ok(result.hp>0); assert.deepEqual(result.errors,[]);
         if(outcome==='defeat')assert.equal(result.hp,1,'canLose revives the defeated party');
         assert.equal(result.textColour,'#f2f0ff','starter windowskin uses legible text palette');

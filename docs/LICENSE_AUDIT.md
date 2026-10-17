@@ -1,5 +1,7 @@
 # Auditoria de licenças
 
+Atualização de sprites (17/10/2026): `assets/rtp/medieval/BrannCaminhada-v2.png` é uma edição original feita pela ferramenta integrada imagegen a partir do Brann do próprio projeto, sem referência a assets comerciais. O original anterior foi preservado. Prompts, origem e evidências estão em [SPRITE_REPAIR_VALIDATION.md](SPRITE_REPAIR_VALIDATION.md). O editor inclui os três originais do projeto usados para recuperar recortes; licenças e avisos existentes permanecem no pacote.
+
 Data da inspeção: 15-10-2026. Resultado: o código próprio do RPGReactor é uma base MIT utilizável, mas **o pacote completo não pode ser descrito como exclusivamente MIT**. A distribuição depende dos componentes efetivamente incluídos, das respetivas licenças e da proveniência dos recursos. Esta é uma auditoria técnica documental; não constitui uma autorização global de redistribuição.
 
 ## Âmbito e prova
@@ -75,7 +77,7 @@ O pacote preserva `LICENSE` Diana, `licenses/RPGReactor-MIT.txt`, `THIRD_PARTY_N
 | Componentes e versões | Declaração local | Texto preservado |
 | --- | --- | --- |
 | @jsquash/oxipng 2.3.0; wasm-feature-detect 1.8.0 | Apache-2.0 | LICENSE de cada pacote; cadeia WASM ainda pendente |
-| @pixi/colord 2.9.6 | MIT | **Ausente no pacote instalado: bloqueio** |
+| @pixi/colord 2.9.6 | MIT; titular/ano identificados como Vlad Shilov, 2020 em inventários publicados do pacote | O tarball instalado omite o texto; `licenses/pixi-colord-MIT.txt` agora é acrescentado ao pacote e inventário. |
 | @types/earcut 3.0.0; @xmldom/xmldom 0.8.15; eventemitter3 5.0.1 | MIT | LICENSE de cada pacote |
 | @webgpu/types 0.1.72; tiny-lru 11.4.7 | BSD-3-Clause | LICENSE de cada pacote |
 | earcut 3.0.2 | ISC | LICENSE |
@@ -93,9 +95,9 @@ A closure de produção é copiada fisicamente da instalação existente, sem np
 
 O SDK `tools/nwjs-sdk-v0.118.0-win-x64` contém `credits.html` de exemplo (401 bytes), com as instruções “This is sample credits page” e `generate_about_credits=true`; não foi encontrado texto completo de licenças NW.js/Chromium/Node nessa pasta. O arquivo é copiado sem alterações, junto aos binários locais e `ffmpeg.dll` local, cujos hashes são registrados; nenhum overlay é aplicado. A origem/hash do ZIP consta de `tools-lock.json`, mas isso não fornece os notices ausentes nem atesta a árvore extraída inteira.
 
-**Publicação bloqueada:** obter/gerar notices oficiais correspondentes ao SDK exato e completar a evidência de licenças de `@pixi/colord`, WASM/decoders e demais terceiros embutidos antes de redistribuir. A tarefa não fez downloads nem instalações, não declarou conformidade legal e não publicou pacote. Pacotes locais estão marcados `blocked-license-review`; são artefatos de validação isolada, não uma liberação de distribuição.
+**Publicação bloqueada:** a verificação interativa no SDK exato confirmou que `chrome://credits` devolve apenas a página de amostra. É necessário obter um runtime NW.js com notices Chromium completos ou gerar os avisos correspondentes ao build exato; o `credits.html` atual não basta. O aviso MIT que faltava para `@pixi/colord` foi acrescentado ao pacote e ao inventário. A cadeia WASM/decoders e terceiros embutidos continua a requerer revisão por binário exato. Esta tarefa não instalou dependências, não declarou conformidade legal e não publicou pacote; pacotes locais continuam em `blocked-license-review`.
 
 
 ## Atualização Diana: remoção da dependência LGPL de MP3
 
-Estado: **implementado e testado por patch e API**. O prepare isolado `build/diana-license-clean` confirma `lamejs` e o transitivo exclusivo ausentes dos manifests e lockfile preparados; a revisão upstream fixada permanece intacta. A dependência LGPL-3.0 já não integra a closure declarada do editor Diana, e o empacotador bloqueia regressão. Esta correção não libera a publicação: permanecem pendentes notices completos do NW.js/Chromium/Node, o texto MIT de `@pixi/colord` e a revisão de WASM/terceiros. O smoke Windows global e a geração do pacote ficaram para a integração central.
+Estado: **implementado e testado por patch e API**. O prepare isolado `build/diana-license-clean` confirma `lamejs` e o transitivo exclusivo ausentes dos manifests e lockfile preparados; a revisão upstream fixada permanece intacta. A dependência LGPL-3.0 já não integra a closure declarada do editor Diana, e o empacotador bloqueia regressão. O texto MIT de `@pixi/colord` também passou a ser incluído. A publicação continua bloqueada por notices incompletos no runtime NW.js/Chromium/Node e pela revisão WASM/terceiros.

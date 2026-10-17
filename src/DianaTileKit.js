@@ -28,7 +28,7 @@
  }
  function prepare(map,tiles,purpose,w=32,h=32){
   const size=w*h;
-  Object.assign(map,{width:w,height:h,tilesetId:1,parallaxName:'',parallaxShow:false,note:'[DianaFixture:'+purpose+']',
+  Object.assign(map,{width:w,height:h,tilesetId:1,encounterList:[],encounterStep:30,parallaxName:'',parallaxShow:false,note:'[DianaFixture:'+purpose+']',
    dianaFixture:{version:1,purpose,nativeTiles:{terrainPage:'ClareiraTerrenos',objectPage:'ClareiraObjetos',interiorPage:'ClareiraInteriores',tileSize:32}},data:Array(size*6).fill(0)});
   tiles.tilesetNames=Array(9).fill('');tiles.tilesetNames[4]='ClareiraTerrenos';tiles.tilesetNames[5]='ClareiraObjetos';tiles.tilesetNames[6]='ClareiraInteriores';tiles.tilesetNames[7]='ClareiraPaisagem';tiles.name='Clareira — vila, natureza e interiores editáveis';
   configureFlags(tiles);
@@ -120,7 +120,22 @@
   stamp(map,tiles,state,'bed',2,2);stamp(map,tiles,state,'table',10,5);stamp(map,tiles,state,'shelf',15,2);stamp(map,tiles,state,'counter',7,11);
   return map;
  }
- const api={terrain,objects,tileId,objectTileId,configureFlags,populate,populateNavigation,populateBattle,populateInn,populateCottage};root.DianaTileKit=api;if(typeof module!=='undefined')module.exports=api;
+ function populateForge(map,tiles){
+  const {state}=populateInterior(map,tiles,'forge-interior');
+  stamp(map,tiles,state,'counter',3,2);stamp(map,tiles,state,'table',8,3);stamp(map,tiles,state,'table',14,3);stamp(map,tiles,state,'shelf',16,8);
+  return map;
+ }
+ function populateLibrary(map,tiles){
+  const {state}=populateInterior(map,tiles,'library-interior');
+  stamp(map,tiles,state,'shelf',2,2);stamp(map,tiles,state,'shelf',16,2);stamp(map,tiles,state,'shelf',2,10);stamp(map,tiles,state,'shelf',16,10);stamp(map,tiles,state,'table',8,6);
+  return map;
+ }
+ function populateHall(map,tiles){
+  const {state}=populateInterior(map,tiles,'hall-interior');
+  stamp(map,tiles,state,'counter',2,2);stamp(map,tiles,state,'table',6,5);stamp(map,tiles,state,'table',12,5);stamp(map,tiles,state,'shelf',16,2);stamp(map,tiles,state,'table',9,10);
+  return map;
+ }
+ const api={terrain,objects,tileId,objectTileId,configureFlags,populate,populateNavigation,populateBattle,populateInn,populateCottage,populateForge,populateLibrary,populateHall};root.DianaTileKit=api;if(typeof module!=='undefined')module.exports=api;
  // Focus only Diana's expanded starter map on its marked starting area. Existing projects keep their saved viewport.
  const Manager=typeof TilemapManager!=='undefined'?TilemapManager:null;
  if(Manager&&!Manager.prototype._dianaVillageFocusInstalled){

@@ -1,6 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict');
-const {validate}=require('../src/DianaProjectValidation.js');
-const {validateAssets}=require('../src/DianaProjectValidation.js');
+const {validate,validateAssets,validateReferences}=require('../src/DianaProjectValidation.js');
 function fixture(){return {system:{partyMembers:[1]},actors:[null,{name:'Diana',classId:1,initialLevel:1}],classes:[null,{name:'Classe',params:Array.from({length:8},()=>[0,100])}],skills:[null,{id:1},{id:2}],states:[null,{restriction:4}]};}
 test('prévia aceita dados essenciais e não altera o projeto',()=>{const data=fixture(),before=JSON.stringify(data);assert.deepEqual(validate(data),[]);assert.equal(JSON.stringify(data),before);});
 test('prévia identifica grupo, personagem e classe ausentes sem lançar erro',()=>{
@@ -23,4 +22,25 @@ test('prévia impede PV inválido, nível sem parâmetros e contratos de batalha
     data.actors[1].initialLevel=20;assert.match(validate(data).join('\n'),/oito parâmetros/);
     data.skills=[null];data.states[1].restriction=0;const messages=validate(data).join('\n');
     assert.match(messages,/habilidade #1/);assert.match(messages,/habilidade #2/);assert.match(messages,/Nocaute/);
+});
+test('referencias cruzadas de equipamentos, habilidades, animacoes e recompensas sao detectadas sem mutacao',()=>{
+    const data=fixture();data.actors[1].equips=[77];data.enemies=[null,{name:'Lobo',actions:[{skillId:88}],dropItems:[{kind:1,dataId:99}]}];
+    data.skills[1].animationId=66;const before=JSON.stringify(data);const issues=validateReferences(data).join('\n');
+    assert.match(issues,/equipamento inexistente #77/);assert.match(issues,/habilidade inexistente #88/);
+    assert.match(issues,/item de recompensa inexistente #99/);assert.match(issues,/animação inexistente #66/);
+    assert.equal(JSON.stringify(data),before);
+});
+test('recursos ausentes de retratos, battlers e poses sao apontados',()=>{
+    const data=fixture();data.actors[1].faceName='Liora';data.actors[1].battlerName='LioraSV';
+    data.enemies=[null,{name:'Lobo',battlerName:'LoboSV'}];data.battlePresentation={actors:{1:{graphic:{name:'LioraPose',folder:'characters'}}},enemies:{1:{graphic:{name:'LoboPose',folder:'characters'}}}};
+    const errors=validateAssets(data,{events:[]},()=>false).join('\n');
+    assert.match(errors,/img\/faces\/Liora/);assert.match(errors,/img\/sv_actors\/LioraSV/);
+    assert.match(errors,/img\/sv_enemies\/LoboSV/);assert.match(errors,/img\/characters\/LioraPose/);assert.match(errors,/img\/characters\/LoboPose/);
+});
+test('checagem recebe todos os mapas e encontra eventos, tilesets e camadas fora do mapa aberto',()=>{
+    const data=fixture();data.tilesets=[null,{tilesetNames:['Folhas']}];
+    const maps=[{events:[]},{tilesetId:1,parallaxName:'Bosque',rrImageLayers:[{name:'Bruma'}],events:[null,{pages:[{image:{characterName:'Moradora'}}]}]}];
+    const errors=validateAssets(data,maps,()=>false).join('\n');
+    assert.match(errors,/img\/tilesets\/Folhas/);assert.match(errors,/img\/parallaxes\/Bosque/);
+    assert.match(errors,/img\/parallaxes\/Bruma/);assert.match(errors,/img\/characters\/Moradora/);
 });

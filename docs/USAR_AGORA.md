@@ -1,6 +1,6 @@
-# Usar o Diana agora
+# Usar o Luae RPG agora
 
-Abra `dist/Diana-RPG-Studio-Windows-0.2.4/Diana.exe`. Mantenha a pasta completa junto
+Abra `dist/Luae-RPG-Windows-0.2.6-20261016-r2/Luae RPG.exe`. Mantenha a pasta completa junto
 do executável. Não é necessário executar comandos.
 
 **Recursos JRPG ilustrados:** abra a pasta `dist/Projetos/Vila da Clareira` pelo

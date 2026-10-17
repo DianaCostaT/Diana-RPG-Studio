@@ -2,11 +2,11 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {WebDriverClient}=require('../upstream/RPGReactor/editor/tests/smoke/webdriver-client.cjs');
 async function main(){
- const root=path.resolve(__dirname,'..'),bundle=path.resolve(process.argv[2]||path.join(root,'dist/Diana-RPG-Studio-Windows'));
+ const root=path.resolve(__dirname,'..'),bundle=path.resolve(process.argv[2]||path.join(root,'dist/Luae-RPG-Windows-0.2.6-20261016-r2'));
  const run=fs.mkdtempSync(path.join(root,'artifacts/ready-exe-')),project=path.join(run,'Jogo do executável');
  const report={bundle,run,status:'running'};let driver;
  try{
-  assert.equal(fs.readFileSync(path.join(bundle,'Diana.exe')).subarray(0,2).toString(),'MZ');
+  assert.equal(fs.readFileSync(path.join(bundle,'Luae RPG.exe')).subarray(0,2).toString(),'MZ');
   driver=new WebDriverClient(path.join(root,'tools/nwjs-sdk-v0.118.0-win-x64/chromedriver.exe'));await driver.start();
   await driver.createSession({browserName:'chrome','goog:chromeOptions':{binary:path.join(bundle,'nw.exe'),args:['nwapp='+path.join(bundle,'app/editor'),'user-data-dir='+path.join(run,'profile'),'no-first-run']}});await driver.setScriptTimeout(90000);
   await driver.waitForScript('return !!window.reactor?.projectManager && getComputedStyle(document.getElementById("splash-screen")).display==="none";',[],{timeout:90000});

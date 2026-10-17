@@ -1,0 +1,36 @@
+diff --git a/editor/src/ProjectManager.js b/editor/src/ProjectManager.js
+--- a/editor/src/ProjectManager.js
++++ b/editor/src/ProjectManager.js
+@@ -378,2 +378,6 @@
+     getRuntimePath() {
++        const hostRuntimePath = typeof window !== 'undefined' && window.RPGReactorHost?.isTauri
++            ? window.RPGReactorHost.runtimePath
++            : null;
++        if (hostRuntimePath && this.fs?.existsSync(this.path.join(hostRuntimePath, 'reactor_main.js'))) return hostRuntimePath;
+         if (!this.fs || !this.path || typeof process === 'undefined') return null;
+@@ -401,7 +401,8 @@
+         // The web bundle bakes the current runtime in at packaging time, and
+         // the browser host serves only preloaded files to synchronous reads —
+         // the version probes below would throw before any check ran, and an
+         // uncaught throw here left the web editor stuck on its splash screen.
+-        if (typeof window !== 'undefined' && window.RPGReactorHost?.mode === 'web') {
++        // Tauri preloads packaged runtime files into its synchronous filesystem shim.
++        if (typeof window !== 'undefined' && window.RPGReactorHost?.mode === 'web' && !window.RPGReactorHost?.isTauri) {
+             return { ok: true, updated: false };
+         }
+@@ -431,8 +432,14 @@
+             const targetVersion = targetSource.match(/RPG Reactor runtime version:\s*([\d.]+)/)?.[1] || '';
+             const sourceRevision = sourceMain.match(/RPG Reactor runtime revision:\s*([\w.-]+)/)?.[1] || '';
+             const targetRevision = targetSource.match(/RPG Reactor runtime revision:\s*([\w.-]+)/)?.[1] || '';
+             const currentRevision = !sourceRevision || targetRevision === sourceRevision;
++            const runtimeFilesMatch = ['reactor_objects_legacy.js', 'reactor_sprites.js', 'reactor_battle_data.js'].every(name => {
++                const source = this.path.join(runtimePath, name);
++                const target = this.path.join(projectPath, 'js', name);
++                return this.fs.existsSync(source) && this.fs.existsSync(target)
++                    && this.fs.readFileSync(source, 'utf8') === this.fs.readFileSync(target, 'utf8');
++            });
+             if (targetVersion === engineVersion && projectData.engineVersion === engineVersion
+-                    && currentRevision) {
++                    && currentRevision && runtimeFilesMatch) {
+                 return { ok: true, updated: false };
+             }

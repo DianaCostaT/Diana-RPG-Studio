@@ -18,10 +18,12 @@ async function main(){
  const fill=async selector=>{await click(selector);await wait('return !!document.getElementById("diana-project-folder");');await type('#rr-new-project-name',name);await type('#diana-project-folder',run);};
  try{
   driver=new WebDriverClient(path.join(sdk,'chromedriver.exe'));await driver.start();
-  const binary=process.argv[2]?path.resolve(app,'../../nw.exe'):path.join(sdk,'nw.exe');
+  const binary=path.join(sdk,'nw.exe');
   await driver.createSession({browserName:'chrome','goog:chromeOptions':{binary,args:['nwapp='+app,'user-data-dir='+path.join(run,'profile'),'no-first-run']}});await driver.setScriptTimeout(90000);
   await wait('return !!window.reactor?.projectController && getComputedStyle(document.getElementById("splash-screen")).display==="none";',90000);
   await fill('.welcome-button[data-action="new-project"]');
+  assert.equal(await driver.execute('return document.getElementById("diana-project-mode")?.value;'),'2d');
+  assert.equal(await driver.execute('return document.querySelector(".diana-project-mode-choice")?.open;'),false,'3D mode is tucked into advanced project options');
   await click('#diana-project-browse');
   await wait('return document.getElementById("diana-folder-choose")?.disabled===false;');await shot('folder-browser');await click('#diana-folder-choose');
   await wait('return document.getElementById("diana-project-browse")?.disabled===false;');
@@ -29,8 +31,36 @@ async function main(){
   assert.equal(await driver.execute('return document.getElementById("diana-project-folder-hint").textContent.includes("Não foi possível");'),false);
   report.folderBrowser='selected folder without invoking NW.js native chooser';await shot('folder-selected');
   await click('#rr-new-project-create');
-  await driver.waitForScript('return reactor.projectController.currentProject?.path===arguments[0] && reactor.tilesetPaletteViewer?.currentLayer==="B";',[project],{timeout:90000});
+  await driver.waitForScript('return reactor.projectController.currentProject?.path===arguments[0] && reactor.projectController.tilemapManager?.currentMap?.id===1;',[project],{timeout:90000});
   await shot('created');assert.ok(fs.existsSync(path.join(project,'data/Map001.json')));
+  const workspaceActions=await driver.execute('return [...document.querySelectorAll("#diana-workspace [data-diana-action]")].map(n=>n.dataset.dianaAction);');
+  assert.deepEqual(workspaceActions.filter(id=>id!=='quick-event'),['maps','events','event-search','database','battle','resources','play']);
+  assert.ok(workspaceActions.includes('quick-event'),'NPC creation shortcut stays alongside Events');
+  await click('#diana-workspace [data-diana-action="event-search"]');
+  const eventName=await driver.execute('return reactor.eventManager.currentMap.events.find(e=>e&&e.name)?.name;');
+  assert.ok(eventName,'starter map has a named event');await type('#diana-event-search input[type="search"]',eventName);
+  await wait('return document.querySelectorAll("#diana-event-search .rr-modal-body > div:last-child button").length>0;');
+  await click('#diana-event-search .rr-modal-body > div:last-child button');
+  await wait('return !document.getElementById("diana-event-search") && !!reactor.eventManager.selectedEvent;');
+  assert.equal(await driver.execute('return document.querySelector("#diana-mode-options summary")?.textContent;'),'Projeto 2D');
+  await click('#diana-workspace [data-diana-action="resources"]');
+  await wait('return !!document.querySelector("#diana-resource-library .diana-rtp-library");');
+  assert.equal(await driver.execute('return document.querySelectorAll("#diana-resource-library .diana-rtp-library button").length;'),26);
+  await shot('resource-library');await click('#diana-resource-library .rr-modal-footer .rr-btn-secondary');
+  await click('#diana-workspace [data-diana-action="battle"]');
+  await wait('return !!document.querySelector(".diana-combat-rules summary");');
+  await click('.diana-combat-rules summary');
+  assert.equal(await driver.execute('return [...document.querySelectorAll(".diana-tactical-planned")].some(n=>n.open);'),false,'tactical planning starts collapsed');
+  await click('#database-close-btn');
+  await click('#diana-workspace [data-diana-action="maps"]');
+  await click('#diana-mode-options > summary');
+  await driver.execute('const s=document.getElementById("diana-mode-badge");s.value="hybrid";s.dispatchEvent(new Event("change",{bubbles:true}));');
+  await wait('return document.documentElement.dataset.dianaMode==="hybrid";');
+  assert.equal(await driver.execute('return reactor.projectController.currentProject.diana.mode;'),'hybrid');
+  assert.equal(await driver.execute('return document.querySelector("#diana-mode-options summary")?.textContent;'),'Projeto 2D + 3D — avançado');
+  await driver.execute('const s=document.getElementById("diana-mode-badge");s.value="2d";s.dispatchEvent(new Event("change",{bubbles:true}));');
+  await wait('return document.documentElement.dataset.dianaMode==="2d";');
+  assert.equal(await driver.execute('return reactor.projectController.currentProject.diana.mode;'),'2d');
   const before=fs.readFileSync(path.join(project,'data/Map001.json'),'utf8');
   await fill('#toolbar [data-action="new-project"]');await click('#rr-new-project-create');
   await wait('return document.querySelector(".rr-dialog-message")?.textContent.includes("Não foi possível criar o projeto");');
@@ -57,7 +87,7 @@ async function main(){
   await driver.execute('reactor.playtestManager.playtestProcess.kill();');
   await wait('return !reactor.playtestManager.playtestProcess;');
   assert.equal(await driver.execute('return reactor.projectController.currentProject.path;'),project);
-  report.status='passed';report.scope='Creation from actual New Project UI, integrated folder selection, duplicate destination, cancellation, reopening and actual Playtest button; child runtime stays running for 12 seconds, editor responds after child closes.';
+  report.status='passed';report.scope='New Project defaults to 2D with 3D in advanced options; six primary workspace destinations, separate resource library, collapsed tactical planning, persisted 2D/3D switching, folder selection, duplicate destination, cancellation, reopening and actual Playtest button; child runtime stays running for 12 seconds.';
   console.log('PASS project UI '+run);
  }catch(error){report.status='failed';report.failure=String(error.stack||error);if(driver)try{await shot('failure');report.diagnostic=await driver.execute('return {text:document.body.innerText,project:reactor.projectController.currentProject?.path};');}catch{}throw error;}
  finally{if(driver)await driver.close();save();}

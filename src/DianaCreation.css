@@ -1,0 +1,15 @@
+.diana-creation-modal { z-index:24000!important; }
+.diana-creation-modal>.rr-modal { width:min(980px,94vw); max-height:90vh; display:flex; flex-direction:column; }
+.diana-creation-modal .rr-modal-body { overflow:auto; min-height:0; }
+.diana-creation-modal .rr-modal-footer { flex-wrap:wrap; gap:8px; }
+.diana-creation-modal pre { overflow:auto; max-height:220px; white-space:pre; font-size:12px; }
+.diana-reference-filters { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.diana-reference-filters input { flex:1; min-width:180px; }
+.diana-reference-filters select { max-width:100%; }
+.diana-reference-card { display:flex; flex-direction:column; gap:6px; padding:12px; border:1px solid var(--color-border); margin:8px 0; background:var(--color-bg-panel); }
+.diana-reference-card small { color:var(--color-text-muted); }
+.diana-reference-url { display:flex; gap:8px; }
+.diana-reference-url input { min-width:0; flex:1; }
+.diana-art-review-controls,.diana-sequence-order { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 0; }
+.diana-art-review-controls select,.diana-sequence-order select { max-width:230px; }
+.diana-resource-library-modal .rr-modal-footer { flex-wrap:wrap; gap:8px; }
