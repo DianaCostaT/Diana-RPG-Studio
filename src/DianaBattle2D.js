@@ -7,6 +7,23 @@
  const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
  const button=(text,fn)=>{const b=el('button','diana-maker-button',text);b.type='button';b.onclick=fn;return b;};
  const copy=value=>JSON.parse(JSON.stringify(value));
+ // Authoring shortcuts only: saved data remains native BattleData steps.
+ function studioSteps(){return [
+  ['POSE','pose','Fixar quadro',{operation:'hold',motion:'idle',frame:1}],
+  ['MOVE','move','Mover',{duration:30,easing:'smooth'}],
+  ['WAIT','wait','Esperar',{duration:20}],
+  ['ATTACK','motion','Animar ataque',{motion:'attack',duration:20}],
+  ['PROJECTILE','projectile','Projétil',{}],
+  ['EFFECT','animation','Efeito visual',{}],
+  ['DAMAGE','impact','Aplicar ação',{role:'allTargets'}],
+  ['CAMERA','camera','Câmera',{}],['SOUND','sound','Som',{}],
+  ['SHAKE','shake','Tremor',{}],['FLASH','flash','Flash',{}],
+  ['RETURN','move','Retornar à origem',{anchor:'home',duration:30,easing:'smooth'}],
+  ['STATE','state','Alterar estado',{}],
+  ['VICTORY','motion','Animar vitória',{motion:'victory',duration:30}],
+  ['DEATH','motion','Animar nocaute',{motion:'dead',duration:30}]
+ ].map(([id,value,label,extra])=>({key:'studio:'+id,value,label:id+' — '+label,extra,raw:true,
+  hint:id==='ATTACK'?'Apresentação do ataque. Insira DAMAGE no instante do impacto para aplicar a ação uma vez.':id==='DAMAGE'?'Aplica dano e efeitos da habilidade ou item pelas regras do jogo.':id==='VICTORY'||id==='DEATH'?'Animação do combatente; não altera HP nem encerra a batalha.':undefined}));}
  const defaultGrid=()=>({version:1,columns:3,rows:4,anchor:{x:.5,y:1},animations:{idle:{frames:[0],speed:12,loop:true}}});
  const SpriteSheetTools={
   analyze(imageData,columns,rows,threshold=0){
@@ -130,6 +147,10 @@
  function select(values,value,change){const s=el('select','database-field-value');for(const [id,text] of values){const o=el('option','',text);o.value=id;s.append(o);}s.value=value;s.onchange=()=>change(s.value);return s;}
  function number(host,title,value,change,min=0,max=816){const n=el('input','database-field-value');n.type='number';n.step=1;n.min=min;n.max=max;n.value=value;n.onchange=()=>{const v=n.valueAsNumber;if(Number.isInteger(v)&&v>=min&&v<=max){n.setCustomValidity('');change(v);}else{n.setCustomValidity(`Informe um inteiro entre ${min} e ${max}.`);n.reportValidity();}};return field(host,title,n);}
  function install(){
+  if(typeof DatabaseActionSequenceEditor!=='undefined'){
+   const sequence=DatabaseActionSequenceEditor.prototype;
+   if(!sequence._luaeStudioSteps){const groups=sequence.stepGroups;sequence.stepGroups=function(){return [['Battle Studio',studioSteps()],...groups.call(this)];};sequence._luaeStudioSteps=true;}
+  }
   const proto=DatabaseEditorUI.prototype,nav=proto.setupDatabaseNavigation,open=proto.openDatabase;
   proto.setupDatabaseNavigation=function(){nav.call(this);const host=document.getElementById('database-navigation');
    for(const [type,title] of [['dianaPoses','Animações 2 — Poses'],['dianaBattleScreen','Tela de batalha']]){const tab=el('div','database-nav-item',title);tab.dataset.type=type;tab.onclick=()=>this.openDatabase(type);host.append(tab);}
@@ -346,6 +367,6 @@
   }
   dispose(){this.dead=true;this.poseAudio?.pause();cancelAnimationFrame(this.raf);document.removeEventListener('visibilitychange',this.visibility);this.previews=[];this.images.clear();}
  }
- root.DianaBattle2D={poseNames,defaults,Battle2D,SpriteSheetTools,saveAlignedSheet,animationFrameAt};root.DianaSpriteComposer=SpriteComposer;if(typeof module!=='undefined')module.exports=root.DianaBattle2D;
+ root.DianaBattle2D={poseNames,defaults,Battle2D,SpriteSheetTools,saveAlignedSheet,animationFrameAt,studioSteps};root.DianaSpriteComposer=SpriteComposer;if(typeof module!=='undefined')module.exports=root.DianaBattle2D;
  if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',install);
 })(globalThis);
